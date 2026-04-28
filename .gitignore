@@ -1,0 +1,76 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+.mcp.json
+.financial-secrets
+vault/clients/_registry.md
+.runner.lock
+.paused
+.cooldown
+.claude/worktrees/
+
+# Workspace + project artifacts — these contain operator/PII, project state, and
+# test-run scratch. Templates (_template/) and platform MCPs (_platform/) stay tracked.
+vault/clients/operator/
+vault/clients/practice/
+
+# Generic per-workspace patterns. Per-client config.md is ignored by default
+# because it carries email/billing/PII; the template stays tracked via negation.
+# Templates (_template/) and platform MCPs (_platform/) stay tracked.
+vault/clients/*/config.md
+!vault/clients/_template/config.md
+vault/clients/*/projects/*.md
+vault/clients/*/projects/*.derived/
+vault/clients/*/tickets/T-*.md
+vault/clients/*/snapshots/
+vault/clients/*/deliverables/
+vault/clients/*/decisions/*.md
+vault/clients/*/lessons/*.md
+
+# Top-level vault test/run artifacts (preserve .counter, .gitkeep, _platform/, incoming/)
+vault/projects/*.md
+vault/projects/*.derived/
+vault/tickets/T-*.md
+vault/snapshots/*/
+!vault/snapshots/_platform/
+!vault/snapshots/incoming/
+vault/decisions/*.md
+vault/lessons/*.md
+
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+
+node_modules/
+npm-debug.log*
+
+logs/
+data/control-plane/
+data/chromadb/
+data/executors/
+data/*.json
+tmp/
+.codex-tmp/
+workspaces/
+artifacts/
+benchmarks/
+proof-packs/
+screenshots/
+videos/
+
+vault/config/.gate-status
+vault/config/stitch-auth-state.json
+vault/config/*-state.json
+
+*.sqlite
+*.sqlite3
+*.db
+*.log

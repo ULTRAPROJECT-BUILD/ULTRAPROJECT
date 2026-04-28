@@ -1,0 +1,9 @@
+{
+  "name": "stitch-mcp-proxy",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@google/stitch-sdk": "^0.1.0",
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  }
+}
