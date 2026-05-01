@@ -2,34 +2,182 @@
 
 # ULTRAPROJECT
 
-### Drop in your specs, prompt, and walk away.
+### Start an autonomous AI project from one folder and one prompt.
 
-A file-backed operating system for autonomous AI work. Turns Claude Code or Codex into a durable, heavy-duty, multi-cycle project runner that plans, builds, reviews, and verifies its own work across days or weeks on a single prompt.
+ULTRAPROJECT is a ready-to-run workspace for **Claude Code** or **Codex**. Download this repo, open the folder in your AI coding tool, paste one "run an ultraproject" prompt, and the agent uses the files here to plan, build, review, verify, and resume work until the project is done. Normal use is chat-native: the included `ultraproject` command prepares local config and checks readiness; it does not run the project for you.
 
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue)](pyproject.toml)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 [![Status](https://img.shields.io/badge/status-early--release-yellow)](#project-status)
 
-```bash
-git clone https://github.com/ULTRAPROJECT-BUILD/ULTRAPROJECT
-cd ultraproject && pip install -e . && ultraproject
-```
-
-**Works on macOS and Linux.** Requires Python 3.9+ and [Claude Code](https://claude.com/claude-code) or [Codex CLI](https://github.com/openai/codex). On Windows, fork and adapt — the `.claude/hooks/` shell scripts and a few hardcoded macOS paths in `scripts/agent_runtime.py` will need replacing. PRs welcome.
-
 ![ULTRAPROJECT](docs/assets/hero.png)
 
 <br>
 
-**For anyone who wants to build serious things — but still wants to go outside.**
+**For anyone who wants to build serious things without babysitting every step.**
 
-[Why](#why-ultraproject) · [How It Works](#how-it-works) · [The Gate Stack](#the-gate-stack) · [Recovery](#recovery) · [Routing](#routing) · [Self-Extending](#self-extending) · [Quickstart](docs/QUICKSTART.md) · [Architecture](docs/ARCHITECTURE.md) · [Setup](docs/SETUP.md)
+[Start Here](#start-here-run-your-first-ultraproject) · [Prompt Template](#the-prompt-to-paste) · [Watch Progress](#watch-progress) · [Resume](#if-the-session-stops) · [Why](#why-ultraproject) · [How It Works](#how-it-works) · [Quickstart](docs/QUICKSTART.md) · [Architecture](docs/ARCHITECTURE.md) · [Setup](docs/SETUP.md)
 
 </div>
 
 ---
 
-> **Reviewers (human or LLM): if you haven't read [skills/orchestrator.md](skills/orchestrator.md), you haven't seen the system.** The README is one page; the actual decision logic is ~900 lines in orchestrator.md, plus [SYSTEM.md](SYSTEM.md), [skills/creative-brief.md](skills/creative-brief.md), and [skills/deliverable-standards.md](skills/deliverable-standards.md). Fresh chats that judge from the README alone reliably call this overhyped — and reliably reverse after the spec. Read orchestrator.md first.
+## Start Here: Run Your First Ultraproject
+
+If you are new to AI agents, use this section and ignore the architecture details until later. The whole path is: install one tool, download the repo, run the readiness setup, open the `ULTRAPROJECT` folder, paste the starter prompt, and let the agent work. You do **not** need to understand MCPs, vaults, tickets, routing, or gates before starting.
+
+### 1. Install one AI coding tool
+
+Install and sign in to either:
+
+- [Claude Code](https://claude.com/claude-code)
+- [Codex CLI](https://github.com/openai/codex)
+
+One authenticated tool is enough for a first run. If you have both, ULTRAPROJECT can route work between them, but that is optional.
+
+### 2. Download this repo
+
+With Git:
+
+```bash
+git clone https://github.com/ULTRAPROJECT-BUILD/ULTRAPROJECT
+cd ULTRAPROJECT
+```
+
+Without Git: click **Code -> Download ZIP** on GitHub, unzip it, and open the unzipped `ULTRAPROJECT` folder. If the ZIP creates a folder named something like `ULTRAPROJECT-main`, that is the folder to open.
+
+### 3. Recommended one-time readiness setup
+
+This installs the small `ultraproject` helper and creates local config files from the examples. This is a setup check, not a project runner.
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install -e .
+ultraproject
+```
+
+What this does:
+
+- copies `.env.example` to `.env`
+- copies `.mcp.example.json` to `.mcp.json`
+- copies `vault/clients/_registry.example.md` to `vault/clients/_registry.md`
+- checks that `claude` or `codex` is available on your PATH
+
+For serious runs, use macOS or Linux, Python 3.9+, and an authenticated Claude Code or Codex install. Node 18+ is recommended for web apps, browser tests, and UI projects. Windows is not first-class yet because some shell hooks and runtime paths are macOS/Linux oriented.
+
+### 4. Open this folder in Claude Code or Codex
+
+Open the folder that contains `README.md`, `SYSTEM.md`, and `skills/orchestrator.md`. From inside that `ULTRAPROJECT` folder, start your tool:
+
+```bash
+claude
+```
+
+or:
+
+```bash
+codex
+```
+
+If you are using a graphical app, choose the `ULTRAPROJECT` folder as the workspace/project folder. Do not choose the parent folder that merely contains `ULTRAPROJECT`.
+
+### 5. Paste the starter prompt
+
+Use the template below. Replace the bracketed text with what you want built, researched, designed, analyzed, or delivered.
+
+## The Prompt To Paste
+
+```text
+Run an ultraproject with this goal:
+
+[Describe what you want built, researched, designed, analyzed, or delivered.]
+
+Before starting, read SYSTEM.md and skills/orchestrator.md, especially the Critical Rules block at the top of orchestrator.md. Follow the orchestrator skill literally. Treat the files in this repo as the source of truth, not chat memory.
+
+Turn my goal into a project contract, phase plan, tickets, acceptance criteria, assumptions, and evidence gates. Then execute the tickets, verify work with real evidence from files/commands/screenshots/reports as appropriate, and write checkpoints so the project can resume from disk.
+
+If details are missing, make reasonable assumptions, write them down, and keep going. Work until the project is delivered. Do not stop, pause, or ask me to continue unless I explicitly tell you to pause or every executable path is blocked.
+```
+
+That is the whole basic workflow: **download repo → open folder in Claude/Codex → paste prompt → let it run.**
+
+### A Better First Prompt
+
+Your ultraproject will work better if you include:
+
+- **Goal:** what you want at the end
+- **Audience:** who will judge the result
+- **Done means:** specific acceptance criteria
+- **Constraints:** tech stack, style, budget, deadline, files to use, things to avoid
+- **Proof:** tests, screenshots, demos, citations, reports, or review standards you expect
+
+Example:
+
+```text
+Run an ultraproject with this goal:
+
+Build a polished local-first personal finance dashboard for a non-technical user. It should import CSV bank transactions, categorize spending, show monthly trends, and export a clean PDF summary.
+
+Audience: someone who wants a simple private budgeting tool, not an accounting system.
+
+Done means: a working app, clear setup instructions, sample data, screenshots, and a verification report showing the import flow, charts, and PDF export all work.
+
+Constraints: use a boring maintainable stack, avoid paid APIs, keep the UI calm and easy to understand.
+
+Before starting, read SYSTEM.md and skills/orchestrator.md, especially the Critical Rules block at the top of orchestrator.md. Follow the orchestrator skill literally. Treat the repo files as the source of truth. Turn this into a project contract, phase plan, tickets, acceptance criteria, assumptions, and evidence gates. Execute the tickets, verify work with real evidence from files/commands/screenshots/reports as appropriate, and write checkpoints so the project can resume from disk. Make reasonable assumptions, write them down, and keep going. Work until the project is delivered. Do not stop, pause, or ask me to continue unless I explicitly tell you to pause or every executable path is blocked.
+```
+
+### What Happens Next
+
+ULTRAPROJECT tells the agent how to run the work like a durable project instead of a one-off chat:
+
+- It creates a project record in `vault/projects/` as the run's notebook.
+- It breaks your request into phases and tickets, which are small work orders.
+- It may hand tickets to focused executor sessions instead of doing everything in one long chat.
+- It requires proof checks before work closes: real files, real commands, screenshots, reports, or other evidence.
+- It writes checkpoints to disk so a future session can resume.
+
+Project execution happens in Claude Code or Codex chat. There is no hidden daemon and no `ultraproject run` command for normal use.
+
+### Watch Progress
+
+The agent will create a project slug from your goal. If you do not know the slug, ask: "What project slug are you using?"
+
+To watch progress, open:
+
+```text
+vault/projects/<project-name>.derived/status.md
+```
+
+or the canonical project log:
+
+```text
+vault/projects/<project-name>.md
+```
+
+The `status.md` file is the quick view. The project `.md` file is the durable log with decisions, checkpoints, blockers, and ticket history.
+
+### If The Session Stops
+
+Token limits, rate limits, restarts, and model switches are normal. Start Claude Code or Codex again in the same `ULTRAPROJECT` folder and paste:
+
+```text
+Resume the active ultraproject in this repo. Do not create a new project.
+
+Read SYSTEM.md and skills/orchestrator.md, especially the Critical Rules block at the top of orchestrator.md. Inspect vault/projects/*.md and the matching vault/projects/*.derived/status.md files, identify the active project, find the latest ORCH-CHECKPOINT, restore the current state from disk, and continue the project to delivery. Do not restart from scratch unless the project file says to. If more than one active project exists, ask me which one to resume.
+```
+
+### Common First-Run Mistakes
+
+- Opening the parent folder instead of the `ULTRAPROJECT` folder.
+- Trying to run `ultraproject run`. The `ultraproject` command only bootstraps config and readiness.
+- Giving a vague goal but no "done means" criteria.
+- Forgetting to say "run to completion," which makes agents pause at natural stopping points.
+- Expecting a cheap quick answer. ULTRAPROJECT optimizes for quality and verification, which can use many model calls.
+
+> **For technical reviewers:** the README is the front door. The actual operating logic lives in [skills/orchestrator.md](skills/orchestrator.md), plus [SYSTEM.md](SYSTEM.md), [skills/creative-brief.md](skills/creative-brief.md), and [skills/deliverable-standards.md](skills/deliverable-standards.md). Read `orchestrator.md` before judging the system design.
 
 ---
 
@@ -85,21 +233,19 @@ It works for software, design, research, content, presentations, audits, data wo
 
 ## How It Works
 
-### Setup (one-time)
+The beginner workflow is above: download the repo, open the folder in Claude Code or Codex, paste the starter prompt. This section explains what ULTRAPROJECT asks the agent to do after that.
 
-```bash
-pip install -e . && ultraproject
-```
+### The plain-English loop
 
-`ultraproject` copies the example config files into place and verifies `claude` or `codex` is on your PATH. Project execution is chat-native — see below.
+1. The agent reads `SYSTEM.md` and `skills/orchestrator.md`.
+2. It turns your request into a project contract: mission, assumptions, acceptance criteria, proof strategy.
+3. It creates a phase plan and just-in-time ticket files in the vault.
+4. It spawns executor agents for tickets instead of doing all work in one chat context.
+5. It requires evidence before closing work: files, command output, screenshots, walkthroughs, reports, or reviews.
+6. It writes checkpoints to disk after major steps.
+7. If the session ends, a future Claude or Codex session resumes from the latest checkpoint.
 
-### Run a project (chat-native)
-
-Open Claude Code or Codex pointed at the repo and paste:
-
-> *"Read SYSTEM.md and skills/orchestrator.md — **especially the Critical Rules block at the top of orchestrator.md, those are load-bearing**. Follow the skill literally. Here's what I want to build: \<your prompt\>. Be strict about acceptance criteria, run to completion — don't stop, pause, or ask clarifying questions unless I (the operator) explicitly tell you otherwise."*
-
-The agent reads the system prompt, follows the orchestrator skill, and runs end-to-end from there. Pause, redirect, or kill the run by editing files in the vault or sending a follow-up message. Auth is whatever your CLI is configured for — Claude Code's subscription auth, Codex's, or your own API keys if you've set them.
+Project execution is chat-native: there is no `ultraproject run` command. The `ultraproject` CLI is only a bootstrap helper that creates local config files and checks readiness. Auth is whatever your Claude Code or Codex install already uses: subscription auth, CLI auth, or your own API keys if configured.
 
 ### Two execution models
 
@@ -112,10 +258,6 @@ The orchestrator picks one based on the project plan's frontmatter:
 >
 > 1. Strict acceptance criteria (named bar, specific verifications, named evaluator). The more specific you are about what "done" looks like, the harder the gate stack works to actually hit those criteria.
 > 2. An explicit "do not stop, do not pause, do not ask under any circumstances" directive. Without it, agents default to asking before spending serious compute or making structural decisions — which breaks the walk-away promise.
->
-> **Example prompt that exercises the whole stack:**
->
-> *"Read SYSTEM.md and skills/orchestrator.md — **especially the Critical Rules block at the top of orchestrator.md, those are load-bearing**. Follow the skill literally. Design from first principles a complete schematic + specification package for an anthropomorphic robotic hand at the quality level of Tesla Optimus Gen-3. Must include: a runnable Python kinematic model (FK + closed-form Jacobian, validated against numeric to 1e-5), a parametric mechanical model in OpenSCAD, a BOM with real purchasable SKUs, an electrical block diagram with a closed power-tree calculation, a control-loop architecture with an explicit latency budget, and a self-review that lists what is NOT included. Suitable for technical review by a senior robotics engineer. **Maximum quality, maximum tokens, no scope reduction.** **Run this project to completion. Do not stop, ask clarifying questions, or pause for approval under any circumstances unless I (the operator) explicitly tell you otherwise.**"*
 
 ### Watching progress (or not)
 
