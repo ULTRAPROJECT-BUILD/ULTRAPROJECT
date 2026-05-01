@@ -67,9 +67,9 @@ What this does:
 
 For serious runs, use macOS or Linux, Python 3.9+, and an authenticated Claude Code or Codex install. Node 18+ is recommended for web apps, browser tests, and UI projects. Windows is not first-class yet because some shell hooks and runtime paths are macOS/Linux oriented.
 
-### 4. Open this folder in Claude Code or Codex
+### 4. Open the ULTRAPROJECT folder in Claude Code or Codex
 
-Open the folder that contains `README.md`, `SYSTEM.md`, and `skills/orchestrator.md`. From inside that `ULTRAPROJECT` folder, start your tool:
+Open the folder "ULTRAPROJECT" that contains `README.md`, `SYSTEM.md`, and `skills/orchestrator.md`. From inside that folder, start your tool:
 
 ```bash
 claude
