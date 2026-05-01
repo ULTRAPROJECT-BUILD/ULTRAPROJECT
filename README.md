@@ -12,6 +12,10 @@ ULTRAPROJECT is a ready-to-run workspace for **Claude Code** or **Codex**. Downl
 
 ![ULTRAPROJECT](docs/assets/hero.png)
 
+<p>
+  <a href="docs/assets/ultraproject-promo-pro-final.mp4"><strong>Watch the ULTRAPROJECT promo video</strong></a>
+</p>
+
 <br>
 
 **For anyone who wants to build serious things without babysitting every step.**
