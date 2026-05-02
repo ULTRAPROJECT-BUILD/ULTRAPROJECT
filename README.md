@@ -1,6 +1,6 @@
 <div align="center">
 
-# ULTRAPROJECT
+# ULTRAPROMPT
 
 ### Start an autonomous AI project from one folder and one prompt.
 
