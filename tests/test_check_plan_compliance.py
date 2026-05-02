@@ -62,6 +62,16 @@ def has_failure(report: dict, name: str) -> bool:
 MINIMAL_VALID_BODY = """\
 # Project Plan — Demo
 
+## Current Research Inputs
+
+- **Trigger report:** /tmp/trigger.json
+- **Trigger decision:** skip — local_only_tags
+- **Research-context snapshot:** not required
+- **Confidence:** not available
+- **Cost and coverage:** not applicable
+- **Planning implications:** none
+- **Assumptions from low-confidence research:** none
+
 ## Architecture Decisions
 
 | Decision | Choice | Rationale |
@@ -144,6 +154,26 @@ def test_missing_required_section_fails(tmp_path):
 
     report = mod.validate_plan_compliance(plan_path)
     assert has_failure(report, "section_architecture_decisions_present")
+
+
+def test_missing_current_research_inputs_fails(tmp_path):
+    mod = load_module()
+    body = MINIMAL_VALID_BODY.replace(
+        "## Current Research Inputs\n\n"
+        "- **Trigger report:** /tmp/trigger.json\n"
+        "- **Trigger decision:** skip — local_only_tags\n"
+        "- **Research-context snapshot:** not required\n"
+        "- **Confidence:** not available\n"
+        "- **Cost and coverage:** not applicable\n"
+        "- **Planning implications:** none\n"
+        "- **Assumptions from low-confidence research:** none\n\n",
+        "",
+    )
+    plan_path = tmp_path / "plan.md"
+    write_plan(plan_path, body, tags=["plan", "frontier"])
+
+    report = mod.validate_plan_compliance(plan_path)
+    assert has_failure(report, "section_current_research_inputs_present")
 
 
 def test_frontier_missing_playbook_section_fails(tmp_path):

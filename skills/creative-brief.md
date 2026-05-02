@@ -14,6 +14,7 @@ inputs:
   - brief_scope (optional — project, phase, or ticket; default: project)
   - applies_to_tickets (optional — execution/review ticket IDs that should consume this brief)
   - client_requirements (optional — parsed from clarification ticket or project notes if not provided)
+  - research_context_path (optional — latest research-context snapshot to use for current references, tools, vendors, genre benchmarks, and deprecated-pattern warnings)
 ---
 
 # Creative Brief
@@ -36,6 +37,7 @@ You are creating the brief before real work begins. This is the most important s
    - If `brief_scope: phase`, also read the governing project brief (`parent_brief_path` when provided, otherwise resolve the latest project-scoped brief first). A phase brief is an addendum, not a fresh independent worldview.
    - **Master-brief rule:** if `brief_scope: phase` or `brief_scope: ticket` and no project-scoped brief exists yet, STOP and report that the master project brief is missing. Do NOT author a phase/ticket brief as if it were the root contract.
    - Read the project plan's `## Goal Contract` and `## Assumption Register` first when they exist. The brief should consume those contracts, not reinvent them.
+   - If a `research-context.md` snapshot exists, read it before researching genre excellence standards. Use it as the currentness baseline for recent launches, current tool/library versions, deprecated patterns, new capabilities since cutoff, and current best practices. Treat `total_websearch`, `total_webfetch`, and the per-category count maps as cost-and-coverage context only. Do not copy the whole snapshot into the brief. Pull only cited claims that affect references, quality bar, recommended tooling, anti-patterns, media strategy, proof strategy, or Executability Audit. If the snapshot has `low_confidence: true`, cite those items only as assumptions or risks unless independently verified in the brief.
 2. If `client` is provided:
    - Read the client's `config.md` for industry, domain, and notes.
    - Read all clarification/discovery tickets and incoming snapshots for details about what they want.
@@ -60,7 +62,7 @@ You are creating the brief before real work begins. This is the most important s
 
 ### Step 2: Research Genre Excellence Standards
 
-**Before writing a single line of the brief, understand what BEST-OF-THE-BEST looks like for this exact project type.** The system must know what it's competing against. Use WebSearch to find real examples.
+**Before writing a single line of the brief, understand what BEST-OF-THE-BEST looks like for this exact project type.** Start from research-context references when present, then use only additional scoped WebSearch needed for visual, genre, or evaluator examples not already covered. The system must know what it's competing against without duplicating currentness research that already passed through `research-context.md`.
 
 **Phase-brief exception:** when `brief_scope: phase`, inherit the project-level genre benchmarks by default. Do NOT repeat a full benchmark section unless this phase introduces a meaningfully different evaluator lens (for example: adversarial clean-room review, compliance review, artifact-polish review). Phase briefs should usually add only the phase-specific benchmark delta.
 
@@ -430,6 +432,13 @@ tags: [creative, brief, planning]
 ## Audience
 {who will see/use this}
 
+## Research Context Used
+
+- **Snapshot path:** {research_context_path or "not available"}
+- **Confidence:** {low_confidence false/true or "not available"}
+- **Claim IDs used:** {cited research-context claim IDs used in references, quality bar, tooling, anti-patterns, media strategy, proof strategy, or Executability Audit}
+- **Claim IDs treated as assumptions:** {low-confidence or inferred claim IDs used only as assumptions or risks, or "none"}
+
 ## References
 1. {URL} — {what's good about it}
 2. {URL} — {what's good about it}
@@ -593,6 +602,9 @@ Per [[deliverable-standards]] Enterprise Quality Gate. All fields below are mand
 - **Be specific.** "Make it look good" is not a brief. "Warm earth tones, generous whitespace, editorial typography, hero image with depth of field" is a brief. So is "Deliver a stock deck with a one-slide thesis per ticker, explicit downside risks, and a clear evidence trail."
 - **Set the bar high.** The quality bar should describe work you'd be proud to put in a portfolio, not work that merely satisfies a checkbox.
 - **Name what to avoid.** Anti-patterns are as important as aspirations. "No generic stock photos" prevents the most common failure mode.
+- **Research-context is input, not proof.** A research-context claim that a capability exists is not enough for a PASS row; the brief must show that the capability is available in this run.
+- **Use currentness findings surgically.** Deprecated-pattern findings should appear in anti-patterns or be explicitly dismissed, and current version findings must prevent stale recommended-tooling claims.
+- **Keep the existing gate model.** No separate gate-review subagent is added for research-context; the Executability Audit remains the proof boundary.
 
 ## See Also
 

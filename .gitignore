@@ -57,6 +57,7 @@ data/control-plane/
 data/chromadb/
 data/executors/
 data/*.json
+deliverables/
 tmp/
 .codex-tmp/
 workspaces/
@@ -65,10 +66,19 @@ benchmarks/
 proof-packs/
 screenshots/
 videos/
+tools/bin/
+vault/data/
 
 vault/config/.gate-status
 vault/config/stitch-auth-state.json
 vault/config/*-state.json
+
+# Keep platform snapshot directories as placeholders only; generated status and
+# run evidence can contain local/operator context.
+vault/snapshots/_platform/*
+!vault/snapshots/_platform/.gitkeep
+vault/snapshots/incoming/*
+!vault/snapshots/incoming/.gitkeep
 
 *.sqlite
 *.sqlite3

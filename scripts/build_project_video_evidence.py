@@ -232,6 +232,30 @@ def probe_video_metadata(path: Path) -> dict[str, Any]:
     except Exception:
         data = {}
 
+    if not data:
+        try:
+            proc = subprocess.run(
+                ["ffmpeg", "-i", str(path)],
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=15,
+            )
+            stderr = proc.stderr or ""
+            duration_match = re.search(r"Duration:\s*(\d+):(\d+):(\d+(?:\.\d+)?)", stderr)
+            video_match = re.search(r"Video:\s*([^,\s]+).*?,\s*(\d+)x(\d+)", stderr)
+            stream: dict[str, Any] = {}
+            fmt: dict[str, Any] = {}
+            if duration_match:
+                hours, minutes, seconds = duration_match.groups()
+                fmt["duration"] = str((int(hours) * 3600) + (int(minutes) * 60) + float(seconds))
+            if video_match:
+                codec, width, height = video_match.groups()
+                stream.update({"codec_name": codec, "width": width, "height": height})
+            data = {"streams": [stream] if stream else [], "format": fmt}
+        except Exception:
+            data = {}
+
     streams = data.get("streams") or []
     stream = streams[0] if streams else {}
     fmt = data.get("format") or {}

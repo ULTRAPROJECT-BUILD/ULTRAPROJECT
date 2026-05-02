@@ -9,7 +9,7 @@ script removes that decision from the model entirely.
 
 Checks (the rubric items NOT already covered by check_quality_contract.py):
 
-- Required structural sections present: Architecture Decisions, Phases, plus
+- Required structural sections present: Current Research Inputs, Architecture Decisions, Phases, plus
   frontier-specific Playbook Usage Contract and Why This Cannot Just Be The Playbook.
 - For execution_model: capability-waves: Capability Register and Dynamic Wave Log present.
 - Reverse trace coverage: every WS-N referenced in the Goal Workstreams table has at
@@ -211,7 +211,7 @@ def validate_plan_compliance(plan_path: Path) -> dict[str, Any]:
     checks: list[dict[str, Any]] = []
 
     # 1. Required core sections.
-    core_sections = ["Architecture Decisions", "Goal Contract", "Assumption Register", "Phases"]
+    core_sections = ["Current Research Inputs", "Architecture Decisions", "Goal Contract", "Assumption Register", "Phases"]
     for section in core_sections:
         present = bool(extract_section(plan_body, section).strip())
         checks.append(
