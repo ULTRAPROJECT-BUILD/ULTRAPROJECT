@@ -134,6 +134,7 @@ Before starting, read SYSTEM.md and skills/orchestrator.md, especially the Criti
 ULTRAPROJECT tells the agent how to run the work like a durable project instead of a one-off chat:
 
 - It creates a project record in `vault/projects/` as the run's notebook.
+- It checks whether current external research is needed before planning, then writes a cited research-context snapshot when tools, vendors, benchmarks, deprecated patterns, or best practices may have changed.
 - It breaks your request into phases and tickets, which are small work orders.
 - It may hand tickets to focused executor sessions instead of doing everything in one long chat.
 - It requires proof checks before work closes: real files, real commands, screenshots, reports, or other evidence.
@@ -206,12 +207,13 @@ ULTRAPROJECT is a **chat-native agent platform**. You operate it from inside Cla
 You give it one prompt. The system:
 
 1. Generates a project contract with mission alignment, proof strategy, scale matching, and acceptance criteria.
-2. Decomposes the contract into phases, waves, and tickets.
-3. Routes each ticket to the right model (Claude or Codex) based on `task_type`.
-4. Spawns executor agents one at a time through a routing runtime that handles metering, detachment, and ticket lifecycle.
-5. Runs evidence gates against actual files on disk between every meaningful state change.
-6. Records every decision, blocker, artifact, and recovery checkpoint as a markdown file.
-7. Resumes from exactly where it stopped if anything interrupts the run.
+2. Runs a deterministic research-context trigger before architecture planning; when currentness matters, it creates a cited snapshot with a search/fetch ledger and claim checks.
+3. Decomposes the contract into phases, waves, and tickets.
+4. Routes each ticket to the right model (Claude or Codex) based on `task_type`.
+5. Spawns executor agents one at a time through a routing runtime that handles metering, detachment, and ticket lifecycle.
+6. Runs evidence gates against actual files on disk between every meaningful state change.
+7. Records every decision, blocker, artifact, and recovery checkpoint as a markdown file.
+8. Resumes from exactly where it stopped if anything interrupts the run.
 
 It works for software, design, research, content, presentations, audits, data work, or any structured project bigger than a single agent run.
 
@@ -239,11 +241,12 @@ The beginner workflow is above: download the repo, open the folder in Claude Cod
 
 1. The agent reads `SYSTEM.md` and `skills/orchestrator.md`.
 2. It turns your request into a project contract: mission, assumptions, acceptance criteria, proof strategy.
-3. It creates a phase plan and just-in-time ticket files in the vault.
-4. It spawns executor agents for tickets instead of doing all work in one chat context.
-5. It requires evidence before closing work: files, command output, screenshots, walkthroughs, reports, or reviews.
-6. It writes checkpoints to disk after major steps.
-7. If the session ends, a future Claude or Codex session resumes from the latest checkpoint.
+3. It decides whether planning needs fresh research about current tools, vendors, references, launches, deprecated patterns, or best practices.
+4. It creates a phase plan and just-in-time ticket files in the vault.
+5. It spawns executor agents for tickets instead of doing all work in one chat context.
+6. It requires evidence before closing work: files, command output, screenshots, walkthroughs, reports, or reviews.
+7. It writes checkpoints to disk after major steps.
+8. If the session ends, a future Claude or Codex session resumes from the latest checkpoint.
 
 Project execution is chat-native: there is no `ultraproject run` command. The `ultraproject` CLI is only a bootstrap helper that creates local config files and checks readiness. Auth is whatever your Claude Code or Codex install already uses: subscription auth, CLI auth, or your own API keys if configured.
 
@@ -276,10 +279,11 @@ Edit `vault/projects/<slug>.md` directly — change the goal, drop phases, add c
 
 ## The Gate Stack
 
-This is what makes "no hallucinated completions" real. Every gate is a `scripts/check_*.py` Python file. They are fail-closed, mechanical, and run in a defined order — not aspirational quality theater.
+This is what makes "no hallucinated completions" real. The gate stack combines fail-closed Python helpers, companion audit scripts, and clean-room model reviews in a defined order — not aspirational quality theater.
 
 | Gate | What it verifies | Script |
 |------|------------------|--------|
+| **Research Context** | Before architecture decisions, determines whether current external research is required; when it is, verifies cited currentness claims, search/fetch ledger coverage, and downstream handling of low-confidence claims. | `research_context_trigger.py`, `research_context_budget.py`, `check_research_context.py`, `check_plan_compliance.py` |
 | **Quality Contract** | The brief defines a real Goal Contract, Assumption Register, and Proof Strategy — not vague intent. | `check_quality_contract.py` |
 | **Brief gate** | Brief passes a 12-criterion review by an independent reviewer (`gate_reviewer` role — different model in `normal` mode, fresh-context subagent on the host in `chat_native`) against the original request. Re-closes don't count without a dated re-grade snapshot that postdates the revision. | `check_brief_gate.py` |
 | **Gate packet preflight** | Mechanical check that all phase tickets are actually closed, evidence files exist on disk, and cited proof paths resolve. Catches phantom citations before the gate review runs. | `check_gate_packet.py` |
@@ -423,7 +427,7 @@ Agents working on workspace A cannot read or write to workspace B. Platform-leve
 
 ## Quality Bar
 
-Most agent frameworks hide behind "high quality." ULTRAPROJECT names the bar — every brief is graded against named reference points researched live by the brief author:
+Most agent frameworks hide behind "high quality." ULTRAPROJECT names the bar — every brief is grounded in the project research context and, when needed, additional live reference research:
 
 - **Dashboards & internal tools** — Stripe Dashboard, Linear, Grafana, Datadog. Information density without clutter, semantic color, real interaction states.
 - **Public web & landing pages** — Stripe.com, Vercel, Linear, Notion. Strong narrative structure, defined visual quality bar, composition anchors.
@@ -468,14 +472,15 @@ The largest project built end-to-end through ULTRAPROJECT to date: a production-
 - `vault/SCHEMA.md` — markdown/frontmatter schema for project memory.
 
 **Skills (`skills/`)** — ~30 role and workflow prompts:
-- Core loop: `orchestrator`, `create-project`, `project-plan`, `gather-context`, `sync-context`, `vault-status`.
+- Core loop: `orchestrator`, `create-project`, `project-plan`, `research-context`, `gather-context`, `sync-context`, `vault-status`.
 - Quality pipeline: `creative-brief`, `self-review`, `quality-check`, `artifact-polish-review`, `credibility-gate`, `deliverable-standards`.
 - Capability sourcing: `source-capability`, `build-mcp-server`, `build-skill`, `register-mcp`, `test-mcp-server`, `archive-capability`.
 - Institutional knowledge: `archive-project`, `match-playbooks`, `consolidate-lessons`, `post-delivery-review`, `meta-improvement`.
 - Specialized: `deep-execute`, `test-manifest`, `build-remotion-video`, `source-audio`, `delete-client-data`.
 
 **Scripts (`scripts/`)** — ~50 Python helpers:
-- The 13 named gates above.
+- The named gates above.
+- Planning currentness: `research_context_trigger.py`, `research_context_budget.py`, `check_research_context.py`, `check_plan_compliance.py`.
 - Routing runtime: `agent_runtime.py` (spawn-task, run-task, ensure-stitch-auth, executor metering).
 - Project context: `build_project_context.py`, `refresh_project_text_embeddings.py`, `refresh_project_image_embeddings.py`, `refresh_project_video_embeddings.py`, `refresh_project_code_index.py`.
 - Evidence: `build_review_pack.py`, `build_claim_ledger.py`, `capture_walkthrough_video.py`, `ensure_qc_walkthrough.py`, `verify_release.py`.
@@ -488,7 +493,7 @@ The largest project built end-to-end through ULTRAPROJECT to date: a production-
 - `archive/` — sanitized reusable capabilities and de-identified playbooks.
 - `config/platform.md` — sanitized routing table and quality contract.
 
-**Tests (`tests/`)** — 35+ regression tests for routing, gates, evidence requirements, and project state.
+**Tests (`tests/`)** — 40+ regression tests for routing, gates, research context, evidence requirements, and project state.
 
 **Hooks (`.claude/hooks/`)** — runtime guardrails: shell safety, path restrictions, audit logging, verification-first behavior.
 
