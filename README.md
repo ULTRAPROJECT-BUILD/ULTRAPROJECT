@@ -119,7 +119,13 @@ Run an ultraprompt for this:
 
 Before starting, read SYSTEM.md and skills/orchestrator.md, especially the Critical Rules block at the top of orchestrator.md. Follow the orchestrator skill literally. Treat the files in this repo as the source of truth, not chat memory.
 
-If details are missing, make reasonable assumptions, write them down, and keep going. Work until the project is delivered. Do not stop, pause, or ask me to continue unless I explicitly tell you to pause or every executable path is blocked.
+If details are missing, make reasonable implementation assumptions, record them in the project file, and keep going.
+
+Do not reduce scope, quality, proof requirements, user-facing polish, or delivery obligations unless I explicitly approve that change. Do not reinterpret the request as a prototype, draft, MVP, plan, scaffold, partial implementation, or "best effort" unless those words are in my request.
+
+When ambiguity exists, choose the most complete reasonable interpretation that preserves the stated goal. If a detail would materially change scope, create a ticket or amendment and continue all unblocked work while surfacing the decision clearly.
+
+Work until the project is delivered: all acceptance criteria satisfied, required proof gathered, final review passed, and deliverables handed off. Stop only if I explicitly pause/kill the run, or if every executable path is blocked by a legal, credential, approval, physical-world, or safety constraint. In that case, write a complete blocker report listing every blocked path and exactly what is needed to unblock each one.
 ```
 
 ![Claude Code with the ULTRAPROMPT starter prompt pasted](docs/assets/claude-paste-prompt-example.png)
@@ -153,7 +159,13 @@ Proof: run the app locally, test the import flow, capture screenshots of the das
 
 Before starting, read SYSTEM.md and skills/orchestrator.md, especially the Critical Rules block at the top of orchestrator.md. Follow the orchestrator skill literally. Treat the files in this repo as the source of truth, not chat memory.
 
-If details are missing, make reasonable assumptions, write them down, and keep going. Work until the project is delivered. Do not stop, pause, or ask me to continue unless I explicitly tell you to pause or every executable path is blocked.
+If details are missing, make reasonable implementation assumptions, record them in the project file, and keep going.
+
+Do not reduce scope, quality, proof requirements, user-facing polish, or delivery obligations unless I explicitly approve that change. Do not reinterpret the request as a prototype, draft, MVP, plan, scaffold, partial implementation, or "best effort" unless those words are in my request.
+
+When ambiguity exists, choose the most complete reasonable interpretation that preserves the stated goal. If a detail would materially change scope, create a ticket or amendment and continue all unblocked work while surfacing the decision clearly.
+
+Work until the project is delivered: all acceptance criteria satisfied, required proof gathered, final review passed, and deliverables handed off. Stop only if I explicitly pause/kill the run, or if every executable path is blocked by a legal, credential, approval, physical-world, or safety constraint. In that case, write a complete blocker report listing every blocked path and exactly what is needed to unblock each one.
 ```
 
 ## What Happens Next
