@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ultraprompt"
+version = "1.0.0"
+description = "Drop in your specs, prompt, and walk away. Built for delivering large, complex projects at maximum quality."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+authors = [{ name = "ULTRAPROMPT contributors" }]
+keywords = ["ai-agents", "orchestration", "claude", "codex", "opencode", "vault", "agentic"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development",
+]
+dependencies = [
+    "pyyaml",
+    "requests",
+]
+
+[project.optional-dependencies]
+full = [
+    "flask",
+    "mcp",
+    "python-pptx",
+    "playwright",
+    "tomli",
+    "chromadb",
+    "google-generativeai",
+]
+dev = [
+    "pytest",
+]
+
+[project.scripts]
+ultraprompt = "ultraprompt:main"
+
+[project.urls]
+Documentation = "https://github.com/ULTRAPROMPT-BUILD/ULTRAPROMPT#readme"
+Source = "https://github.com/ULTRAPROMPT-BUILD/ULTRAPROMPT"
+Issues = "https://github.com/ULTRAPROMPT-BUILD/ULTRAPROMPT/issues"
+
+[tool.setuptools]
+py-modules = ["ultraprompt"]
