@@ -282,11 +282,11 @@ QC must verify the tool against ALL stress test criteria, not just the happy-pat
 **Local/Physical Business Requirements:**
 - If the client is a local/physical business, include a dedicated location section (not just footer) with: embedded map, address with directions link, hours, parking/transit tips, phone number. (Learned from 2026-03-17-location-section-standard-requirement, 2026-03-17)
 
-### Step 3b: Stitch Design Screens (for Stitch-governed UI projects)
+### Step 3b: Stitch Design Screens (optional, only for explicitly Stitch-governed UI projects)
 
 **Trigger:** The project produces a visual UI and the governing ticket/plan requires `design_mode: stitch_required`.
 
-**Hard rule:** Stitch is mandatory only when the design contract is `stitch_required`. Use that mode for high-ambiguity/high-drift work such as existing public-surface redesigns, rejected visual work, and complex multi-screen UI. Do not silently downgrade to prose-only visual specs when Stitch should be available.
+**Hard rule:** Stitch is never the default requirement for new users. It is mandatory only when the operator explicitly asked for Stitch or the project intentionally selected `design_mode: stitch_required`. For normal UI work, use Step 3c's concept package, visual quality bar, composition anchors, and screenshot-driven QC instead.
 
 1. **Create a Stitch project:** Use `mcp__stitch__create_project` with the project name and a description summarizing the creative direction from Step 3.
 
@@ -306,11 +306,11 @@ QC must verify the tool against ALL stress test criteria, not just the happy-pat
 
 4. **Define how visual targets feed QC:** For each screen, describe the exact application state QC should capture for comparison. This prevents ambiguity about "what screenshot to take."
 
-5. **Blocked, not degraded:** If Stitch MCP is unavailable (tools not loaded, API error, rate limited):
+5. **Explicit opt-in blocker:** If Stitch MCP is unavailable (tools not loaded, API error, rate limited) on a ticket that explicitly chose `design_mode: stitch_required`:
    - Stop and mark the task **blocked**.
    - Record the exact Stitch failure in the work log.
    - Source/fix the capability before proceeding.
-   - Do NOT substitute a prose-only Visual Specification when the design contract is `stitch_required` unless an explicit admin override says the project is legacy-exempt from Stitch.
+   - Do NOT substitute a prose-only Visual Specification when the operator/project explicitly made Stitch the source of truth unless an explicit admin override changes the design mode.
 
 ### Step 3c: Visual Quality Bar, Route Family, Narrative Structure, and Page Contracts (for UI projects)
 
@@ -318,7 +318,7 @@ For user-facing UI/frontend work, the brief must define not just *what exists* b
 
 Design-mode expectations:
 - `stitch_required`: use Step 3b plus the sections below. Stitch is the visual source of truth.
-- `concept_required`: the sections below are still mandatory, but the source of truth can be the brief/references/concept package rather than Stitch.
+- `concept_required`: the default for user-facing UI. The sections below are still mandatory, but the source of truth can be the brief/references/concept package rather than Stitch.
 - `implementation_only`: reference the already-approved source of truth explicitly and keep the brief focused on faithful execution rather than new concept invention.
 
 1. **Visual Quality Bar (mandatory for all user-facing UI):** Add a section named `## Visual Quality Bar` that makes the taste bar explicit:

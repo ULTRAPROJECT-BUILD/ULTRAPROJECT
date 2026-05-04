@@ -155,10 +155,10 @@ DEFAULT_QUALITY_CONTRACT = {
     "clean_room_artifact_review_required": True,
     "reserve_polish_effort_pct": 15,
     "concept_required_for_frontend_design": True,
-    "stitch_required_for_existing_public_surface_redesigns": True,
-    "stitch_required_for_multi_screen_high_complexity_ui": True,
+    "stitch_required_for_existing_public_surface_redesigns": False,
+    "stitch_required_for_multi_screen_high_complexity_ui": False,
     "implementation_only_allowed_for_low_risk_ui_changes": True,
-    "stitch_block_on_unavailable": True,
+    "stitch_block_on_unavailable": False,
     "stitch_design_doc_required": True,
     "stitch_screen_artifacts_required": True,
     "stitch_qc_reference_required": True,
@@ -167,9 +167,9 @@ DEFAULT_QUALITY_CONTRACT = {
     "composition_anchors_required_for_public_surfaces": True,
     "replace_vs_preserve_required_for_existing_surface_redesigns": True,
     "greenfield_concept_required_for_existing_public_surfaces": True,
-    "runtime_stitch_parity_required_for_public_surface_redesigns": True,
+    "runtime_stitch_parity_required_for_public_surface_redesigns": False,
     "stitch_artifacts_must_be_fresh": True,
-    "stitch_required_codex_code_build_requires_sealed_design_package": True,
+    "stitch_required_codex_code_build_requires_sealed_design_package": False,
     "qc_runtime_screenshot_reference_required": True,
     "runtime_screenshot_hashes_are_copy_integrity_only": True,
     "dynamic_ui_preservation_requires_semantic_gate": True,
@@ -177,7 +177,7 @@ DEFAULT_QUALITY_CONTRACT = {
     "screenshot_laundering_for_gate_pass_prohibited": True,
     "page_contract_required_for_nav_surfaces": True,
     "route_family_required_for_operator_surfaces": True,
-    "stitch_required_for_existing_route_family_redesigns": True,
+    "stitch_required_for_existing_route_family_redesigns": False,
     "route_family_section_required_for_operator_surfaces": True,
     "composition_anchors_required_for_route_family_surfaces": True,
     "route_family_parity_required_in_qc": True,
@@ -1532,14 +1532,14 @@ def determine_design_context(
     escalation_reason = ""
 
     if not stitch_exempt:
-        if existing_surface_redesign and public_surface and contract.get("stitch_required_for_existing_public_surface_redesigns", True):
+        if existing_surface_redesign and public_surface and contract.get("stitch_required_for_existing_public_surface_redesigns", False):
             if effective_mode != "stitch_required":
                 escalation_reason = "Existing public-surface redesigns are Stitch-governed by policy."
             effective_mode = "stitch_required"
         elif (
             existing_surface_redesign
             and route_family_required
-            and contract.get("stitch_required_for_existing_route_family_redesigns", True)
+            and contract.get("stitch_required_for_existing_route_family_redesigns", False)
         ):
             if effective_mode != "stitch_required":
                 escalation_reason = "Existing route-family operator-surface redesigns are Stitch-governed by policy."
@@ -1547,7 +1547,7 @@ def determine_design_context(
         elif (
             not explicit_mode
             and (high_complexity_ui or rejected_visual_work)
-            and contract.get("stitch_required_for_multi_screen_high_complexity_ui", True)
+            and contract.get("stitch_required_for_multi_screen_high_complexity_ui", False)
         ):
             if effective_mode != "stitch_required":
                 escalation_reason = "High-ambiguity, rejected, or multi-screen UI work is Stitch-governed by policy."
@@ -1569,7 +1569,7 @@ def determine_design_context(
         "requested_mode": requested_mode,
         "requires_stitch": effective_mode == "stitch_required",
         "codex_code_build_requires_sealed_stitch_package": bool(
-            contract.get("stitch_required_codex_code_build_requires_sealed_design_package", True)
+            contract.get("stitch_required_codex_code_build_requires_sealed_design_package", False)
         ),
         "reason": reason,
         "public_surface": public_surface,
@@ -1838,7 +1838,7 @@ def build_runtime_preamble(
                 )
             if contract.get("stitch_qc_reference_required", True):
                 lines.append("- Self-review and QC must compare the built UI against Stitch targets and cite the relevant screen IDs or screen names.")
-            if contract.get("stitch_block_on_unavailable", True) and not design_context.get("implementation_from_sealed_stitch_package"):
+            if contract.get("stitch_block_on_unavailable", False) and not design_context.get("implementation_from_sealed_stitch_package"):
                 lines.append("- If Stitch MCP is unavailable, stop and mark the task blocked. Do not replace Stitch with ad-hoc CSS or prose-only visual specs.")
         elif mode == "concept_required":
             lines.extend(
@@ -1875,7 +1875,7 @@ def build_runtime_preamble(
             lines.append("- The brief must include a Replace vs Preserve section that explicitly names what wiring/behavior survives and what layout/composition is being replaced.")
         if existing_surface_redesign and design_context.get("public_surface") and mode in {"stitch_required", "concept_required"} and contract.get("greenfield_concept_required_for_existing_public_surfaces", True):
             lines.append("- Do a greenfield concept pass first: define the new public-facing surface as if the old page did not exist, then map that concept back into the current codebase.")
-        if existing_surface_redesign and design_context.get("public_surface") and mode == "stitch_required" and contract.get("runtime_stitch_parity_required_for_public_surface_redesigns", True):
+        if existing_surface_redesign and design_context.get("public_surface") and mode == "stitch_required" and contract.get("runtime_stitch_parity_required_for_public_surface_redesigns", False):
             lines.append("- Copy/colors/section order are not enough. The built runtime must preserve the primary above-the-fold composition anchors from the Stitch concept.")
         if design_context.get("route_family_required") and existing_surface_redesign and contract.get("route_family_parity_required_in_qc", True):
             lines.append("- QC must explicitly audit same-product-family parity for this route. A generic admin split view under correct tokens is still a failure.")

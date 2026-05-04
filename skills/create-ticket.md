@@ -18,7 +18,7 @@ inputs:
   - tags (optional)
   - ui_work (optional — default: false. True when the ticket materially changes a user-facing UI surface)
   - design_mode (optional — default: "". Canonical UI contract when `ui_work: true`: `stitch_required`, `concept_required`, or `implementation_only`)
-  - stitch_required (optional — default: false. Mechanical Stitch gate flag. True when `design_mode` is `stitch_required`)
+  - stitch_required (optional — default: false. Mechanical Stitch gate flag. True only when `design_mode` is explicitly `stitch_required`)
   - public_surface (optional — default: false. True for landing pages, pricing pages, marketing pages, or other public-facing surfaces that must clear the visual-narrative bar)
   - existing_surface_redesign (optional — default: false. True when the ticket is redesigning an already-existing user-facing surface and must first establish a greenfield concept)
   - page_contract_required (optional — default: false. True for account/settings/dashboard/admin or other top-level nav surfaces that must have a non-destructive information architecture)
@@ -112,11 +112,11 @@ delivery_surface_verified_at: "{delivery_surface_verified_at or ''}"
    - `ui_work: true`
    - `design_mode` to one of: `stitch_required`, `concept_required`, or `implementation_only`
    - tags including `ui-design`
-   - `stitch_required: true` and tag `stitch-required` only when `design_mode: stitch_required`
+   - `stitch_required: true` and tag `stitch-required` only when the operator/project explicitly opts into Stitch and `design_mode: stitch_required`
    Frontend design work must not skip design intent. The runtime reads these fields and will enforce the appropriate UI contract mechanically.
 11. **Design-mode selection rule:** Choose `design_mode` deliberately:
-   - `stitch_required` for existing public-surface redesigns, rejected visual work, and high-ambiguity/high-drift multi-screen UI where Stitch should be the visual source of truth
-   - `concept_required` for greenfield public surfaces and other user-facing design work that still needs a real concept, visual direction, and screenshot-driven QC
+   - `concept_required` by default for public surfaces, existing-surface redesigns, rejected visual work, and high-ambiguity/high-drift multi-screen UI that still needs a real concept, visual direction, and screenshot-driven QC
+   - `stitch_required` only when the operator explicitly asks for Stitch or the project intentionally makes Stitch the visual source of truth
    - `implementation_only` only for low-risk polish or follow-through on an already-approved design/source of truth
    If a UI ticket cannot honestly be called implementation-only, do not use that mode.
 12. **Public-surface rule:** If the ticket governs a landing page, homepage, pricing page, marketing site, or other public-facing surface where first impression matters, also set:
