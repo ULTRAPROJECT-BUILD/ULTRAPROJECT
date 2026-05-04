@@ -688,7 +688,7 @@ with sync_playwright() as p:
    - Tests can't run at all (page won't load, canvas not found) → **FAIL — Broken**
    - All verifiable tests pass, headless limitations prevent full verification → **PASS with caveats** + human-review ticket for manual play-testing
 
-### Step 4c: Stitch Design Comparison (when applicable)
+### Step 4c: Stitch Design Comparison (optional, when explicitly applicable)
 
 If the creative brief or ticket indicates Stitch-governed UI work (`design_mode: stitch_required` or `stitch_required: true`) and the brief references Stitch screen IDs under a "Visual Targets" section:
 
@@ -704,11 +704,11 @@ If the creative brief or ticket indicates Stitch-governed UI work (`design_mode:
 7. If the ticket/brief indicates an existing-surface redesign, verify that `.stitch/DESIGN.md` and the downloaded Stitch artifacts are fresh for this redesign cycle rather than stale leftovers from an older surface. A reused or pre-redesign Stitch artifact is **FAIL — Broken evidence**.
 8. The downstream visual gate also consumes concrete screenshot filenames and parity calls mechanically. Vague language like “looks clean” without named screenshots/states is insufficient evidence.
 
-**Hard failure for Stitch-required UI work:**
-If the project/ticket is Stitch-governed frontend design work and the brief does NOT reference Stitch screen IDs, this is **FAIL — Incomplete**, not a fallback scenario. Create a remediation ticket to produce the missing Stitch project, `.stitch/DESIGN.md`, and Visual Targets section before delivery can proceed.
+**Hard failure only for explicit Stitch-required UI work:**
+If the project/ticket explicitly opts into Stitch-governed frontend design work and the brief does NOT reference Stitch screen IDs, this is **FAIL — Incomplete**, not a fallback scenario. Create a remediation ticket to produce the missing Stitch project, `.stitch/DESIGN.md`, and Visual Targets section before delivery can proceed.
 
 **Legacy fallback only:**
-If an older brief predates the Stitch requirement and explicitly carries an admin-approved exemption, a Visual Specification section may be used as a temporary comparison target. Otherwise, no Stitch targets means no PASS for UI/frontend design work.
+If a project does not explicitly opt into Stitch, skip this Stitch-only step. The UI must still pass the concept, public-surface, page-contract, runtime screenshot, and visual-review gates that apply to the work.
 
 If the work is `design_mode: concept_required`, skip this Stitch-only step and evaluate the public-surface/page-contract/runtime screenshot audits against the concept package instead. If the brief has neither Stitch screens nor another concept source of truth (non-visual project), skip this step entirely.
 

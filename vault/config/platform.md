@@ -94,10 +94,10 @@ quality_contract:
   clean_room_artifact_review_required: true
   reserve_polish_effort_pct: 15
   concept_required_for_frontend_design: true
-  stitch_required_for_existing_public_surface_redesigns: true
-  stitch_required_for_multi_screen_high_complexity_ui: true
+  stitch_required_for_existing_public_surface_redesigns: false
+  stitch_required_for_multi_screen_high_complexity_ui: false
   implementation_only_allowed_for_low_risk_ui_changes: true
-  stitch_block_on_unavailable: true
+  stitch_block_on_unavailable: false
   stitch_design_doc_required: true
   stitch_screen_artifacts_required: true
   stitch_qc_reference_required: true
@@ -106,9 +106,9 @@ quality_contract:
   composition_anchors_required_for_public_surfaces: true
   replace_vs_preserve_required_for_existing_surface_redesigns: true
   greenfield_concept_required_for_existing_public_surfaces: true
-  runtime_stitch_parity_required_for_public_surface_redesigns: true
+  runtime_stitch_parity_required_for_public_surface_redesigns: false
   stitch_artifacts_must_be_fresh: true
-  stitch_required_codex_code_build_requires_sealed_design_package: true
+  stitch_required_codex_code_build_requires_sealed_design_package: false
   qc_runtime_screenshot_reference_required: true
   runtime_screenshot_hashes_are_copy_integrity_only: true
   dynamic_ui_preservation_requires_semantic_gate: true

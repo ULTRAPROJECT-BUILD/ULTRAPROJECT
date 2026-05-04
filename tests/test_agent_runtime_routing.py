@@ -1087,6 +1087,9 @@ def test_command_spawn_task_blocks_codex_stitch_code_build_without_design_packag
     routing["agent_mode"] = "normal"
     routing["agents"]["codex"]["enabled"] = True
     monkeypatch.setattr(agent_runtime, "load_agent_routing", lambda _platform: routing)
+    contract = dict(agent_runtime.DEFAULT_QUALITY_CONTRACT)
+    contract["stitch_required_codex_code_build_requires_sealed_design_package"] = True
+    monkeypatch.setattr(agent_runtime, "load_quality_contract", lambda _platform: contract)
 
     def fail_popen(*args, **kwargs):
         raise AssertionError("spawn-task should not launch Codex without a sealed Stitch package")
@@ -1699,7 +1702,7 @@ def test_explicit_concept_required_internal_ui_does_not_auto_escalate_to_stitch(
     assert design_context["requires_stitch"] is False
 
 
-def test_implicit_high_complexity_ui_still_auto_escalates_to_stitch():
+def test_implicit_high_complexity_ui_defaults_to_concept_not_stitch():
     agent_runtime = load_agent_runtime()
 
     design_context = agent_runtime.determine_design_context(
@@ -1713,11 +1716,11 @@ def test_implicit_high_complexity_ui_still_auto_escalates_to_stitch():
         ["ui-design"],
     )
 
-    assert design_context["design_mode"] == "stitch_required"
-    assert design_context["requires_stitch"] is True
+    assert design_context["design_mode"] == "concept_required"
+    assert design_context["requires_stitch"] is False
 
 
-def test_existing_public_surface_redesign_still_forces_stitch_even_with_explicit_concept_mode():
+def test_existing_public_surface_redesign_preserves_explicit_concept_mode():
     agent_runtime = load_agent_runtime()
 
     design_context = agent_runtime.determine_design_context(
@@ -1734,11 +1737,11 @@ def test_existing_public_surface_redesign_still_forces_stitch_even_with_explicit
         ["ui-design", "existing-surface-redesign"],
     )
 
-    assert design_context["design_mode"] == "stitch_required"
-    assert design_context["requires_stitch"] is True
+    assert design_context["design_mode"] == "concept_required"
+    assert design_context["requires_stitch"] is False
 
 
-def test_existing_internal_route_family_redesign_forces_stitch():
+def test_existing_internal_route_family_redesign_preserves_concept_mode():
     agent_runtime = load_agent_runtime()
 
     design_context = agent_runtime.determine_design_context(
@@ -1756,8 +1759,8 @@ def test_existing_internal_route_family_redesign_forces_stitch():
         ["ui-design", "route-family-required"],
     )
 
-    assert design_context["design_mode"] == "stitch_required"
-    assert design_context["requires_stitch"] is True
+    assert design_context["design_mode"] == "concept_required"
+    assert design_context["requires_stitch"] is False
     assert design_context["route_family_required"] is True
 
 
