@@ -17,7 +17,7 @@ AI agents are powerful, but long projects get messy. ULTRAPROMPT keeps the plan,
 
 **Built for people who want AI agents to finish real work, not stop at a confident first draft.**
 
-[Start](#start-in-five-minutes) · [Starter Prompt](#starter-prompt) · [Better Prompts](#make-the-prompt-stronger) · [Resume](#resume-after-any-interruption) · [Proof](#what-makes-it-different) · [Architecture](docs/ARCHITECTURE.md) · [Setup](docs/SETUP.md)
+[Start](#start-in-five-minutes) · [Starter Prompt](#starter-prompt) · [Better Prompts](#make-the-prompt-stronger) · [Resume](#resume-after-any-interruption) · [Proof](#what-makes-it-different) · [Architecture](docs/ARCHITECTURE.md) · [Setup](docs/SETUP.md) · [Contributing](CONTRIBUTING.md)
 
 </div>
 
@@ -239,10 +239,22 @@ Early release. The platform works end-to-end and real projects have shipped thro
 
 Security issues: see [SECURITY.md](SECURITY.md).
 
+## Canonical Project And Brand
+
+The canonical ULTRAPROMPT project is this repository:
+
+```text
+https://github.com/ULTRAPROMPT-BUILD/ULTRAPROMPT
+```
+
+Apache 2.0 covers the code and documentation license. It does not grant trademark or brand rights. Forks, derivatives, commercial distributions, and compatible tools should not imply they are the official ULTRAPROMPT project unless they have explicit permission.
+
+For contribution rules, see [CONTRIBUTING.md](CONTRIBUTING.md). For name, logo, compatibility, and attribution rules, see [TRADEMARKS.md](TRADEMARKS.md).
+
 ## Creator
 
 Created by [Michael Zola](https://www.linkedin.com/in/michaeljzola/).
 
 ## License
 
-[Apache 2.0](LICENSE). Keep the copyright notice and `NOTICE` file.
+[Apache 2.0](LICENSE). Keep the copyright notice and `NOTICE` file. Contributions are accepted under Apache 2.0 unless explicitly marked otherwise before submission.
