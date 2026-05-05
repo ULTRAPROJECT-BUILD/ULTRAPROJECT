@@ -2,7 +2,7 @@
 
 # ULTRAPROMPT
 
-### The project manager for serious AI agent work.
+### The project manager agent for serious AI agent work.
 
 ULTRAPROMPT turns one big prompt into a planned, tracked, resumable project, then keeps agents moving until the work is proven done.
 
