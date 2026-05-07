@@ -17,13 +17,13 @@ Optional app, MCP, and hook files are intentionally omitted. OneShot uses the ex
 
 ## Use In Codex
 
-Add the OneShot repository as a Codex plugin marketplace source:
+Codex does not upload the Claude `.plugin` file and does not use the `/oneshot` slash command. Open Codex in the OneShot repo/folder:
 
 ```bash
-codex plugin marketplace add /path/to/OneShot
+codex -C /path/to/OneShot
 ```
 
-Then open Codex on the project you want OneShot to work on and use one of the starter prompts:
+Then use one of the starter prompts:
 
 ```text
 OneShot this app idea. Keep going until it runs locally.
@@ -39,14 +39,15 @@ To the user, OneShot means: one prompt, full delivery. Paste the request, let th
 
 Under the hood, the skill instructs Codex to:
 
-1. Use repo-level OneShot instructions when the workspace includes them, or plugin mode when it does not.
-2. Gather local context from relevant files and any existing OneShot state.
-3. Decide whether the user requested planning only, a specific ticket, or a full project loop.
-4. Source or build missing skills and MCPs when needed.
-5. Execute scoped work without crossing ownership boundaries.
-6. Validate claims with local proof.
-7. Record results in project or ticket logs.
-8. Hand off changed files, validation results, and limitations.
+1. Verify the workspace is the OneShot repo/folder, not an unrelated folder or old ULTRAPROMPT checkout.
+2. Read the repo-level OneShot instructions.
+3. Gather local context from relevant files and any existing OneShot state.
+4. Decide whether the user requested planning only, a specific ticket, or a full project loop.
+5. Source or build missing skills and MCPs when needed.
+6. Execute scoped work without crossing ownership boundaries.
+7. Validate claims with local proof.
+8. Record results in project or ticket logs.
+9. Hand off changed files, validation results, and limitations.
 
 ## Marketplace Metadata
 

@@ -4,9 +4,9 @@
 
 ### One prompt. Full delivery.
 
-OneShot is a Claude plugin that turns one big request into a finished project. You type `/oneshot`, describe what you want, and Claude keeps working until it's done — or until it needs a decision only you can make.
+OneShot is a Claude plugin plus a local project folder that turns one big request into a finished project. You open the OneShot folder, type `/oneshot`, describe what you want, and Claude keeps working until it's done — or until it needs a decision only you can make.
 
-Works with Claude Desktop. Also works with Codex.
+Works with Claude Desktop. Also works with Codex from the same OneShot folder.
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 
@@ -22,13 +22,19 @@ A normal Claude chat answers one question. OneShot keeps Claude going through th
 
 It pauses and asks you when it needs a password, a payment, or a real human decision. Otherwise, it keeps working.
 
+The OneShot folder is the engine. It contains the instructions, vault, project records, tickets, and proof trail. The Claude plugin is the clean `/oneshot` button that starts the engine.
+
 ## Install (Claude Desktop)
 
-1. Download `oneshot-claude-plugin-0.1.0.plugin` from the [latest release](https://github.com/ULTRAPROMPT-BUILD/oneshot/releases/tag/v0.1.0).
-2. In Claude Desktop, open plugin settings and upload the file.
-3. Enable OneShot.
+1. Download or clone the OneShot repo from the [latest release](https://github.com/ULTRAPROMPT-BUILD/oneshot/releases/tag/v0.1.0).
+2. Put the OneShot folder somewhere you can keep it, such as `Documents/OneShot`.
+3. Download `oneshot-claude-plugin-0.1.0.plugin` from the same release.
+4. In Claude Desktop, open plugin settings and upload the plugin file.
+5. Enable OneShot.
+6. Open Claude in the OneShot folder.
+7. Type `/oneshot` and paste your request.
 
-To start a job: open Claude in the folder you want work done in, type `/oneshot`, and paste your request.
+You need both pieces: the OneShot folder and the Claude plugin. If Claude is opened in an old ULTRAPROMPT folder or some other project folder, `/oneshot` will not use the right vault.
 
 > The `.zip` in the release is the same plugin in a different wrapper — only use it if your system blocks `.plugin` files.
 
@@ -84,8 +90,8 @@ That's the whole setup.
 
 - **Big asks take real time.** Hours, sometimes longer.
 - **It can't bypass logins or payments.** It pauses and asks.
-- **If a session ends**, reopen Claude in the same folder and tell it to resume the active OneShot.
-- **It needs a workspace.** Open Claude in the folder where the work should happen.
+- **If a session ends**, reopen Claude in the OneShot folder and tell it to resume the active OneShot.
+- **It needs the OneShot folder.** The plugin starts the workflow; the repo stores the workflow.
 
 ## Safety
 

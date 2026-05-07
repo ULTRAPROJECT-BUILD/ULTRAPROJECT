@@ -26,7 +26,7 @@ Run a OneShot for this:
 
 [Your prompt, specs, project, goal, etc.]
 
-Before starting, check whether the current workspace contains `SYSTEM.md`, `skills/orchestrator.md`, and `vault/`. If those files exist, read SYSTEM.md and skills/orchestrator.md, especially the Critical Rules block at the top of orchestrator.md. If they do not exist, run in OneShot plugin mode and create `.oneshot/` state in the current workspace.
+Before starting, verify that the current workspace is the OneShot repo/folder. It must contain `SYSTEM.md`, `skills/orchestrator.md`, and `vault/`, and it must identify as OneShot rather than legacy ULTRAPROMPT. Read SYSTEM.md and skills/orchestrator.md, especially the Critical Rules block at the top of orchestrator.md. Follow the orchestrator skill literally. Treat the files in this repo as the source of truth.
 
 If details are missing, make reasonable implementation assumptions, record them in the project file, and keep going.
 
@@ -39,24 +39,22 @@ Work until the project is delivered: all acceptance criteria satisfied, required
 
 ## Workflow
 
-1. Confirm the local workspace root.
-2. If the workspace contains `SYSTEM.md`, `skills/orchestrator.md`, and `vault/`, read `SYSTEM.md` and `skills/orchestrator.md`, especially the Critical Rules block. Treat those files as source of truth.
-3. If those files do not exist, do not ask the user to install the OneShot repo. The plugin is enough. Run in OneShot plugin mode:
-   - Use the current Codex workspace as the work area.
-   - Create or reuse `.oneshot/` in that workspace for durable state.
-   - Create `.oneshot/projects/<slug>.md` for the goal, assumptions, plan, checkpoints, validation, blockers, and handoff.
-   - Create `.oneshot/proof/` for command results, screenshots, notes, checklists, or other evidence when useful.
-   - Use machine-local time for timestamps when possible.
-4. Gather only the context needed for the user's goal: existing project records, current status files, relevant docs, code, and proof artifacts.
-5. Decide the mode:
+1. Confirm the local workspace root is the OneShot repo/folder, not a random project folder and not an old ULTRAPROMPT checkout.
+2. Require `SYSTEM.md`, `skills/orchestrator.md`, and `vault/`.
+3. Require at least one OneShot identifier: `README.md` contains `# OneShot`, `oneshot.py` exists, or `pyproject.toml` identifies the project as oneshot.
+4. If the current workspace appears to be legacy ULTRAPROMPT, such as README.md naming ULTRAPROMPT or `ultraprompt.py` existing without `oneshot.py`, do not use that vault. Tell the user to open the actual OneShot repo/folder and run again.
+5. If the workspace is missing the OneShot repo files, do not run. Tell the user OneShot needs the local OneShot repo/folder, then ask them to open Codex in that folder.
+6. Read `SYSTEM.md` and `skills/orchestrator.md`, especially the Critical Rules block. Treat those files as source of truth.
+7. Gather only the context needed for the user's goal: existing project records, current status files, relevant docs, code, and proof artifacts.
+8. Decide the mode:
    - If the user asks for planning, specification, review, or a brief only, create or update the appropriate plan/proof records and do not begin implementation.
    - If the user names a ticket, execute only that ticket and respect its file ownership, blockers, acceptance criteria, and work log.
    - If the user gives a new large goal, create or update a OneShot project plan, tickets, validation checks, and proof expectations before implementation spreads out.
-6. Source or build missing capabilities when the work requires them. Prefer existing local skills, MCPs, scripts, and repo patterns before adding new machinery.
-7. Execute scoped work until the acceptance criteria are met or every executable path is blocked by a legal, credential, approval, physical-world, or safety constraint.
-8. Validate claims with concrete evidence: command output, tests, screenshots, audits, reviews, manifests, or other proof appropriate to the task.
-9. Record results on disk. Update project or ticket work logs with changed files, validation results, blockers, assumptions, and residual risks.
-10. Deliver a concise handoff: what changed, where it lives, what passed, what was not run, and what remains manual or infrastructure-dependent.
+9. Source or build missing capabilities when the work requires them. Prefer existing local skills, MCPs, scripts, and repo patterns before adding new machinery.
+10. Execute scoped work until the acceptance criteria are met or every executable path is blocked by a legal, credential, approval, physical-world, or safety constraint.
+11. Validate claims with concrete evidence: command output, tests, screenshots, audits, reviews, manifests, or other proof appropriate to the task.
+12. Record results on disk. Update project or ticket work logs with changed files, validation results, blockers, assumptions, and residual risks.
+13. Deliver a concise handoff: what changed, where it lives, what passed, what was not run, and what remains manual or infrastructure-dependent.
 
 ## Boundaries
 

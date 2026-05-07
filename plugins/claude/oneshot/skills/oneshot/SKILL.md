@@ -7,23 +7,25 @@ Run a OneShot for this:
 
 $ARGUMENTS
 
-Before starting, check whether the current workspace contains OneShot repo files:
+Before starting, verify that the current workspace is the OneShot repo/folder. The installed plugin is the command surface; the repo is the execution engine.
+
+A valid OneShot workspace must contain:
 
 - SYSTEM.md
 - skills/orchestrator.md
 - vault/
 
-If those files exist, read SYSTEM.md and skills/orchestrator.md, especially the Critical Rules block at the top of orchestrator.md. Follow the orchestrator skill literally. Treat the files in that repo as the source of truth, not chat memory.
+It must also identify as OneShot, not legacy ULTRAPROMPT. Check at least one of these identifiers:
 
-If those files do not exist, do not ask the user to install the OneShot repo. The plugin is enough. Run in OneShot plugin mode:
+- README.md contains "# OneShot"
+- oneshot.py exists
+- pyproject.toml identifies the project as oneshot
 
-1. Use the current Claude workspace as the work area.
-2. Create or reuse `.oneshot/` in that workspace for durable state when file access is available.
-3. Create `.oneshot/projects/<slug>.md` for the goal, assumptions, plan, checkpoints, validation, blockers, and handoff.
-4. Create `.oneshot/proof/` for command results, screenshots, notes, checklists, or other evidence when useful.
-5. If file access is unavailable, keep the same structure in the conversation and tell the user that durable resume files could not be written.
-6. Use machine-local time for timestamps when a shell/date tool is available. Otherwise use the current chat date and say that it was not machine-verified.
-7. Continue until the result is delivered, validated, or blocked by a real external constraint.
+If the current workspace is missing those files, do not run. Tell the user: "OneShot needs both the OneShot repo/folder and the Claude plugin. Open Claude in the OneShot folder, then run `/oneshot` again."
+
+If the current workspace appears to be an old ULTRAPROMPT checkout, such as README.md naming ULTRAPROMPT or `ultraprompt.py` existing without `oneshot.py`, do not use that vault. Tell the user to open the actual OneShot repo/folder and run `/oneshot` again.
+
+When the workspace is verified as OneShot, read SYSTEM.md and skills/orchestrator.md, especially the Critical Rules block at the top of orchestrator.md. Follow the orchestrator skill literally. Treat the files in that OneShot repo as the source of truth, not chat memory.
 
 If details are missing, make reasonable implementation assumptions, record them in the project file, and keep going.
 

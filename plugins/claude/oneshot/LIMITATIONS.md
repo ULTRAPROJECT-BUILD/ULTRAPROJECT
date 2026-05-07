@@ -6,7 +6,8 @@ This Claude package is a local OneShot plugin package, not an official marketpla
 
 - The intended user-facing Claude workflow is `/oneshot`.
 - Some Claude Code plugin test contexts may show the fully qualified form `/oneshot:oneshot`; that is the same OneShot skill.
-- The full OneShot repository is not required for Claude plugin users. They still need to open Claude in the workspace or folder where the work should happen. If repo files are missing, the skill runs in plugin mode and creates `.oneshot/` state in the active workspace when file access is available.
+- The OneShot repository/folder is required for the full Claude plugin workflow. The plugin provides the command; the repo provides the orchestrator, vault, project records, tickets, and proof trail.
+- Claude must be opened in the OneShot repo/folder. If it is opened in an old ULTRAPROMPT checkout or unrelated project folder, the skill should stop and ask the user to reopen Claude in OneShot.
 - The installed package intentionally uses the current `skills/oneshot/SKILL.md` layout and does not include a legacy `commands/` file or uppercase `/ONESHOT` command, so users see one OneShot entry instead of duplicate cards.
 - Codex and other hosts should use their own plugin or skill invocation surfaces rather than Claude slash-command syntax.
 

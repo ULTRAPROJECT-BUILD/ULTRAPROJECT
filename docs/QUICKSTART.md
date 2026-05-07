@@ -2,12 +2,19 @@
 
 This is the shortest path for each host.
 
-- **Claude:** install the plugin, type `/oneshot`, paste the job, and let OneShot drive it to delivery.
-- **Codex:** add the OneShot repo as a plugin marketplace source, then start with `Run a OneShot for this:`.
+- **Claude:** download the OneShot repo, install the plugin, open Claude in the OneShot folder, type `/oneshot`, and paste the job.
+- **Codex:** open Codex in the OneShot folder, then start with `Run a OneShot for this:`.
 
-## Claude: Install The Plugin
+## Claude: Install OneShot
 
-Download one of the Claude plugin artifacts from the release:
+OneShot has two pieces:
+
+- The **OneShot repo/folder**, which stores the workflow, vault, projects, tickets, and proof.
+- The **Claude plugin**, which gives Claude the `/oneshot` command.
+
+Download or clone the OneShot repo from the [latest release](https://github.com/ULTRAPROMPT-BUILD/oneshot/releases/tag/v0.1.0), then put the folder somewhere permanent.
+
+Download one of the Claude plugin artifacts from the same release:
 
 ```text
 oneshot-claude-plugin-0.1.0.plugin
@@ -19,9 +26,7 @@ or:
 oneshot-claude-plugin-0.1.0.zip
 ```
 
-Upload it in Claude Desktop or your Claude organization plugin marketplace, then enable OneShot for the workspace where you want to use it.
-
-Claude users do not need the whole OneShot repo. The plugin file is enough, as long as Claude is opened in the folder or project it should work on. The repo is only needed for Codex setup, source review, testing, building, or publishing.
+Upload it in Claude Desktop or your Claude organization plugin marketplace, then enable OneShot.
 
 If you are building from source instead of downloading a release artifact, run this from the OneShot repo root:
 
@@ -33,7 +38,7 @@ The script creates both upload formats under `dist/claude/`.
 
 ## Claude: Use `/oneshot`
 
-Open Claude Code or Cowork with access to the project you want OneShot to work on, then run:
+Open Claude Code or Cowork in the OneShot folder, then run:
 
 ```text
 /oneshot <your prompt, specs, project, goal, etc.>
@@ -47,6 +52,8 @@ Example:
 
 OneShot already carries the strict delivery contract inside the plugin. You do not need to paste the long orchestration prompt by hand.
 
+Do not open Claude in an old ULTRAPROMPT folder. That folder has a different vault and can send work to the wrong place.
+
 Some Claude Code plugin contexts display the fully qualified plugin namespace:
 
 ```text
@@ -55,18 +62,12 @@ Some Claude Code plugin contexts display the fully qualified plugin namespace:
 
 That is the same OneShot skill. Select the OneShot entry from the slash menu when in doubt.
 
-## Codex: Add OneShot As A Marketplace Source
+## Codex: Use The OneShot Folder
 
-Codex does not upload a `.plugin` file and does not use Claude-style `/oneshot` slash commands. Add the OneShot repository as a Codex plugin marketplace source:
-
-```bash
-codex plugin marketplace add /path/to/OneShot
-```
-
-Then open Codex on the project you want OneShot to work on:
+Codex does not upload a `.plugin` file and does not use Claude-style `/oneshot` slash commands. Open Codex in the OneShot folder:
 
 ```bash
-codex -C /path/to/your/project
+codex -C /path/to/OneShot
 ```
 
 Start the run with:
@@ -77,7 +78,7 @@ Run a OneShot for this:
 [Your prompt, specs, project, goal, etc.]
 ```
 
-That uses the bundled OneShot Codex skill and default prompt from `plugins/codex/oneshot`.
+That uses the bundled OneShot Codex skill and the repo-backed workflow.
 
 ## Write A Better OneShot Prompt
 
@@ -107,12 +108,7 @@ Resume the active OneShot project in this repo. Do not create a new project.
 Restore state from the latest OneShot checkpoint and continue to delivery. If more than one active OneShot project exists, ask me which one to resume.
 ```
 
-In plugin-only mode, progress files usually live at:
-
-```text
-.oneshot/projects/<project-name>.md
-.oneshot/proof/
-```
+Progress lives in the OneShot repo vault.
 
 ## Developer Source Setup
 

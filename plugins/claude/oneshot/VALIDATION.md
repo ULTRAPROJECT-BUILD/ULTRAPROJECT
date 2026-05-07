@@ -31,13 +31,15 @@ test ! -e plugins/claude/oneshot/.claude-plugin/skills \
   && test ! -e plugins/claude/oneshot/.claude-plugin/agents
 ```
 
-Check for stale placeholders and source-brand strings in the Claude package:
+Check for stale placeholders in the Claude package:
 
 ```bash
-rg -n "T[O]DO|T[B]D|example\\.[i]nvalid|plugin-[n]ame|my-first-[p]lugin|ULTRA[P]ROMPT|Ultra[p]rompt|ultra[p]rompt" plugins/claude/oneshot plugins/claude/marketplace.json
+rg -n "T[O]DO|T[B]D|example\\.[i]nvalid|plugin-[n]ame|my-first-[p]lugin" plugins/claude/oneshot plugins/claude/marketplace.json
 ```
 
 Expected result: no hits.
+
+The package intentionally names legacy ULTRAPROMPT only in setup guardrails that stop Claude from using an old vault.
 
 ## Claim Readback
 

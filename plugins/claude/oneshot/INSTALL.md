@@ -5,7 +5,7 @@ This package is meant to be used as an installed Claude plugin:
 - Claude.ai/Cowork organization marketplaces, where manual upload expects a valid `.zip` or `.plugin` file.
 - Claude Code local development/testing, where plugins are directories loaded with `--plugin-dir` or installed through a local marketplace.
 
-End users do not need the full OneShot repo after the plugin is installed. They need the plugin file and a Claude workspace or folder where Claude has access to the files or context it should work on.
+End users need both the OneShot repo/folder and the plugin file. The repo stores the OneShot workflow, vault, projects, tickets, and proof. The plugin adds the `/oneshot` command in Claude.
 
 ## Option 1: Claude.ai / Cowork Upload
 
@@ -29,7 +29,8 @@ Upload steps:
 6. Add it to a new or existing marketplace.
 7. Set the plugin availability preference for your users.
 8. In Cowork or Claude Code, install or enable OneShot.
-9. Invoke OneShot from the slash menu:
+9. Open Claude in the OneShot repo/folder, not an old ULTRAPROMPT folder and not an unrelated project folder.
+10. Invoke OneShot from the slash menu:
 
 ```text
 /oneshot <your prompt, specs, project, goal, etc.>
@@ -63,6 +64,8 @@ Restart Claude Code if prompted, then run:
 ```text
 /oneshot <your prompt, specs, project, goal, etc.>
 ```
+
+Run that command from a Claude session opened in the OneShot repo/folder.
 
 The Claude Code marketplace metadata lives at:
 

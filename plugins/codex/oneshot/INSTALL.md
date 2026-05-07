@@ -14,31 +14,30 @@ The repo-local marketplace metadata lives at:
 .agents/plugins/marketplace.json
 ```
 
-## Marketplace Discovery
+## Use From Codex
 
-Codex uses marketplace-source discovery. Add the OneShot repository as a marketplace source:
-
-```bash
-cd oneshot
-codex plugin marketplace add .
-```
-
-For a published repo, users can add the GitHub source instead:
+Codex does not upload the Claude `.plugin` file. Open Codex in the OneShot repo/folder:
 
 ```bash
-codex plugin marketplace add owner/repo
+codex -C /path/to/OneShot
 ```
 
-This command may depend on the installed Codex version, local configuration, and authentication state. Static package validation does not require running a mutating marketplace install command.
-
-## First Prompt
-
-After the plugin is available in Codex, open Codex on the project you want OneShot to work on and start with:
+Then start with:
 
 ```text
-Run the OneShot workflow for this prompt:
+Run a OneShot for this:
 
 [Your goal, constraints, definition of done, and proof expectations.]
 ```
 
-If you only want planning, say so explicitly. If you name a ticket, the skill should execute only that ticket.
+The OneShot repo/folder is required because it stores `SYSTEM.md`, `skills/orchestrator.md`, the vault, projects, tickets, and proof.
+
+## Optional Marketplace Discovery
+
+Some Codex setups support marketplace-source discovery. If you want this package listed as a local plugin source, add the OneShot repository:
+
+```bash
+codex plugin marketplace add /path/to/OneShot
+```
+
+This command may depend on the installed Codex version, local configuration, and authentication state. Static package validation does not require running a mutating marketplace install command.

@@ -4,13 +4,13 @@ OneShot helps Claude take one big prompt and deliver the result: app, game, site
 
 This package is the Claude-facing OneShot plugin package. It is upload-ready as a `.zip` or `.plugin` artifact; it does not claim official marketplace submission.
 
-End users do not need the whole OneShot repository to use the Claude plugin. They need the installed plugin plus a Claude workspace or folder where Claude can access the files or context it should work on. If the workspace does not contain OneShot repo files, the skill runs in plugin mode and stores progress in `.oneshot/` when file access is available.
+End users need the OneShot repository/folder and the Claude plugin. The repo is the execution engine: it contains `SYSTEM.md`, `skills/orchestrator.md`, the vault, tickets, project records, and proof trail. The plugin is the clean `/oneshot` command that starts that engine from Claude.
 
 ## Entrypoint
 
 - Primary user-facing skill: `/oneshot <your prompt, specs, project, goal, etc.>`
 
-Upload the package, enable OneShot, then invoke OneShot from the slash menu with `/oneshot`. The prompt lives at `skills/oneshot/SKILL.md` and uses the operator-approved strict OneShot starter contract plus plugin-only fallback mode. The package intentionally avoids legacy `commands/` files and duplicate skill/command pairs, so the installed plugin presents one clean OneShot entry.
+Upload the package, enable OneShot, open Claude in the OneShot repo/folder, then invoke OneShot from the slash menu with `/oneshot`. The prompt lives at `skills/oneshot/SKILL.md` and uses the operator-approved strict OneShot starter contract. The package intentionally avoids legacy `commands/` files and duplicate skill/command pairs, so the installed plugin presents one clean OneShot entry.
 
 Some Claude Code plugin test contexts display the fully qualified form `/oneshot:oneshot`. That is the same skill. The intended user-facing surface is `/oneshot`.
 
@@ -20,8 +20,9 @@ To the user, OneShot means: one prompt, full delivery. Paste the request, let th
 
 Under the hood, OneShot asks the agent to:
 
-- use the installed plugin instructions, or read repo-level OneShot instructions when the workspace includes them
-- preserve workspace files and OneShot state records as the source of truth
+- verify Claude is opened in the OneShot repo/folder
+- read the repo-level OneShot instructions before work starts
+- preserve OneShot vault records as the source of truth
 - create or update projects and tickets
 - honor user scope, ticket ownership, and requested proof
 - source or build missing capabilities when needed
