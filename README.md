@@ -26,7 +26,7 @@ The OneShot folder is the engine. It contains the instructions, vault, project r
 
 ## Install (Claude Desktop)
 
-1. Download or clone the OneShot repo from the [latest release](https://github.com/ULTRAPROMPT-BUILD/oneshot/releases/tag/v0.1.0).
+1. Download or clone the OneShot repo from the [latest release](https://github.com/oneshot-repo/OneShot/releases/tag/v0.1.0).
 2. Put the OneShot folder somewhere you can keep it, such as `Documents/OneShot`.
 3. Download `oneshot-claude-plugin-0.1.0.plugin` from the same release.
 4. In Claude Desktop, open plugin settings and upload the plugin file.

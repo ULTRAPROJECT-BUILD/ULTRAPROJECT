@@ -12,7 +12,7 @@ OneShot has two pieces:
 - The **OneShot repo/folder**, which stores the workflow, vault, projects, tickets, and proof.
 - The **Claude plugin**, which gives Claude the `/oneshot` command.
 
-Download or clone the OneShot repo from the [latest release](https://github.com/ULTRAPROMPT-BUILD/oneshot/releases/tag/v0.1.0), then put the folder somewhere permanent.
+Download or clone the OneShot repo from the [latest release](https://github.com/oneshot-repo/OneShot/releases/tag/v0.1.0), then put the folder somewhere permanent.
 
 Download one of the Claude plugin artifacts from the same release:
 
