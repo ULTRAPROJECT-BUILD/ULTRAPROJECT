@@ -34,8 +34,6 @@ You need two things: the **OneShot folder** (the engine) and the **Claude plugin
 2. **Install the Claude plugin.** From the same release, download `oneshot-claude-plugin-0.1.0.plugin`. In Claude Desktop, open plugin settings, upload the file, and enable OneShot.
 3. **Start a job.** Open Claude in the OneShot folder, type `/oneshot`, and paste your request.
 
-That's it. If Claude is opened in any other folder — including an old ULTRAPROMPT folder — `/oneshot` won't find the right vault. Always open Claude in the OneShot folder.
-
 > The `.zip` in the release is the same plugin in a different wrapper. Only use it if your system blocks `.plugin` files.
 
 ## How to use it
