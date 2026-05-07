@@ -177,21 +177,10 @@ Avoid: re-explaining basic SQL, marketing tone, "the Postgres docs say…" witho
 Proof: run every exercise end-to-end on a fresh docker-compose stack and commit the expected output. Record a short video of one exercise being completed cold. Run a self-review pass through every module and write a critique of the 5 weakest paragraphs in each one before final delivery.
 ```
 
-## Using Codex
-
-Claude Desktop is the smoother experience and the recommended path. If you'd rather use Codex, open Codex in the OneShot folder and ask:
-
-```text
-OneShot this:
-
-[your prompt]
-```
-
-Quality varies more than with Claude Desktop — keep that in mind for long jobs.
-
 ## What to expect
 
 - **Big asks take real time.** Hours, sometimes longer.
+- **It can use a lot of tokens.** OneShot keeps context, reviews its work, runs checks, and revises until the job is actually done; serious jobs can consume substantially more tokens than a normal chat.
 - **It can't bypass logins or payments.** It pauses and asks.
 - **If a session ends**, reopen your agent in the OneShot folder and tell it to resume the active OneShot.
 - **It needs the OneShot folder.** The folder stores the workflow; the Claude plugin is only one way to start it.
