@@ -175,6 +175,6 @@ Don't paste secrets or credentials into prompts.
 
 ## License
 
-[Apache 2.0](LICENSE). OneShot is derived from the project listed in [`NOTICE`](NOTICE).
+[Apache 2.0](LICENSE). OneShot — formerly ULTRAPROMPT — is derived from the project listed in [`NOTICE`](NOTICE).
 
 Created by [Michael Zola](https://www.linkedin.com/in/michaeljzola/)
