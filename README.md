@@ -4,7 +4,7 @@
 
 ### One prompt. Full delivery.
 
-A Claude plugin for big AI requests. Ask for the app, game, site, research, cleanup, or migration you want — OneShot keeps Claude working until the result is finished, verified, or blocked by a decision only you can make.
+A Claude (and Codex) plugin for big AI requests. Ask for the app, game, site, research, cleanup, or migration you want — OneShot keeps Claude working until the result is finished, verified, or blocked by a decision only you can make.
 
 You don't need to learn the project-management plumbing under the hood. You just type `/oneshot`.
 
