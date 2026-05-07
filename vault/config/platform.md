@@ -1,11 +1,11 @@
 ---
 type: config
-title: "ULTRAPROMPT Configuration"
+title: "OneShot Configuration"
 description: "Global settings for orchestration, legal compliance, budgets, payment rails, and marketing guardrails."
 updated: 2026-04-18T16:21
 ---
 
-# ULTRAPROMPT Configuration
+# OneShot Configuration
 
 ## Core Settings
 
@@ -40,7 +40,7 @@ admin:
 
 ```yaml
 legal:
-  # The fields below are only relevant if you run ULTRAPROMPT as a billable service.
+  # The fields below are only relevant if you run OneShot as a billable service.
   # For personal use, leave them empty.
   llc_name: ""
   llc_state: ""

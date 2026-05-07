@@ -1,260 +1,188 @@
 <div align="center">
 
-# ULTRAPROMPT
+# OneShot
 
-### The project manager for serious AI agent work.
+### One prompt. Full delivery.
 
-ULTRAPROMPT turns one big prompt into a planned, tracked, resumable project, then keeps agents moving until the work is proven done.
+Drop in the prompt. Walk away.
 
-AI agents are powerful, but long projects get messy. ULTRAPROMPT keeps the plan, tickets, checkpoints, evidence, and resume state organized across Codex, Claude Code, OpenCode, or any capable coding agent.
+OneShot is a Claude plugin for big AI requests you do not want to babysit. Ask for the app, game, website, research, cleanup, migration, or project you want delivered, and OneShot tells Claude to keep going until the result is finished, checked, or blocked by something only you can decide.
 
-[![Python](https://img.shields.io/badge/python-3.9%2B-blue)](pyproject.toml)
-[![CI](https://github.com/ULTRAPROMPT-BUILD/ULTRAPROMPT/actions/workflows/ci.yml/badge.svg)](https://github.com/ULTRAPROMPT-BUILD/ULTRAPROMPT/actions/workflows/ci.yml)
+You do not need to understand the project-management stuff behind it. That stays under the hood. You just use `/oneshot`.
+
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
-[![Status](https://img.shields.io/badge/status-early--release-yellow)](#project-status)
+[![Status](https://img.shields.io/badge/status-public--release--ready-green)](#for-publishers)
 
-![ULTRAPROMPT](docs/assets/hero.png)
+![OneShot](docs/assets/hero.png)
 
-**Built for people who want AI agents to finish real work, not stop at a confident first draft.**
-
-[Start](#start-in-five-minutes) · [Starter Prompt](#starter-prompt) · [Better Prompts](#make-the-prompt-stronger) · [Resume](#resume-after-any-interruption) · [Proof](#what-makes-it-different) · [Architecture](docs/ARCHITECTURE.md) · [Setup](docs/SETUP.md) · [Contributing](CONTRIBUTING.md)
+[Install](#install) . [Use](#use) . [Examples](#examples) . [Codex](#using-codex) . [Publish](#for-publishers)
 
 </div>
 
 ---
 
-## What Makes It Different
+## What OneShot Does
 
-- **It keeps AI projects organized.** Agents execute the work; ULTRAPROMPT manages the plan, tickets, evidence, checkpoints, and delivery state.
-- **Progress does not disappear.** Plans, tickets, decisions, evidence, and status files live on disk, so work can resume after context limits, restarts, pauses, or model switches.
-- **Big work becomes manageable.** One prompt can turn into hours, days, or weeks of structured work because ULTRAPROMPT breaks the project into phases, tickets, gates, and checkpoints.
-- **The finish line is defined up front.** ULTRAPROMPT can research current context, set acceptance criteria, define the quality bar, and apply deliverable standards before the agent builds.
-- **Done means proven.** Tickets close only with real evidence such as files, command output, tests, screenshots, reports, reviews, or release checks.
-- **It can add tools when the work needs them.** ULTRAPROMPT can source or build MCP servers, skills, and helper tools, then archive them for reuse.
+Normal Claude chats are great for quick answers. Big requests are different.
 
-You do not need to understand MCPs, vaults, tickets, gates, or routing before your first run. The setup path is intentionally plain: install one AI coding tool, clone or download this repo, run bootstrap, open the folder, paste the prompt.
+If you ask Claude to build something serious, you often have to keep nudging it: remember the goal, make the files, run the checks, fix the mistakes, explain what changed, keep going.
 
-## Built With ULTRAPROMPT
+OneShot is made for that kind of work.
 
-The largest project built end-to-end through ULTRAPROMPT to date was a production-grade cross-platform database client with Tauri v2, React 19, Rust, PostgreSQL, SQLite, DuckDB, CSV/XLSX support, and enterprise security features.
+You give Claude one serious prompt. OneShot pushes it to:
 
-From one prompt, ULTRAPROMPT drove about **6 days** of work, about **200 tickets**, and roughly **130,000 lines** of TypeScript, Rust, Python, configs, and supporting code.
+- understand what you want
+- make reasonable assumptions when details are missing
+- keep working instead of stopping at a first draft
+- check the work before handing it back
+- tell you clearly if it needs a password, payment, approval, or other human decision
+- resume from saved progress if the session gets interrupted
 
-## Start In Five Minutes
+It can run for an hour, a day, or longer if that is what the job takes.
 
-### 1. Install an AI coding tool
+## Install
 
-Install and sign in to one of these:
-
-- [Claude Code](https://claude.com/claude-code)
-- [Codex CLI](https://github.com/openai/codex)
-- [OpenCode](https://opencode.ai/)
-- Another compatible AI coding tool
-
-One authenticated tool is enough. A compatible tool can be a CLI, a VS Code-style editor agent, a desktop app, or a GUI agent as long as it can open this folder, read and edit files, run shell commands, and follow long repo instructions. A plain web chat without repo and terminal access is not enough. Claude Code and Codex have the most tested routing support; OpenCode, editor agents, desktop apps, and other tools can still run ULTRAPROMPT chat-native by opening this folder and pasting the starter prompt.
-
-By default, ULTRAPROMPT runs chat-native on whichever tool you open it in. That means reviews are cross-context by default, not necessarily cross-model. Advanced users can customize routing to mix Claude, Codex, OpenCode, local models, or other tools when they want stronger model diversity.
-
-### 2. Clone or download ULTRAPROMPT
-
-With Git:
-
-```bash
-git clone https://github.com/ULTRAPROMPT-BUILD/ULTRAPROMPT
-cd ULTRAPROMPT
-```
-
-Without Git: use GitHub's **Code -> Download ZIP**, unzip it, and open the folder that contains `README.md`, `SYSTEM.md`, and `skills/orchestrator.md`.
-
-### 3. Run bootstrap
-
-This installs the small `ultraprompt` helper and creates local config files from examples. It checks readiness; it does not run your project.
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip
-pip install -e .
-ultraprompt
-```
-
-The bootstrap copies `.env.example`, `.mcp.example.json`, and `vault/clients/_registry.example.md` into local working files if they are missing, then checks for `claude`, `codex`, or `opencode` on your PATH.
-
-### 4. Open the folder
-
-Open the ULTRAPROMPT folder in your AI coding tool.
-
-Terminal users can start from inside the repo:
-
-```bash
-claude
-```
-
-or:
-
-```bash
-codex
-```
-
-or:
-
-```bash
-opencode
-```
-
-Desktop app, editor, and GUI users should choose the repo folder itself, not its parent folder.
-
-![Claude Code with the ULTRAPROMPT folder open and an empty prompt box](docs/assets/claude-open-folder-example.png)
-
-### 5. Paste the starter prompt
-
-Use the template below. Replace the bracketed line with the thing you want built, researched, designed, analyzed, or delivered.
-
-## Starter Prompt
+Download one of the OneShot plugin files from the release:
 
 ```text
-Run an ultraprompt for this:
-
-[Your prompt, specs, project, goal, etc.]
-
-Before starting, read SYSTEM.md and skills/orchestrator.md, especially the Critical Rules block at the top of orchestrator.md. Follow the orchestrator skill literally. Treat the files in this repo as the source of truth, not chat memory.
-
-If details are missing, make reasonable implementation assumptions, record them in the project file, and keep going.
-
-Do not reduce scope, quality, proof requirements, user-facing polish, or delivery obligations unless I explicitly approve that change. Do not reinterpret the request as a prototype, draft, MVP, plan, scaffold, partial implementation, or "best effort" unless those words are in my request.
-
-When ambiguity exists, do not choose the smaller or easier interpretation. Preserve the full stated goal and deliver the most complete version consistent with my request. If an ambiguity affects scope, quality, proof, polish, or delivery, record the assumption and continue on the path that maintains or increases the requested outcome. Tickets and amendments may clarify or add work; they may not reduce, defer, or downgrade the requested outcome without my explicit approval.
-
-Work until the project is delivered: all acceptance criteria satisfied, required proof gathered, final review passed, and deliverables handed off. Stop only if I explicitly pause/kill the run, or if every executable path is blocked by a legal, credential, approval, physical-world, or safety constraint. In that case, write a complete blocker report listing every blocked path and exactly what is needed to unblock each one.
+oneshot-claude-plugin-0.1.0.plugin
 ```
 
-![Claude Code with the ULTRAPROMPT starter prompt pasted](docs/assets/claude-paste-prompt-example.png)
+or:
 
-That is the core workflow: **clone or download -> bootstrap -> open folder in your AI coding tool -> paste prompt -> let it work.**
+```text
+oneshot-claude-plugin-0.1.0.zip
+```
 
-## Make The Prompt Stronger
+Then:
 
-ULTRAPROMPT works best when you define the finish line. Add these five fields:
+1. Open Claude Desktop.
+2. Go to your plugin settings.
+3. Upload the OneShot plugin file.
+4. Enable OneShot.
+5. Open Claude where you want the work done.
+6. Type `/oneshot` and paste your request.
 
-- **Goal:** the concrete outcome you want.
-- **Audience:** who will use, judge, or approve the result.
-- **Done means:** specific acceptance criteria.
-- **Constraints:** stack, style, budget, deadline, required files, and things to avoid.
-- **Proof:** tests, screenshots, demos, citations, reports, reviews, or release checks you expect.
+You do not need to download the whole OneShot repo to use the Claude plugin. The repo is only needed if you want to build, inspect, or publish the plugin yourself.
+
+Some Claude screens may show the full name as:
+
+```text
+/oneshot:oneshot
+```
+
+That is the same OneShot plugin. Pick the OneShot option from the slash menu if you see both.
+
+## Use
+
+Start with `/oneshot`, then say what you want.
+
+```text
+/oneshot build a simple personal budget app with CSV import, charts, setup instructions, screenshots, and proof that the main flows work
+```
+
+That is enough.
+
+For better results, add:
+
+- what you want built
+- who it is for
+- what "done" means
+- anything to avoid
+- what proof you want before it is handed back
 
 Example:
 
 ```text
-Run an ultraprompt for this:
+/oneshot build a local-first personal finance dashboard.
 
-Build a polished local-first personal finance dashboard for a non-technical user.
+It is for a non-technical person who wants private budgeting.
 
-Audience: someone who wants a private budgeting tool, not an accounting system.
+Done means: working app, setup instructions, sample data, screenshots, CSV import, spending categories, monthly charts, and PDF export.
 
-Done means: a working app, clear setup instructions, sample data, screenshots, and a verification report showing CSV import, categorization, monthly charts, and PDF export all work.
+Constraints: no paid APIs, calm design, and no financial data sent to outside services.
 
-Constraints: use a boring maintainable stack, avoid paid APIs, keep the UI calm and easy to understand, and do not send financial data to external services.
-
-Proof: run the app locally, test the import flow, capture screenshots of the dashboard, verify PDF export, and summarize every command or check used.
-
-Before starting, read SYSTEM.md and skills/orchestrator.md, especially the Critical Rules block at the top of orchestrator.md. Follow the orchestrator skill literally. Treat the files in this repo as the source of truth, not chat memory.
-
-If details are missing, make reasonable implementation assumptions, record them in the project file, and keep going.
-
-Do not reduce scope, quality, proof requirements, user-facing polish, or delivery obligations unless I explicitly approve that change. Do not reinterpret the request as a prototype, draft, MVP, plan, scaffold, partial implementation, or "best effort" unless those words are in my request.
-
-When ambiguity exists, do not choose the smaller or easier interpretation. Preserve the full stated goal and deliver the most complete version consistent with my request. If an ambiguity affects scope, quality, proof, polish, or delivery, record the assumption and continue on the path that maintains or increases the requested outcome. Tickets and amendments may clarify or add work; they may not reduce, defer, or downgrade the requested outcome without my explicit approval.
-
-Work until the project is delivered: all acceptance criteria satisfied, required proof gathered, final review passed, and deliverables handed off. Stop only if I explicitly pause/kill the run, or if every executable path is blocked by a legal, credential, approval, physical-world, or safety constraint. In that case, write a complete blocker report listing every blocked path and exactly what is needed to unblock each one.
+Proof: run it locally, test import/export, capture screenshots, and summarize what was checked.
 ```
 
-## What Happens Next
-
-ULTRAPROMPT plans the project, assigns tickets, coordinates agents, checks proof, catches drift, and keeps going until delivery:
-
-1. Reads the operating instructions in `SYSTEM.md` and `skills/orchestrator.md`.
-2. Creates a project contract with goals, assumptions, acceptance criteria, and proof strategy.
-3. Gathers current research when the project depends on recent tools, APIs, vendors, or best practices.
-4. Breaks active work into phases and just-in-time ticket files.
-5. Assigns focused tickets to the active agent tool.
-6. Verifies work with evidence from the filesystem, commands, tests, screenshots, reports, citations, or reviews.
-7. Writes checkpoints and status files so the next session can resume.
-
-Project execution is chat-native. There is no hidden daemon and no `ultraprompt run` command. The `ultraprompt` CLI is only a bootstrap and readiness helper.
-
-For the deeper system design, read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
-
-## Watch Progress
-
-The agent creates a project slug from your goal. If you do not know it, ask: "What project slug are you using?"
-
-Quick status:
+## Examples
 
 ```text
-vault/projects/<project-name>.derived/status.md
+/oneshot build a small habit-tracking app I can run locally
 ```
-
-Canonical project log:
 
 ```text
-vault/projects/<project-name>.md
+/oneshot make a playable browser game from this idea and include setup instructions
 ```
-
-The status file is the quick view. The project file is the durable log with decisions, checkpoints, blockers, and ticket history.
-
-## Resume After Any Interruption
-
-Token limits, rate limits, app restarts, machine restarts, and pauses are normal. Start your AI coding tool again in the same ULTRAPROMPT folder and paste:
 
 ```text
-Resume the active ultraprompt in this repo. Do not create a new project.
-
-Read SYSTEM.md and skills/orchestrator.md, especially the Critical Rules block at the top of orchestrator.md. Inspect vault/projects/*.md and the matching vault/projects/*.derived/status.md files, identify the active project, find the latest ORCH-CHECKPOINT, restore the current state from disk, and continue the project to delivery. Do not restart from scratch unless the project file says to. If more than one active project exists, ask me which one to resume.
+/oneshot research the best options for this product category and give me a clear recommendation
 ```
-
-## What Is Included
-
-- `SYSTEM.md` and `skills/orchestrator.md`: the core operating instructions.
-- `skills/`: prompts for orchestration, project planning, research context, creative briefs, ticketing, deliverable standards, quality checks, capability sourcing, reviews, delivery, and project memory.
-- `scripts/`: gate checks, routing helpers, context builders, evidence tools, and release verification helpers.
-- `vault/`: disk-backed project memory, tickets, snapshots, decisions, lessons, client workspaces, archived capabilities, and platform config.
-- `vault/clients/_platform/mcps/`: bundled MCP servers and API wrappers, including spending controls.
-- `tests/`: regression tests for routing, gates, evidence requirements, and project state.
-- `docs/`: [architecture](docs/ARCHITECTURE.md), [quickstart](docs/QUICKSTART.md), and [setup](docs/SETUP.md).
-
-## Safety And Cost
-
-ULTRAPROMPT is powerful because agents can read and write files, run shell commands, and call configured APIs. Treat that seriously.
-
-- Review `.env.example` and `.mcp.example.json` before adding credentials. Never commit `.env` or live credentials.
-- Use restricted API keys wherever providers support them.
-- Configure the spending MCP before giving agents access to paid APIs.
-- Use broad edit/run permissions only for trusted local repos after reviewing credentials and config.
-- External code and third-party tools should be treated as untrusted until inspected.
-- Expect real projects to use many model calls. ULTRAPROMPT optimizes for verified output, not the lowest token count.
-
-## Project Status
-
-Early release. The platform works end-to-end and real projects have shipped through it, but it is not battle-tested across every environment. macOS and Linux are the primary targets; Windows users can try Codex in PowerShell, with WSL2 recommended for the most Linux-like path. Python 3.9+ is required. Node 18+ is recommended for web apps, browser tests, and UI projects.
-
-Security issues: see [SECURITY.md](SECURITY.md).
-
-## Canonical Project And Brand
-
-The canonical ULTRAPROMPT project is this repository:
 
 ```text
-https://github.com/ULTRAPROMPT-BUILD/ULTRAPROMPT
+/oneshot clean up this project, fix obvious issues, run checks, and tell me what changed
 ```
 
-Apache 2.0 covers the code and documentation license. It does not grant trademark or brand rights. Forks, derivatives, commercial distributions, and compatible tools should not imply they are the official ULTRAPROMPT project unless they have explicit permission.
+```text
+/oneshot turn this rough app idea into a working first version I can try
+```
 
-For contribution rules, see [CONTRIBUTING.md](CONTRIBUTING.md). For name, logo, compatibility, and attribution rules, see [TRADEMARKS.md](TRADEMARKS.md).
+## What To Expect
 
-## Creator
+OneShot does not magically bypass real limits.
 
-Created by [Michael Zola](https://www.linkedin.com/in/michaeljzola/).
+- If Claude needs access to files, open it where those files are available.
+- If the work needs a login, API key, payment, or approval, OneShot should stop and tell you.
+- If the session ends, reopen the same project and ask Claude to resume the active OneShot project.
+- If you ask for something huge, expect it to take real time and model usage.
+
+The goal is simple: one prompt in, full delivery out.
+
+## Using Codex
+
+Claude is the main `/oneshot` plugin experience. This section is only for people using Codex.
+
+Codex works differently. It does not upload a `.plugin` file and it does not create a `/oneshot` slash command.
+
+For Codex, add the OneShot repository as a plugin marketplace source:
+
+```bash
+codex plugin marketplace add /path/to/OneShot
+```
+
+Then open Codex on the project you want worked on and start with:
+
+```text
+Run a OneShot for this:
+
+[your prompt]
+```
+
+That uses the bundled OneShot Codex skill.
+
+## For Publishers
+
+People publishing or validating OneShot can build the Claude plugin files with:
+
+```bash
+scripts/package_claude_plugin.sh
+```
+
+Useful docs:
+
+- [Quickstart](docs/QUICKSTART.md)
+- [Publishing checklist](docs/PUBLISHING.md)
+- [Claude plugin install notes](plugins/claude/oneshot/INSTALL.md)
+- [Codex plugin notes](plugins/codex/oneshot/INSTALL.md)
+
+## Safety
+
+OneShot can ask Claude to read files, edit files, run commands, and use connected tools. Use it in workspaces where you are comfortable letting Claude work.
+
+Do not upload secrets, private customer data, or payment credentials unless you understand where they will be used.
 
 ## License
 
-[Apache 2.0](LICENSE). Keep the copyright notice and `NOTICE` file. Contributions are accepted under Apache 2.0 unless explicitly marked otherwise before submission.
+OneShot is derived from the source project identified in the legal and provenance files.
+
+[Apache 2.0](LICENSE). Keep the copyright notice and `NOTICE` file.

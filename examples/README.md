@@ -1,6 +1,6 @@
 # Examples
 
-Starter goals you can hand to an ULTRAPROMPT orchestrator on day one.
+Starter goals you can hand to a OneShot orchestrator on day one.
 
 Each file shows:
 

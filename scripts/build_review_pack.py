@@ -143,7 +143,7 @@ def display_path(path: Path, root: Path, qc_paths: list[Path]) -> str:
         except ValueError:
             continue
     for parent in resolved.parents:
-        if parent.name in {"ULTRAPROMPT", "ULTRAPROMPT-clean"}:
+        if parent.name in {"OneShot", "OneShot-clean"}:
             try:
                 return str(resolved.relative_to(parent))
             except ValueError:
