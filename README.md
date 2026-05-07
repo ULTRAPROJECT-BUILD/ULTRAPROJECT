@@ -4,151 +4,121 @@
 
 ### One prompt. Full delivery.
 
-OneShot is a Claude plugin for big AI requests. Ask for the app, game, website, research, cleanup, migration, or project you want delivered, and OneShot tells Claude to keep going until the result is finished, checked, or blocked by something only you can decide.
+A Claude plugin for big AI requests. Ask for the app, game, site, research, cleanup, or migration you want — OneShot keeps Claude working until the result is finished, verified, or blocked by a decision only you can make.
 
-You do not need to understand the project-management stuff behind it. That stays under the hood. You just use `/oneshot`.
+You don't need to learn the project-management plumbing under the hood. You just type `/oneshot`.
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
-[![Status](https://img.shields.io/badge/status-public--release--ready-green)](#for-publishers)
 
 ![OneShot](docs/assets/hero.png)
 
-[Install](#install) . [Use](#use) . [Examples](#examples) . [Codex](#using-codex) . [Publish](#for-publishers)
+[Install](#install) · [Use](#use) · [Examples](#examples) · [Codex](#using-codex) · [Publish](#publishing)
 
 </div>
 
 ---
 
-## What OneShot Does
+## Why OneShot
 
-Normal Claude chats are great for quick answers. Big requests are different.
+A normal Claude chat is great for quick answers. Big work is different — it needs nudging: remember the goal, make the files, run the checks, fix what broke, explain what changed, keep going.
 
-If you ask Claude to build something serious, you often have to keep nudging it: remember the goal, make the files, run the checks, fix the mistakes, explain what changed, keep going.
-
-OneShot is made for that kind of work.
-
-You give Claude one serious prompt. OneShot pushes it to:
+OneShot is for that kind of work. Give Claude one serious prompt and OneShot pushes it to:
 
 - understand what you want
 - make reasonable assumptions when details are missing
-- keep working instead of stopping at a first draft
-- check the work before handing it back
-- tell you clearly if it needs a password, payment, approval, or other human decision
-- resume from saved progress if the session gets interrupted
+- keep working past the first draft
+- verify the work before handing it back
+- stop and tell you clearly when it needs a credential, payment, or human decision
+- resume from saved progress if the session is interrupted
 
-It can run for an hour, a day, or longer if that is what the job takes.
+It can run for an hour, a day, or across resumed sessions if the job needs it.
 
 ## Install
 
-Download one of the OneShot plugin files from the release:
+Grab a plugin file from the release:
 
-```text
-oneshot-claude-plugin-0.1.0.plugin
-```
-
-or:
-
-```text
-oneshot-claude-plugin-0.1.0.zip
-```
+- `oneshot-claude-plugin-0.1.0.plugin` — plugin upload file
+- `oneshot-claude-plugin-0.1.0.zip` — same plugin, zip-packaged
 
 Then:
 
 1. Open Claude Desktop.
-2. Go to your plugin settings.
-3. Upload the OneShot plugin file.
+2. Go to plugin settings.
+3. Upload the OneShot file.
 4. Enable OneShot.
-5. Open Claude where you want the work done.
+5. Open Claude in the folder or project where you want work done.
 6. Type `/oneshot` and paste your request.
 
-You do not need to download the whole OneShot repo to use the Claude plugin. The repo is only needed if you want to build, inspect, or publish the plugin yourself.
+You don't need the full repo to use the plugin — that's only required if you want to inspect, build, or publish it yourself.
 
-Some Claude screens may show the full name as:
-
-```text
-/oneshot:oneshot
-```
-
-That is the same OneShot plugin. Pick the OneShot option from the slash menu if you see both.
+> If the slash menu shows `/oneshot:oneshot`, that's the same plugin under its full namespaced name.
 
 ## Use
 
-Start with `/oneshot`, then say what you want.
+Start with `/oneshot` and say what you want:
 
 ```text
 /oneshot build a simple personal budget app with CSV import, charts, setup instructions, screenshots, and proof that the main flows work
 ```
 
-That is enough.
+That's enough to get started. For sharper results, name five things:
 
-For better results, add:
+- **Goal** — what you want built
+- **Audience** — who it's for
+- **Done means** — the specific finish line
+- **Avoid** — constraints and off-limits choices
+- **Proof** — the evidence you want before delivery
 
-- what you want built
-- who it is for
-- what "done" means
-- anything to avoid
-- what proof you want before it is handed back
-
-Example:
+Worked example:
 
 ```text
 /oneshot build a local-first personal finance dashboard.
 
-It is for a non-technical person who wants private budgeting.
+Audience: a non-technical person who wants private budgeting.
 
-Done means: working app, setup instructions, sample data, screenshots, CSV import, spending categories, monthly charts, and PDF export.
+Done: working app, setup instructions, sample data, screenshots, CSV import, spending categories, monthly charts, PDF export.
 
-Constraints: no paid APIs, calm design, and no financial data sent to outside services.
+Avoid: paid APIs, busy design, sending financial data to outside services.
 
-Proof: run it locally, test import/export, capture screenshots, and summarize what was checked.
+Proof: run it locally, test import/export, capture screenshots, summarize what was checked.
 ```
 
 ## Examples
 
 ```text
 /oneshot build a small habit-tracking app I can run locally
+
+/oneshot make a playable browser game from this idea, with setup instructions
+
+/oneshot research the best options for this product category and recommend one
+
+/oneshot clean up this project, fix obvious issues, run checks, summarize what changed
+
+/oneshot turn this rough idea into a working first version I can try
 ```
 
-```text
-/oneshot make a playable browser game from this idea and include setup instructions
-```
+## What to Expect
 
-```text
-/oneshot research the best options for this product category and give me a clear recommendation
-```
+OneShot doesn't bypass real limits.
 
-```text
-/oneshot clean up this project, fix obvious issues, run checks, and tell me what changed
-```
+- **File access** — open Claude in the folder or project that holds the files.
+- **Credentials, logins, payment, approvals** — OneShot stops and asks rather than guessing.
+- **Interrupted session** — reopen the same project and ask Claude to resume the active OneShot.
+- **Big asks** — expect real time and real model usage.
 
-```text
-/oneshot turn this rough app idea into a working first version I can try
-```
-
-## What To Expect
-
-OneShot does not magically bypass real limits.
-
-- If Claude needs access to files, open it where those files are available.
-- If the work needs a login, API key, payment, or approval, OneShot should stop and tell you.
-- If the session ends, reopen the same project and ask Claude to resume the active OneShot project.
-- If you ask for something huge, expect it to take real time and model usage.
-
-The goal is simple: one prompt in, full delivery out.
+The contract is simple: one prompt in, full delivery out.
 
 ## Using Codex
 
-Claude is the main `/oneshot` plugin experience. This section is only for people using Codex.
+Claude is the primary `/oneshot` experience. This section is only for Codex users.
 
-Codex works differently. It does not upload a `.plugin` file and it does not create a `/oneshot` slash command.
-
-For Codex, add the OneShot repository as a plugin marketplace source:
+Codex doesn't take a `.plugin` upload or expose a slash command. Instead, register OneShot as a plugin marketplace source:
 
 ```bash
 codex plugin marketplace add /path/to/OneShot
 ```
 
-Then open Codex on the project you want worked on and start with:
+Then open Codex in the project and start with:
 
 ```text
 Run a OneShot for this:
@@ -156,17 +126,17 @@ Run a OneShot for this:
 [your prompt]
 ```
 
-That uses the bundled OneShot Codex skill.
+That triggers the bundled OneShot Codex skill.
 
-## For Publishers
+## Publishing
 
-People publishing or validating OneShot can build the Claude plugin files with:
+If you're packaging or validating OneShot yourself, build the plugin files with:
 
 ```bash
 scripts/package_claude_plugin.sh
 ```
 
-Useful docs:
+Reference docs:
 
 - [Quickstart](docs/QUICKSTART.md)
 - [Publishing checklist](docs/PUBLISHING.md)
@@ -175,12 +145,10 @@ Useful docs:
 
 ## Safety
 
-OneShot can ask Claude to read files, edit files, run commands, and use connected tools. Use it in workspaces where you are comfortable letting Claude work.
+OneShot lets Claude read files, edit files, run commands, and use connected tools. Use it in workspaces where you're comfortable with that.
 
-Do not upload secrets, private customer data, or payment credentials unless you understand where they will be used.
+Don't paste secrets, customer data, or payment credentials unless you know exactly where they'll be used.
 
 ## License
 
-OneShot is derived from the source project identified in the legal and provenance files.
-
-[Apache 2.0](LICENSE). Keep the copyright notice and `NOTICE` file.
+OneShot is derived from the source project listed in [`NOTICE`](NOTICE). Released under [Apache 2.0](LICENSE) — keep the copyright notice and `NOTICE` file.
