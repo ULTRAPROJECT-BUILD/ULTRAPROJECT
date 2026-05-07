@@ -49,7 +49,7 @@ Then:
 5. Open Claude in the folder or project where you want work done.
 6. Type `/oneshot` and paste your request.
 
-You don't need the full repo to use the plugin — that's only required if you want to inspect, build, or publish it yourself.
+For Claude, the plugin file is enough. You still need to open Claude in the folder or project it should work on. The full repo is only needed for Codex setup, source review, testing, building, or publishing.
 
 > If the slash menu shows `/oneshot:oneshot`, that's the same plugin under its full namespaced name.
 

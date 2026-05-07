@@ -21,7 +21,7 @@ oneshot-claude-plugin-0.1.0.zip
 
 Upload it in Claude Desktop or your Claude organization plugin marketplace, then enable OneShot for the workspace where you want to use it.
 
-Claude users do not need the whole OneShot repo. The plugin file is enough. The repo is only needed if you are building or publishing the plugin yourself.
+Claude users do not need the whole OneShot repo. The plugin file is enough, as long as Claude is opened in the folder or project it should work on. The repo is only needed for Codex setup, source review, testing, building, or publishing.
 
 If you are building from source instead of downloading a release artifact, run this from the OneShot repo root:
 

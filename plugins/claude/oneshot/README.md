@@ -4,7 +4,7 @@ OneShot helps Claude take one big prompt and deliver the result: app, game, site
 
 This package is the Claude-facing OneShot plugin package. It is upload-ready as a `.zip` or `.plugin` artifact; it does not claim official marketplace submission.
 
-End users do not need the whole OneShot repository to use the Claude plugin. The installed plugin contains the OneShot workflow instructions. If the user's workspace does not contain OneShot repo files, the skill runs in plugin mode and stores progress in `.oneshot/` when file access is available.
+End users do not need the whole OneShot repository to use the Claude plugin. They need the installed plugin plus a Claude workspace or folder where Claude can access the files or context it should work on. If the workspace does not contain OneShot repo files, the skill runs in plugin mode and stores progress in `.oneshot/` when file access is available.
 
 ## Entrypoint
 
