@@ -16,9 +16,9 @@ OneShot is a Claude plugin plus a local project folder that turns one big reques
 
 ## What it does
 
-A normal Claude chat answers one question. OneShot keeps Claude going through the whole job — making the files, running the checks, fixing what broke, verifying the result. It can run for an hour, a day, or across resumed sessions.
+A normal Claude chat answers one question. OneShot keeps Claude going through the whole job — making the files, running the checks, fixing what broke, verifying the result. It can run for an hour, a day, a week, or across resumed sessions.
 
-It pauses and asks you when it needs a password, a payment, or a real human decision. Otherwise it keeps working.
+It pauses and asks you when it needs a password, system access, a payment, or a real human decision. Otherwise it keeps working.
 
 The OneShot folder is the engine — it contains the instructions, vault, project records, tickets, and proof trail. The Claude plugin is the clean `/oneshot` button that starts the engine.
 
