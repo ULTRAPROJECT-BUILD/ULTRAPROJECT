@@ -12,7 +12,7 @@ You don't need to learn the project-management plumbing under the hood. You just
 
 ![OneShot](docs/assets/hero.png)
 
-[Install](#install) · [Use](#use) · [Examples](#examples) · [Codex](#using-codex) · [Publish](#publishing)
+[Install](#install) · [Use](#use) · [Examples](#examples) · [Codex](#using-codex) · [Architecture](docs/ARCHITECTURE.md) · [Publish](#publishing)
 
 </div>
 
