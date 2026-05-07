@@ -1,0 +1,39 @@
+{
+  "name": "oneshot",
+  "version": "0.1.0",
+  "description": "OneShot: One prompt. Full delivery.",
+  "author": {
+    "name": "OneShot"
+  },
+  "license": "Apache-2.0",
+  "keywords": [
+    "oneshot",
+    "agent",
+    "workflow",
+    "vault",
+    "codex"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "OneShot",
+    "shortDescription": "One prompt. Full delivery.",
+    "longDescription": "OneShot is for big AI asks you do not want to babysit. Drop in an app, game, site, research, migration, audit, plugin, automation, or repo cleanup prompt, and Codex keeps working until it delivers the result, validates the work, or hands back a clear blocker report.",
+    "developerName": "OneShot",
+    "category": "Productivity",
+    "capabilities": [
+      "Workflow",
+      "Planning",
+      "Project Execution"
+    ],
+    "defaultPrompt": [
+      "Run a OneShot for this:\n\n[Your prompt, specs, project, goal, etc.]\n\nBefore starting, verify that the current workspace is the OneShot repo/folder. It must contain SYSTEM.md, skills/orchestrator.md, and vault/, and it must identify as OneShot rather than legacy ULTRAPROMPT. Read SYSTEM.md and skills/orchestrator.md, especially the Critical Rules block at the top of orchestrator.md. Follow the orchestrator skill literally. Treat the files in this repo as the source of truth, not chat memory.\n\nIf details are missing, make reasonable implementation assumptions, record them in the project file, and keep going.\n\nDo not reduce scope, quality, proof requirements, user-facing polish, or delivery obligations unless I explicitly approve that change. Do not reinterpret the request as a prototype, draft, MVP, plan, scaffold, partial implementation, or \"best effort\" unless those words are in my request.\n\nWhen ambiguity exists, do not choose the smaller or easier interpretation. Preserve the full stated goal and deliver the most complete version consistent with my request. If an ambiguity affects scope, quality, proof, polish, or delivery, record the assumption and continue on the path that maintains or increases the requested outcome. Tickets and amendments may clarify or add work; they may not reduce, defer, or downgrade the requested outcome without my explicit approval.\n\nWork until the project is delivered: all acceptance criteria satisfied, required proof gathered, final review passed, and deliverables handed off. Stop only if I explicitly pause/kill the run, or if every executable path is blocked by a legal, credential, approval, physical-world, or safety constraint. In that case, write a complete blocker report listing every blocked path and exactly what is needed to unblock each one.",
+      "Resume the active OneShot project in this repo. Do not create a new project. Verify that the current workspace is the OneShot repo/folder, then read SYSTEM.md and skills/orchestrator.md, especially the Critical Rules block at the top of orchestrator.md. Inspect vault/projects/*.md and the matching vault/projects/*.derived/status.md files, identify the active project, find the latest ORCH-CHECKPOINT, restore the current state from disk, and continue the project to delivery."
+    ],
+    "brandColor": "#2563EB",
+    "composerIcon": "./assets/icon.png",
+    "logo": "./assets/logo.png",
+    "screenshots": [
+      "./assets/screenshot-workflow.png"
+    ]
+  }
+}

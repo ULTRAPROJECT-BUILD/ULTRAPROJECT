@@ -14,6 +14,9 @@ vault/clients/_registry.md
 # test-run scratch. Templates (_template/) and platform MCPs (_platform/) stay tracked.
 vault/clients/operator/
 vault/clients/practice/
+vault/clients/*/
+!vault/clients/_template/
+!vault/clients/_platform/
 
 # Generic per-workspace patterns. Per-client config.md is ignored by default
 # because it carries email/billing/PII; the template stays tracked via negation.
@@ -43,6 +46,7 @@ __pycache__/
 *.egg-info/
 build/
 dist/
+proof/
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/

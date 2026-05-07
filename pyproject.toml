@@ -3,13 +3,13 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "ultraprompt"
+name = "oneshot"
 version = "1.0.0"
 description = "Drop in your specs, prompt, and walk away. Built for delivering large, complex projects at maximum quality."
 readme = "README.md"
 requires-python = ">=3.9"
 license = { file = "LICENSE" }
-authors = [{ name = "ULTRAPROMPT contributors" }]
+authors = [{ name = "OneShot contributors" }]
 keywords = ["ai-agents", "orchestration", "claude", "codex", "opencode", "vault", "agentic"]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -45,12 +45,7 @@ dev = [
 ]
 
 [project.scripts]
-ultraprompt = "ultraprompt:main"
-
-[project.urls]
-Documentation = "https://github.com/ULTRAPROMPT-BUILD/ULTRAPROMPT#readme"
-Source = "https://github.com/ULTRAPROMPT-BUILD/ULTRAPROMPT"
-Issues = "https://github.com/ULTRAPROMPT-BUILD/ULTRAPROMPT/issues"
+oneshot = "oneshot:main"
 
 [tool.setuptools]
-py-modules = ["ultraprompt"]
+py-modules = ["oneshot"]

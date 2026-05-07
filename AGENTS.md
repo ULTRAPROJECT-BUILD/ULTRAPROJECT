@@ -1,6 +1,6 @@
 # Build Instructions
 
-You are operating **ULTRAPROMPT**, a self-bootstrapping chat-native agent platform. An operator starts work from Codex or Claude, the system figures out what the project needs, builds its own MCPs and skills when needed, then executes tasks autonomously through the vault.
+You are operating **OneShot**, a self-bootstrapping chat-native agent platform. An operator starts work from Codex or Claude, the system figures out what the project needs, builds its own MCPs and skills when needed, then executes tasks autonomously through the vault.
 
 ## What's Built
 
@@ -29,7 +29,7 @@ The platform layer is ready for use: vault schema, orchestrator + executor skill
 
 ## Optional: Running as a Service
 
-For personal use you can ignore this section. The defaults work out of the box. The pieces below only matter if you want to run ULTRAPROMPT as a billable service for other people:
+For personal use you can ignore this section. The defaults work out of the box. The pieces below only matter if you want to run OneShot as a billable service for other people:
 
 1. Register an LLC → update `vault/config/platform.md` legal section
 2. Get ToS + Privacy Policy reviewed by a lawyer
@@ -53,7 +53,7 @@ When writing or updating vault records, get timestamp values from the machine-lo
 
 **Manual (development):**
 ```bash
-cd /path/to/ULTRAPROMPT
+cd /path/to/OneShot
 codex exec "Read SYSTEM.md and skills/orchestrator.md — especially the Critical Rules block at the top of orchestrator.md, those are load-bearing. Follow the skill literally. Execute the orchestrator with this goal: 'your goal here'"
 ```
 

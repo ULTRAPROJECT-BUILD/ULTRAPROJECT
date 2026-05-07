@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""ULTRAPROMPT — drop in your specs, prompt, and walk away.
+"""OneShot — drop in your specs, prompt, and walk away.
 
 This module is the user-facing CLI. It does one job: bootstrap.
 
-    ultraprompt              # bootstrap config + show readiness
-    ultraprompt --version    # print version
+    oneshot              # bootstrap config + show readiness
+    oneshot --version    # print version
 
 Bootstrap copies `.env.example` -> `.env`, `.mcp.example.json` -> `.mcp.json`,
 and `vault/clients/_registry.example.md` -> `vault/clients/_registry.md` if any
@@ -53,7 +53,7 @@ def _c(text: str, code: str) -> str:
 
 _BLOCK_BANNER = (
     "╔════════════════════════════════════════════════════════════════╗\n"
-    "║                         ULTRAPROMPT                          ║\n"
+    "║                          ONESHOT                             ║\n"
     "╚════════════════════════════════════════════════════════════════╝"
 )
 _BANNER_WIDTH = 66
@@ -81,7 +81,7 @@ def banner() -> None:
     print()
     if not _supports_color() or cols < _BANNER_WIDTH:
         # narrow terminal or piped output → single-line title fallback
-        title = "ULTRAPROMPT"
+        title = "ONESHOT"
         if _supports_color():
             styled = ""
             for i, ch in enumerate(title):
@@ -98,7 +98,7 @@ def banner() -> None:
 
 
 def print_intro() -> None:
-    print(f"{_c('ULTRAPROMPT', BOLD)} {_c('v' + VERSION, BLUE)}")
+    print(f"{_c('OneShot', BOLD)} {_c('v' + VERSION, BLUE)}")
     print()
     print("Project control plane for long-running AI work.")
     print("Turns serious prompts into plans, tickets, gates, and evidence.")
@@ -113,7 +113,7 @@ def print_intro() -> None:
 def repo_root(start: Path | None = None) -> Path:
     """Walk up from `start` (default cwd) looking for the repo markers.
 
-    A directory is considered the ultraprompt repo root if it contains both
+    A directory is considered the OneShot repo root if it contains both
     `SYSTEM.md` and a `vault/` directory. Falls back to cwd if no marker is
     found, so the bootstrap can still copy example files when run from inside
     a freshly cloned repo with the markers in place.
@@ -123,7 +123,7 @@ def repo_root(start: Path | None = None) -> Path:
         if (candidate / "SYSTEM.md").exists() and (candidate / "vault").is_dir():
             return candidate
     # cwd has no markers — fall back to walking up from the installed
-    # script's location so `ultraprompt` works from any directory after a
+    # script's location so `oneshot` works from any directory after a
     # global install (e.g. via pipx from a cloned repo).
     script_dir = Path(__file__).resolve().parent
     for candidate in (script_dir, *script_dir.parents):
@@ -195,7 +195,7 @@ def cmd_bootstrap(args: argparse.Namespace) -> int:
     print()
     print(f"  {_c('Next step:', BOLD)} paste this into your AI coding tool:")
     print()
-    print(f"    {_c('Run an ultraprompt for this:', DIM)}")
+    print(f"    {_c('OneShot this:', DIM)}")
     print(f"    {_c('<your prompt, specs, project, goal, etc.>', DIM)}")
     print(f"    {_c('Before starting, read SYSTEM.md and skills/orchestrator.md,', DIM)}")
     print(f"    {_c('especially the Critical Rules block at the top of orchestrator.md.', DIM)}")
@@ -211,12 +211,12 @@ def cmd_bootstrap(args: argparse.Namespace) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        prog="ultraprompt",
-        description="ULTRAPROMPT — bootstrap config and check readiness. "
+        prog="oneshot",
+        description="OneShot — bootstrap config and check readiness. "
         "Project execution is chat-native — see README.md.",
     )
     parser.add_argument(
-        "--version", action="version", version=f"ultraprompt {VERSION}"
+        "--version", action="version", version=f"oneshot {VERSION}"
     )
     sub = parser.add_subparsers(dest="cmd")
 

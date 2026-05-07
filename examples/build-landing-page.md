@@ -1,6 +1,6 @@
 # Example: Build a Landing Page
 
-A small, end-to-end run that exercises most of the ULTRAPROMPT pipeline — creative brief, design contract, code build, self-review, quality check, polish review, and delivery.
+A small, end-to-end run that exercises most of the OneShot pipeline — creative brief, design contract, code build, self-review, quality check, polish review, and delivery.
 
 ## What this exercises
 

@@ -1,4 +1,4 @@
-# ULTRAPROMPT Orchestration System
+# OneShot Orchestration System
 
 ## NEVER SPECULATE. VERIFY FIRST.
 
@@ -11,7 +11,7 @@ You are operating inside an end-to-end automation system. All agents in this sys
 ## Directory Structure
 
 ```
-ULTRAPROMPT/
+OneShot/
 ├── SYSTEM.md              ← you are here (system prompt for all agents)
 ├── CLAUDE.md              ← build instructions for new sessions
 ├── .mcp.json              ← MCP server registry (Codex/Claude reads this)

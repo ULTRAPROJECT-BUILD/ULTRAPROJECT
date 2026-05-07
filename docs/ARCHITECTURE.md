@@ -1,6 +1,6 @@
-# ULTRAPROMPT Architecture
+# OneShot Architecture
 
-ULTRAPROMPT is a file-backed operating system for autonomous agent work. The README is the public front door; this document is the deeper map for people who want to understand the moving parts.
+OneShot is a file-backed operating system for autonomous agent work. The README is the public front door; this document is the deeper map for people who want to understand the moving parts.
 
 ## Core Model
 
@@ -24,10 +24,10 @@ The important design choice is simple: chat is the interface, but disk is the so
 
 ## Runtime Boundaries
 
-ULTRAPROMPT has two different surfaces:
+OneShot has two different surfaces:
 
-- **Bootstrap CLI:** `ultraprompt` creates local config files from examples and checks whether Claude Code or Codex is available.
-- **Project execution:** the user opens the repo in Claude Code or Codex and pastes a prompt. There is no hidden daemon and no `ultraprompt run` command.
+- **Bootstrap CLI:** `oneshot` creates local config files from examples and checks whether Claude Code or Codex is available.
+- **Project execution:** the user opens the repo in Claude Code or Codex and pastes a prompt. There is no hidden daemon and no `oneshot run` command.
 
 That boundary keeps setup boring while leaving execution inside the AI coding tool the operator already uses.
 
@@ -116,7 +116,7 @@ The point is recovery and truthfulness. A failed gate records why work failed an
 
 Routing policy lives in `vault/config/platform.md`.
 
-ULTRAPROMPT supports two main modes:
+OneShot supports two main modes:
 
 - **`chat_native` default:** orchestration, execution, and reviews run through the current host tool. Gates still use fresh context where possible.
 - **`normal` opt-in:** routes work across configured tools, commonly Claude for orchestration and visual judgment, Codex for implementation, reviews, debugging, and mechanical proof.
@@ -149,7 +149,7 @@ The orchestrator includes a 20-iteration safety stop for loops with no progress.
 
 ## Self-Extension
 
-ULTRAPROMPT can add capabilities when the project needs them. The sourcing cascade is:
+OneShot can add capabilities when the project needs them. The sourcing cascade is:
 
 1. Search for an existing skill.
 2. Search GitHub or MCP registries for an existing MCP server.
@@ -176,7 +176,7 @@ Agents must not cross client boundaries unless a task explicitly authorizes it. 
 
 ## Safety And Cost
 
-ULTRAPROMPT assumes agents may run commands, write files, and call configured APIs. Safety comes from least-privilege configuration plus evidence gates, not from pretending the surface is small.
+OneShot assumes agents may run commands, write files, and call configured APIs. Safety comes from least-privilege configuration plus evidence gates, not from pretending the surface is small.
 
 Important expectations:
 
@@ -189,4 +189,4 @@ Important expectations:
 
 ## Why The Architecture Is File-Backed
 
-Long projects fail when the only state is chat history. ULTRAPROMPT writes the project to disk so the next agent can verify before acting, continue after interruption, and disagree with stale chat memory when the filesystem proves otherwise.
+Long projects fail when the only state is chat history. OneShot writes the project to disk so the next agent can verify before acting, continue after interruption, and disagree with stale chat memory when the filesystem proves otherwise.

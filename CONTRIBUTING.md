@@ -1,20 +1,20 @@
-# Contributing To ULTRAPROMPT
+# Contributing To OneShot
 
-Thanks for helping improve ULTRAPROMPT. The goal of this project is to make serious AI agent work more planned, resumable, and provably complete.
+Thanks for helping improve OneShot. The goal of this project is to make serious AI agent work more planned, resumable, and provably complete.
 
 ## Canonical Repository
 
-The canonical project lives at:
+The canonical source project that OneShot was derived from lives at:
 
 ```text
 https://github.com/ULTRAPROMPT-BUILD/ULTRAPROMPT
 ```
 
-Please open issues, pull requests, security reports, and project discussions against the canonical repository unless a maintainer points you somewhere else.
+For this OneShot distribution, use the issue, pull request, security report, and project discussion channels provided by the OneShot maintainers. The ULTRAPROMPT URL above is provenance for the source project, not the support channel for OneShot.
 
 ## Contribution License
 
-ULTRAPROMPT is licensed under the [Apache License 2.0](LICENSE).
+OneShot is licensed under the [Apache License 2.0](LICENSE).
 
 By submitting a pull request, issue patch, code snippet, documentation change, test, example, or other contribution for inclusion in this repository, you agree that your contribution is submitted under Apache 2.0 unless you clearly mark it as "Not a Contribution" before submission.
 
@@ -87,9 +87,9 @@ Before opening a pull request:
 
 ## Brand And Naming
 
-The Apache 2.0 license does not grant permission to use the ULTRAPROMPT name, logo, or project identity in a way that suggests official status, endorsement, or ownership.
+The Apache 2.0 license does not grant permission to use the OneShot name, logo, or project identity in a way that suggests official status, endorsement, or ownership.
 
-Forks and commercial distributions should use their own names. It is fine to describe truthful compatibility, such as "compatible with ULTRAPROMPT", as long as the wording does not imply the project is official. See [TRADEMARKS.md](TRADEMARKS.md).
+Forks and commercial distributions should use their own names. It is fine to describe truthful compatibility, such as "compatible with OneShot", as long as the wording does not imply the project is official. See [TRADEMARKS.md](TRADEMARKS.md).
 
 ## Security Issues
 

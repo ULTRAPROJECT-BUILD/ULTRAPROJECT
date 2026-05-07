@@ -1,6 +1,6 @@
 # New Mac Setup
 
-Use this when cloning ULTRAPROMPT onto a fresh machine.
+Use this when setting up OneShot on a fresh machine.
 
 ## 1. Install Tools
 
@@ -14,8 +14,8 @@ Install whichever agent tools you want to use, for example Claude Code, Codex, O
 ## 2. Clone
 
 ```bash
-git clone https://github.com/ULTRAPROMPT-BUILD/ULTRAPROMPT
-cd ULTRAPROMPT
+# Use the OneShot source location provided with your distribution.
+cd OneShot
 ```
 
 ## 3. Python Environment
@@ -27,7 +27,7 @@ pip install --upgrade pip
 pip install -e .
 ```
 
-That installs the `ultraprompt` command on your PATH. For optional extras (video evidence, ChromaDB indexing, etc.), use:
+That installs the `oneshot` command on your PATH. For optional extras (video evidence, ChromaDB indexing, etc.), use:
 
 ```bash
 pip install -e ".[full]"        # third-party integrations
@@ -39,7 +39,7 @@ Or pin everything to the full dev list with `pip install -r requirements.txt`.
 ## 4. Local Secrets
 
 ```bash
-ultraprompt
+oneshot
 ```
 
 That copies `.env.example` → `.env`, `.mcp.example.json` → `.mcp.json`, and `vault/clients/_registry.example.md` → `vault/clients/_registry.md` (skipping any that already exist), then verifies `claude`, `codex`, or `opencode` is on PATH.
@@ -74,8 +74,8 @@ For a real install:
 python3 -m pytest tests
 ```
 
-Once you start an ultraprompt, view live state by opening `vault/projects/<slug>.derived/status.md` (or the client-scoped equivalent) in any markdown viewer.
+Once you start a OneShot run, view live state by opening `vault/projects/<slug>.derived/status.md` (or the client-scoped equivalent) in any markdown viewer.
 
 ## 8. Chat-Native Operation
 
-Start orchestration from your AI coding tool with a direct prompt that reads `SYSTEM.md` and `skills/orchestrator.md`. Claude Code and Codex have the most tested deeper routing support today; other compatible tools can run ULTRAPROMPT chat-native from this folder. This clean distribution deliberately omits scheduled execution and external-message automation.
+Start orchestration from your AI coding tool with a direct prompt that reads `SYSTEM.md` and `skills/orchestrator.md`. Claude Code and Codex have the most tested deeper routing support today; other compatible tools can run OneShot chat-native from this folder. This clean distribution deliberately omits scheduled execution and external-message automation.

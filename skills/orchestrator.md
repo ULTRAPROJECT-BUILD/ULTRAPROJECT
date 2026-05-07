@@ -580,7 +580,7 @@ Two browser tools are available: `agent-browser` (CLI) and Playwright Python API
    - The project's estimated remaining time (from open ticket count and types) is greater than 15 minutes — for fast projects, the final handoff may arrive so quickly that a "started" note would feel redundant
 
    **Handoff note content — draft for operator-mediated sending:**
-   - **Subject:** Use a clear project subject. If the project has a `project_number` in frontmatter: `ULTRAPROMPT — #{project_number} {Project Title} ({Client Name})`. If no project number: `ULTRAPROMPT — {Project Title} ({Client Name})`.
+   - **Subject:** Use a clear project subject. If the project has a `project_number` in frontmatter: `OneShot — #{project_number} {Project Title} ({Client Name})`. If no project number: `OneShot — {Project Title} ({Client Name})`.
    - **Content:**
      - "We've started work on {project title}."
      - What they'll receive (infer from project goal — e.g., "a redesigned website with Webflow-compatible code", "enriched CSV data files")

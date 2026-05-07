@@ -1,93 +1,132 @@
-# Quickstart
+# OneShot Quickstart
 
-The 5-minute path from `git clone` to a running ultraprompt.
+This is the shortest path for each host.
 
-## 1. Prerequisites
+- **Claude:** download the OneShot repo, install the plugin, open Claude in the OneShot folder, type `/oneshot`, and paste the job.
+- **Codex:** open Codex in the OneShot folder, then start with `Run a OneShot for this:`.
 
-- macOS or Linux, Python 3.9+, Node 18+
-- An authenticated AI coding tool such as [Claude Code](https://claude.com/claude-code), [Codex CLI](https://github.com/openai/codex), [OpenCode](https://opencode.ai/), a VS Code-style editor agent, a desktop app, or another GUI agent that can open this folder, read and edit files, run shell commands, and follow long repo instructions. A plain web chat without repo and terminal access is not enough.
-- Optional: `ripgrep`, `gh`
+## Claude: Install OneShot
 
-If you need a deeper environment setup, see [SETUP.md](SETUP.md).
+OneShot has two pieces:
 
-## 2. Clone And Install
+- The **OneShot repo/folder**, which stores the workflow, vault, projects, tickets, and proof.
+- The **Claude plugin**, which gives Claude the `/oneshot` command.
+
+Download or clone the OneShot repo from the [latest release](https://github.com/oneshot-repo/OneShot/releases/tag/v0.1.0), then put the folder somewhere permanent.
+
+Download one of the Claude plugin artifacts from the same release:
+
+```text
+oneshot-claude-plugin-0.1.0.plugin
+```
+
+or:
+
+```text
+oneshot-claude-plugin-0.1.0.zip
+```
+
+Upload it in Claude Desktop or your Claude organization plugin marketplace, then enable OneShot.
+
+If you are building from source instead of downloading a release artifact, run this from the OneShot repo root:
 
 ```bash
-git clone https://github.com/ULTRAPROMPT-BUILD/ULTRAPROMPT
-cd ULTRAPROMPT
+scripts/package_claude_plugin.sh
+```
+
+The script creates both upload formats under `dist/claude/`.
+
+## Claude: Use `/oneshot`
+
+Open Claude Code or Cowork in the OneShot folder, then run:
+
+```text
+/oneshot <your prompt, specs, project, goal, etc.>
+```
+
+Example:
+
+```text
+/oneshot build a polished local-first budgeting app with CSV import, charts, PDF export, setup docs, screenshots, and proof that the main flows work
+```
+
+OneShot already carries the strict delivery contract inside the plugin. You do not need to paste the long orchestration prompt by hand.
+
+Do not open Claude in an old ULTRAPROMPT folder. That folder has a different vault and can send work to the wrong place.
+
+Some Claude Code plugin contexts display the fully qualified plugin namespace:
+
+```text
+/oneshot:oneshot <your prompt, specs, project, goal, etc.>
+```
+
+That is the same OneShot skill. Select the OneShot entry from the slash menu when in doubt.
+
+## Codex: Use The OneShot Folder
+
+Codex does not upload a `.plugin` file and does not use Claude-style `/oneshot` slash commands. Open Codex in the OneShot folder:
+
+```bash
+codex -C /path/to/OneShot
+```
+
+Start the run with:
+
+```text
+Run a OneShot for this:
+
+[Your prompt, specs, project, goal, etc.]
+```
+
+That uses the bundled OneShot Codex skill and the repo-backed workflow.
+
+## Write A Better OneShot Prompt
+
+You can paste a rough ask, but better prompts usually include:
+
+- **Goal:** the concrete result you want.
+- **Audience:** who will use or judge it.
+- **Done means:** what must exist before the work is finished.
+- **Constraints:** stack, style, budget, files, timing, and things to avoid.
+- **Proof:** tests, screenshots, citations, reports, command output, or reviews.
+
+You do not need to describe OneShot's internal process. Describe the result you want to come back to.
+
+## Let It Run
+
+OneShot is for work that may take an hour, a day, or a longer resumed project. It keeps the agent aimed at full delivery: files changed, checks run, assumptions recorded, blockers named, and handoff clear.
+
+OneShot does not run as a hidden background service. The active Claude, Codex, or compatible local agent does the work while OneShot supplies the delivery workflow.
+
+## Resume Later
+
+If the session ends, reopen the same project in your agent and ask it to resume the active OneShot project from disk:
+
+```text
+Resume the active OneShot project in this repo. Do not create a new project.
+
+Restore state from the latest OneShot checkpoint and continue to delivery. If more than one active OneShot project exists, ask me which one to resume.
+```
+
+Progress lives in the OneShot repo vault.
+
+## Developer Source Setup
+
+Use this only if you are developing OneShot, validating the package, or building release artifacts yourself.
+
+```bash
+cd oneshot
 python3 -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip
 pip install -e .
+oneshot
 ```
 
-This installs the `ultraprompt` command on your PATH (the editable install means the repo source is what runs). The `pip` upgrade is required because pre-22.0 versions don't support editable installs from a `pyproject.toml` without a `setup.py`.
+The `oneshot` helper bootstraps local config examples and checks for an available agent CLI. The main user workflows are still the Claude plugin command or the Codex marketplace skill.
 
-## 3. Bootstrap
+## Next
 
-```bash
-ultraprompt
-```
-
-Copies `.env.example` → `.env`, `.mcp.example.json` → `.mcp.json`, and `vault/clients/_registry.example.md` → `vault/clients/_registry.md` if any are missing, then verifies that `claude`, `codex`, or `opencode` is on your PATH.
-
-Edit `.env` and `.mcp.json` with your own credentials. Leave the templates alone — they're the source of truth for new installs. Never commit either of the live files.
-
-## 4. Run An Ultraprompt (Chat-Native)
-
-Project execution is chat-native — there is no `ultraprompt run` command. Open your AI coding tool pointed at this repo and paste:
-
-> *"Read SYSTEM.md and skills/orchestrator.md — **especially the Critical Rules block at the top of orchestrator.md, those are load-bearing**. Follow the skill literally. Here's what I want to build: \<your prompt, specs, or rough description\>. Be strict about acceptance criteria, run to completion — don't stop, pause, or ask clarifying questions unless I (the operator) explicitly tell you otherwise."*
-
-Auth is whatever your tool is configured for — Claude Code's subscription, Codex's, OpenCode's configured provider, or your own API keys.
-
-The orchestrator will:
-
-1. Decide whether the goal is a known pattern or a frontier project.
-2. Generate a project plan with phases, waves, tickets, and gates.
-3. Spawn executor agents one ticket at a time and route by task type.
-4. Require evidence (commands, screenshots, walkthrough videos, audit logs) before any ticket closes.
-5. Run quality, polish, and credibility gates before delivery.
-6. Record everything in `vault/` so the next session can resume from files.
-
-## 5. Watch It Work
-
-Open the project's `status.md` in any markdown viewer (Obsidian, VS Code preview, GitHub):
-
-```
-vault/projects/<your-project>.derived/status.md
-vault/clients/<client>/projects/<your-project>.derived/status.md   # client-scoped
-```
-
-It's regenerated whenever the orchestrator refreshes context — phase, current wave, active tickets, blocked tickets, recently closed, and the latest checkpoint, all on one screen.
-
-You can also tail the project file directly. Every orchestrator decision lands in `vault/projects/<your-project>.md` under `## Orchestrator Log` as an `ORCH-CHECKPOINT` line — that's how the next session resumes cold.
-
-## 6. If A Session Ends Mid-Flight
-
-Token exhaustion, model switch, machine restart, or operator interruption — none of it loses progress. Just point a fresh AI coding tool session at the repo with the same prompt, and it picks up from the last `ORCH-CHECKPOINT`.
-
-The default `agent_mode` is `chat_native` — everything routes to whichever tool is hosting the chat. Claude Code and Codex have the most tested deeper routing support today. If you're running cross-model (`agent_mode: normal`) and one CLI is exhausted, flip to a single-agent override:
-
-```bash
-python3 scripts/set_agent_mode.py chat_native       # default — auto-route to host CLI
-python3 scripts/set_agent_mode.py claude_fallback   # explicit override → all work to Claude
-python3 scripts/set_agent_mode.py codex_fallback    # explicit override → all work to Codex
-python3 scripts/set_agent_mode.py normal            # cross-model routing (requires both CLIs)
-```
-
-## 7. Where To Go Next
-
-- [ARCHITECTURE.md](ARCHITECTURE.md) — the mental model: vault, tickets, gates, routing, recovery
-- [SETUP.md](SETUP.md) — deeper environment setup, optional integrations, Playwright/browser setup
-- `SYSTEM.md` — the system prompt every agent reads
-- `vault/SCHEMA.md` — the markdown/frontmatter schema for project memory
-- `skills/orchestrator.md` — the core loop in detail
-- `vault/config/platform.md` — agent routing, quality contract, fallback modes
-
-## Tips
-
-- **Don't overthink the first goal.** A small project — landing page, research brief, data analysis — exercises the whole loop end-to-end and teaches you the rhythm.
-- **Read the project plan before the first executor spawns.** The orchestrator writes the plan to `vault/snapshots/` and waits for tickets. If the plan looks wrong, kill it and re-prompt with a tighter goal.
-- **Evidence is the contract.** If a ticket claims work is done but the evidence path doesn't resolve on disk, the gates fail closed. That's the feature.
-- **Read `status.md` per project.** The derived status view in `<slug>.derived/status.md` is the at-a-glance projection of the vault — phase, active tickets, blockers, recent closures. No server required.
+- [README.md](../README.md) for the product overview and example prompts
+- [SETUP.md](SETUP.md) for deeper environment setup
+- [PUBLISHING.md](PUBLISHING.md) for public-release packaging and checks
