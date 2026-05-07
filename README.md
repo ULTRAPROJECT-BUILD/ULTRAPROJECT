@@ -170,12 +170,9 @@ Don't paste secrets or credentials into prompts.
 ## More
 
 - [Architecture](docs/ARCHITECTURE.md) — how OneShot works under the hood
-- [Publishing](docs/PUBLISHING.md) — building and releasing the plugin yourself
 
 ## License
 
 [Apache 2.0](LICENSE). OneShot is derived from the project listed in [`NOTICE`](NOTICE).
 
-<p align="center">
-  Created by <a href="https://www.linkedin.com/in/michaeljzola/">Michael Zola</a>
-</p>
+Created by [Michael Zola](https://www.linkedin.com/in/michaeljzola/)
