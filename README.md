@@ -107,3 +107,7 @@ Don't paste secrets or credentials into prompts.
 ## License
 
 [Apache 2.0](LICENSE). OneShot is derived from the project listed in [`NOTICE`](NOTICE).
+
+<p align="center">
+  Created by <a href="https://www.linkedin.com/in/michaeljzola/">Michael Zola</a>
+</p>
