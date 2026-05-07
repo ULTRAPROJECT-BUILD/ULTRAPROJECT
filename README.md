@@ -8,7 +8,7 @@ OneShot is a Claude plugin plus a local project folder that turns one big reques
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 
-![OneShot](docs/assets/hero.png)
+![OneShot](docs/assets/hero-v2.png)
 
 </div>
 
