@@ -4,7 +4,7 @@
 
 ### One prompt. Full delivery.
 
-OneShot is a Claude plugin for big AI requests you do not want to babysit. Ask for the app, game, website, research, cleanup, migration, or project you want delivered, and OneShot tells Claude to keep going until the result is finished, checked, or blocked by something only you can decide.
+OneShot is a Claude plugin for big AI requests. Ask for the app, game, website, research, cleanup, migration, or project you want delivered, and OneShot tells Claude to keep going until the result is finished, checked, or blocked by something only you can decide.
 
 You do not need to understand the project-management stuff behind it. That stays under the hood. You just use `/oneshot`.
 
