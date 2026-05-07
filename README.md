@@ -4,7 +4,7 @@
 
 ### One prompt. Full delivery.
 
-OneShot is a Claude plugin for projects too big for one chat. You give it one prompt, and Claude keeps working until the job is finished.
+OneShot is a chat-native project delivery system for jobs too big for one chat. You give it one prompt, and a coding agent keeps working until the job is finished.
 
 Built for Claude Desktop. Also works with Codex or any capable coding agent.
 
@@ -22,31 +22,62 @@ Built for Claude Desktop. Also works with Codex or any capable coding agent.
 
 ## What it does
 
-A normal Claude chat answers one question. OneShot keeps Claude going through the whole job — making the files, running the checks, fixing what broke, verifying the result. It can run for an hour, a day, a week, or across resumed sessions.
+A normal chat answers one question. OneShot keeps the agent going through the whole job — making the files, running the checks, fixing what broke, verifying the result. It can run for an hour, a day, a week, or across resumed sessions.
 
 It pauses and asks you when it needs a password, system access, a payment, or a real human decision. Otherwise it keeps working.
 
-The OneShot folder is the engine — it contains the instructions, vault, project records, tickets, and proof trail. The Claude plugin is the clean `/oneshot` button that starts the engine.
+The OneShot folder is the engine — it contains the instructions, vault, project records, tickets, and proof trail. The Claude plugin is the cleanest interface, but the engine is just a folder that a capable coding agent can run from.
 
 ## Install
 
-You need two things: the **OneShot folder** (the engine) and the **Claude plugin** (the `/oneshot` button).
+You need the **OneShot folder** and a coding agent. Claude Desktop with the plugin is the smoothest path, but the plugin is not required if you want to run OneShot from Codex or another capable coding agent.
 
-1. **Get the OneShot folder.** Clone the repo, or download the source zip from the [latest release](https://github.com/oneshot-repo/OneShot/releases/tag/v0.1.0) and unzip it somewhere you can keep it (e.g. `~/Documents/OneShot`).
-2. **Install the Claude plugin.** From the same release, download `oneshot-claude-plugin-0.1.0.plugin`. In Claude Desktop, open plugin settings, upload the file, and enable OneShot.
-3. **Start a job.** Open Claude in the OneShot folder, type `/oneshot`, and paste your request.
+### 1. Get the OneShot folder
+
+Clone the repo:
+
+```bash
+git clone https://github.com/oneshot-repo/OneShot.git ~/Documents/OneShot
+```
+
+Or download the source zip from the [latest release](https://github.com/oneshot-repo/OneShot/releases/tag/v0.1.0) and unzip it somewhere you can keep it.
+
+### 2. Choose how to run it
+
+#### Option A: Claude Desktop, recommended
+
+Install the plugin if you want the `/oneshot` command:
+
+1. Download `oneshot-claude-plugin-0.1.0.plugin` from the [latest release](https://github.com/oneshot-repo/OneShot/releases/tag/v0.1.0).
+2. In Claude Desktop, open plugin settings, upload the file, and enable OneShot.
+3. Open Claude Desktop in the OneShot folder.
+4. Type `/oneshot` and paste your request.
+
+#### Option B: Codex or another coding agent
+
+You do not need the Claude plugin for this path. Open your coding agent in the OneShot folder and ask:
+
+```text
+OneShot this:
+
+[your prompt]
+```
+
+Claude Desktop is the most polished path today. Other agents can work, but quality may vary more on long-running jobs.
 
 **On Windows:** install [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install), open Ubuntu, and run the steps above from inside WSL. Claude Desktop can open WSL folders via `\\wsl$\` paths. OneShot's engine is cross-platform, but a few skills assume Unix tools — WSL is the smoother route.
 
 ## How to use it
 
-The simplest version:
+The simplest version in Claude Desktop:
 
 ```text
 /oneshot build a small habit-tracking app I can run locally
 ```
 
-For real results, tell Claude five things:
+Without the Claude plugin, use the same request with `OneShot this:` from the OneShot folder.
+
+For real results, tell the agent five things:
 
 - **Goal** — what you actually want
 - **Audience** — who's going to use, judge, or pay for it
@@ -146,7 +177,7 @@ Avoid: re-explaining basic SQL, marketing tone, "the Postgres docs say…" witho
 Proof: run every exercise end-to-end on a fresh docker-compose stack and commit the expected output. Record a short video of one exercise being completed cold. Run a self-review pass through every module and write a critique of the 5 weakest paragraphs in each one before final delivery.
 ```
 
-## Using Codex (optional)
+## Using Codex
 
 Claude Desktop is the smoother experience and the recommended path. If you'd rather use Codex, open Codex in the OneShot folder and ask:
 
@@ -156,18 +187,18 @@ OneShot this:
 [your prompt]
 ```
 
-Quality varies more than with Claude — keep that in mind for long jobs.
+Quality varies more than with Claude Desktop — keep that in mind for long jobs.
 
 ## What to expect
 
 - **Big asks take real time.** Hours, sometimes longer.
 - **It can't bypass logins or payments.** It pauses and asks.
-- **If a session ends**, reopen Claude in the OneShot folder and tell it to resume the active OneShot.
-- **It needs the OneShot folder.** The plugin starts the workflow; the folder stores the workflow.
+- **If a session ends**, reopen your agent in the OneShot folder and tell it to resume the active OneShot.
+- **It needs the OneShot folder.** The folder stores the workflow; the Claude plugin is only one way to start it.
 
 ## Safety
 
-OneShot lets Claude read your files, edit them, run commands, and use connected tools. Only point it at folders you're comfortable with that.
+OneShot lets your coding agent read files, edit them, run commands, and use connected tools. Only point it at folders you're comfortable with that.
 
 Don't paste secrets or credentials into prompts.
 
