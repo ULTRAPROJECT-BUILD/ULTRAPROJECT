@@ -1,0 +1,12 @@
+flask
+pytest
+pyyaml
+mcp
+requests
+python-pptx
+playwright
+tomli
+
+# Optional index/search integrations used by some scripts.
+chromadb
+google-generativeai
