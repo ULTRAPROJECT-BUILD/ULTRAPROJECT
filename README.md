@@ -4,7 +4,7 @@
 
 ### One prompt. Full delivery.
 
-OneShot is a Claude plugin plus a local project folder that turns one big request into a finished project. You open the OneShot folder, type `/oneshot`, describe what you want, and Claude keeps working until it's done — or until it needs a decision only you can make.
+OneShot is a Claude plugin for projects too big for one chat. You give it one prompt, and Claude keeps working until the job is finished — or until it hits a password, a payment, or something only you can decide.
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 
