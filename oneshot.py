@@ -191,7 +191,8 @@ def cmd_bootstrap(args: argparse.Namespace) -> int:
         print(f"  Detected: {_c(detected, BOLD)}")
         print()
 
-    print(f"{_c('Done!', GREEN_OK)} Open this folder in your AI coding tool to begin.")
+    print(f"{_c('Done!', GREEN_OK)} Open/select this folder in your AI coding tool to begin.")
+    print("  No plugin or slash command is required.")
     print()
     print(f"  {_c('Next step:', BOLD)} paste this into your AI coding tool:")
     print()
@@ -202,6 +203,8 @@ def cmd_bootstrap(args: argparse.Namespace) -> int:
     print(f"    {_c('If those files exist, read SYSTEM.md and skills/orchestrator.md', DIM)}")
     print(f"    {_c('end to end before starting. Follow orchestrator.md literally.', DIM)}")
     print(f"    {_c('Treat files in that repo as source of truth, not chat memory.', DIM)}")
+    print(f"    {_c('The orchestrator may create the project shell inline, but must', DIM)}")
+    print(f"    {_c('delegate project plans, briefs, deliverables, and gates.', DIM)}")
     print(f"    {_c('If details are missing, make reasonable assumptions, record them', DIM)}")
     print(f"    {_c('in the project file, and keep going until full delivery or a', DIM)}")
     print(f"    {_c('complete blocker report.', DIM)}")

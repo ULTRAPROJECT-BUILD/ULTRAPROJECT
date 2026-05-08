@@ -4,9 +4,9 @@
 
 ### One prompt. Full delivery.
 
-OneShot is a chat-native project delivery system for jobs too big for one chat. You give it one prompt, and a coding agent keeps working until the job is finished.
+OneShot is a chat-native project delivery system for jobs too big for one chat. You open the OneShot folder, paste one prompt, and a coding agent keeps working until the job is finished.
 
-Built for Claude Desktop. Also works with Codex or any capable coding agent.
+Works with Claude, Codex, or any capable coding agent that can open a folder, edit files, and run commands.
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 
@@ -26,13 +26,11 @@ A normal chat answers one question. OneShot keeps the agent going through the wh
 
 It pauses and asks you when it needs a password, system access, a payment, or a real human decision. Otherwise it keeps working.
 
-The OneShot folder is the engine — it contains the instructions, vault, project records, tickets, and proof trail. The Claude plugin is the cleanest interface, but the engine is just a folder that a capable coding agent can run from.
+The OneShot folder is the engine. It contains the instructions, vault, project records, tickets, and proof trail. There is no plugin to install and no slash command to remember.
 
 ## Install
 
-You need the **OneShot folder** and a coding agent. Claude Desktop with the plugin is the smoothest path, but the plugin is not required if you want to run OneShot from Codex or another capable coding agent.
-
-### 1. Get the OneShot folder
+You need the **OneShot folder** and a coding agent.
 
 Clone the repo:
 
@@ -42,25 +40,13 @@ git clone https://github.com/oneshot-repo/OneShot.git ~/Documents/OneShot
 
 Or download the source zip from the [latest release](https://github.com/oneshot-repo/OneShot/releases/tag/v0.1.0) and unzip it somewhere you can keep it.
 
-### 2. Choose how to run it
-
-#### Option A: Claude Desktop, recommended
-
-Install the plugin if you want the `/oneshot` command:
-
-1. Download `oneshot-claude-plugin-0.1.0.plugin` from the [latest release](https://github.com/oneshot-repo/OneShot/releases/tag/v0.1.0).
-2. In Claude Desktop, open plugin settings, upload the file, and enable OneShot.
-3. Open Claude Desktop in the OneShot folder.
-4. Type `/oneshot` and paste your request.
-
-#### Option B: Codex or another coding agent
-
-You do not need the Claude plugin for this path. Open your coding agent in the OneShot folder and use this full starter prompt:
+Then open or select the OneShot folder in Claude, Codex, or your coding agent. Paste this full starter prompt:
 
 ```text
 Run a OneShot for this:
 
 [Your prompt, specs, project, goal, etc.]
+
 Before starting, check whether the current workspace contains OneShot repo files:
 
 SYSTEM.md
@@ -68,6 +54,8 @@ skills/orchestrator.md
 vault/
 
 If those files exist, and before starting the project, read SYSTEM.md and skills/orchestrator.md, especially the Critical Rules block at the top of orchestrator.md. Follow the orchestrator skill literally. Treat the files in that repo as the source of truth, not chat memory. DO NOT RUN UNLESS THESE FILES ARE READ END TO END.
+
+Follow the orchestrator/executor split exactly. The orchestrator may create the project shell, snapshot directories, checkpoint logs, and ticket metadata inline. The orchestrator must not author project plans, creative briefs, deliverables, QC reports, polish reviews, gate reports, claim ledgers, or verification manifests inline. Those require the delegated skill, spawned executor, or gate-review path described in orchestrator.md.
 
 If details are missing, make reasonable implementation assumptions, record them in the project file, and keep going.
 
@@ -82,15 +70,9 @@ Work until the project is delivered: all acceptance criteria satisfied, required
 
 ## How to use it
 
-**Important:** In a normal OneShot run, the orchestrator should coordinate the project and spawn executor agents to do the work. If the orchestrator starts doing implementation work itself, use the [Option B starter prompt](#option-b-codex-or-another-coding-agent) instead.
+Open the OneShot folder, paste the starter prompt above, and replace the bracketed line with what you want.
 
-The simplest version in Claude Desktop:
-
-```text
-/oneshot build a small habit-tracking app I can run locally
-```
-
-Without the Claude plugin, use the full `Run a OneShot for this:` starter prompt above from the OneShot folder.
+**Important:** In a normal OneShot run, the orchestrator coordinates the project and spawns executor agents to do the work. If the orchestrator starts doing implementation work itself, stop the run and restart with the full starter prompt above.
 
 For real results, tell the agent five things:
 
@@ -100,14 +82,14 @@ For real results, tell the agent five things:
 - **Avoid** — anything off-limits, lazy, or against your taste
 - **Proof** — what you want to see before it hands the work back
 
-The prompts below are the kind of thing OneShot is built for — multi-day jobs that a normal chat would give up on by paragraph two. Steal liberally.
+The prompts below are the kind of thing OneShot is built for. Paste one into the bracketed prompt slot, then let it run.
 
 ---
 
 ### Build a real native app
 
 ```text
-/oneshot build a polished cross-platform desktop journaling app called "Trace."
+build a polished cross-platform desktop journaling app called "Trace."
 
 Goal: a serious native journaling app for Mac, Windows, and Linux that feels like premium software, not a webview wrapper. Daily entries, tagging, full-text search, encrypted local storage, optional Dropbox or iCloud sync, a markdown editor with live preview, image and audio attachments, mood tracking with weekly charts, and a "year in review" generator that produces a printable PDF.
 
@@ -125,7 +107,7 @@ Proof: run the app locally and capture screenshots of the four core flows (compo
 ### Ship a browser game with taste
 
 ```text
-/oneshot build a polished browser game called "Lighthouse" — a 2D atmospheric exploration game playable in any modern browser, no install required.
+build a polished browser game called "Lighthouse" — a 2D atmospheric exploration game playable in any modern browser, no install required.
 
 Goal: a single-player game where you play a young lighthouse keeper on a remote coast over the course of a year. Real-time day/night cycle, weather system, diary mechanic, a small cast of NPCs who arrive by boat, four storylines that interweave, a soundtrack of ambient piano and ocean recordings, and a final ending sequence that responds to the choices the player made.
 
@@ -143,7 +125,7 @@ Proof: run the game locally and screenshot the title scene, two key story beats,
 ### Deliver a real strategic research report
 
 ```text
-/oneshot research and write a 60+ page strategic report and deliver it as a finished, publishable artifact.
+research and write a 60+ page strategic report and deliver it as a finished, publishable artifact.
 
 Goal: a report titled "The Coming Decade of Personal Robotics: 2026–2036." Cover the technical landscape (humanoid platforms, dexterous manipulation, perception, on-device AI, battery and actuator limits), the economic landscape (funding, key players, revenue models, total cost of ownership), the regulatory landscape (US, EU, China, Japan), the labor and ethical landscape (jobs displaced, jobs created, accident liability), and a 10-year forecast with three scenarios (slow, base, fast).
 
@@ -161,7 +143,7 @@ Proof: every numerical claim links to a primary source. The bibliography include
 ### Modernize an old codebase without breaking it
 
 ```text
-/oneshot take this old web codebase and ship a modernized version that actually runs in production.
+take this old web codebase and ship a modernized version that actually runs in production.
 
 Goal: take this jQuery + PHP 5 + MySQL legacy admin tool and produce a working modern rewrite — TypeScript on the frontend with React 19, a Hono or Fastify backend in Node, Postgres with migrations, full type safety end-to-end, an OpenAPI spec, and a real test suite. Every existing feature must be preserved bit-for-bit. Anything that looks like a bug in the original should be flagged, not silently "fixed."
 
@@ -179,7 +161,7 @@ Proof: run the legacy app and the new app side by side. Walk every route in both
 ### Build a complete self-paced technical course
 
 ```text
-/oneshot build a complete self-paced course called "Postgres for Working Engineers."
+build a complete self-paced course called "Postgres for Working Engineers."
 
 Goal: an end-to-end 8-module written course aimed at backend engineers with 2–6 years of experience who use Postgres every day but never went deep. Cover query planner internals, indexing for real workloads, locking, MVCC and bloat, partitioning, replication, JSONB patterns, and operating Postgres in production. Each module includes a 30–60 minute reading, hands-on exercises with a docker-compose'd Postgres, and a graded self-check with answer keys.
 
@@ -198,7 +180,7 @@ Proof: run every exercise end-to-end on a fresh docker-compose stack and commit 
 - **It can use a lot of tokens.** OneShot keeps context, reviews its work, runs checks, and revises until the job is actually done; serious jobs can consume substantially more tokens than a normal chat.
 - **It can't bypass logins or payments.** It pauses and asks.
 - **If a session ends**, reopen your agent in the OneShot folder and tell it to resume the active OneShot.
-- **It needs the OneShot folder.** The folder stores the workflow; the Claude plugin is only one way to start it.
+- **It needs the OneShot folder.** The folder stores the workflow, project state, tickets, and proof.
 
 ## Safety
 
