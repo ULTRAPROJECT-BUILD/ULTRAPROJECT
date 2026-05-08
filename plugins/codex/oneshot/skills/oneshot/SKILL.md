@@ -39,10 +39,10 @@ Work until the project is delivered: all acceptance criteria satisfied, required
 
 ## Workflow
 
-1. Confirm the local workspace root is the OneShot repo/folder, not a random project folder and not an old ULTRAPROMPT checkout.
+1. Confirm the local workspace root is the OneShot repo/folder, not a random project folder and not an older source-project checkout.
 2. Require `SYSTEM.md`, `skills/orchestrator.md`, and `vault/`.
 3. Require at least one OneShot identifier: `README.md` contains `# OneShot`, `oneshot.py` exists, or `pyproject.toml` identifies the project as oneshot.
-4. If the current workspace appears to be legacy ULTRAPROMPT, such as README.md naming ULTRAPROMPT or `ultraprompt.py` existing without `oneshot.py`, do not use that vault. Tell the user to open the actual OneShot repo/folder and run again.
+4. If the current workspace appears to be an older source-project checkout instead of OneShot, do not use that vault. Tell the user to open the actual OneShot repo/folder and run again.
 5. If the workspace is missing the OneShot repo files, do not run. Tell the user OneShot needs the local OneShot repo/folder, then ask them to open Codex in that folder.
 6. Read `SYSTEM.md` and `skills/orchestrator.md`, especially the Critical Rules block. Treat those files as source of truth.
 7. Gather only the context needed for the user's goal: existing project records, current status files, relevant docs, code, and proof artifacts.

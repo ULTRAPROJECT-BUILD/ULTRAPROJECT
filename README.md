@@ -205,6 +205,6 @@ Use it in an environment you control. Keep secrets and credentials out of prompt
 
 ## License
 
-[Apache 2.0](LICENSE). OneShot — formerly ULTRAPROMPT — is derived from the project listed in [`NOTICE`](NOTICE).
+[Apache 2.0](LICENSE). Source attribution is kept in [`NOTICE`](NOTICE).
 
 Created by [Michael Zola](https://www.linkedin.com/in/michaeljzola/)

@@ -39,7 +39,7 @@ rg -n "T[O]DO|T[B]D|example\\.[i]nvalid|plugin-[n]ame|my-first-[p]lugin" plugins
 
 Expected result: no hits.
 
-The package intentionally names legacy ULTRAPROMPT only in setup guardrails that stop Claude from using an old vault.
+The package intentionally names legacy source-project files only in setup guardrails that stop Claude from using an old vault.
 
 ## Claim Readback
 

@@ -31,12 +31,10 @@ Forks, derivatives, commercial distributions, hosted services, and consulting pa
 A clear attribution line is encouraged:
 
 ```text
-Based on ULTRAPROMPT: https://github.com/ULTRAPROMPT-BUILD/ULTRAPROMPT
+Based on OneShot: https://github.com/oneshot-repo/OneShot
 ```
 
 Compatibility language should be factual and secondary to your own name. For example, "ExampleRunner, compatible with OneShot" is acceptable when true. "Official OneShot Cloud" is not acceptable without written permission.
-
-The ULTRAPROMPT attribution above is provenance for the canonical source project. It should not be used to imply that OneShot is the official ULTRAPROMPT project.
 
 ## Permission
 

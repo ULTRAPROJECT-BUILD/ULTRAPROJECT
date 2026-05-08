@@ -49,7 +49,7 @@ To the user, OneShot means: one prompt, full delivery. Paste the request, let th
 
 Under the hood, the skill instructs Codex to:
 
-1. Verify the workspace is the OneShot repo/folder, not an unrelated folder or old ULTRAPROMPT checkout.
+1. Verify the workspace is the OneShot repo/folder, not an unrelated folder or old source-project checkout.
 2. Read the repo-level OneShot instructions.
 3. Gather local context from relevant files and any existing OneShot state.
 4. Decide whether the user requested planning only, a specific ticket, or a full project loop.

@@ -52,7 +52,7 @@ Example:
 
 OneShot already carries the strict delivery contract inside the plugin. You do not need to paste the long orchestration prompt by hand.
 
-Do not open Claude in an old ULTRAPROMPT folder. That folder has a different vault and can send work to the wrong place.
+Do not open Claude in an old source-project folder or an unrelated project folder. A different vault can send work to the wrong place.
 
 Some Claude Code plugin contexts display the fully qualified plugin namespace:
 

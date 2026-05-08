@@ -2,7 +2,7 @@
 
 ## Reporting a Vulnerability
 
-If you find a security issue in OneShot — credential leaks, sandbox escapes, prompt-injection paths, hook bypasses, or anything that could let an agent or repo do harm — please open a private GitHub Security Advisory or email the maintainer rather than filing a public issue.
+If you find a security issue in OneShot — credential leaks, sandbox escapes, prompt-injection paths, hook bypasses, or anything that could let an agent or repo do harm — please use GitHub's private vulnerability reporting or open a private Security Advisory for `oneshot-repo/OneShot` rather than filing a public issue.
 
 This project is in early release and shared as-is, so responses are best-effort — but I'd rather know than not.
 

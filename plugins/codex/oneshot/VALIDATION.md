@@ -68,7 +68,7 @@ PY
 
 Run the ticket validation script to scan this package and marketplace file for scaffold residue and fake URLs.
 
-Expected result: no scaffold or fake-URL hits in `plugins/codex/oneshot` or `.agents/plugins`. The package intentionally names legacy ULTRAPROMPT only in setup guardrails that stop Codex from using an old vault.
+Expected result: no scaffold or fake-URL hits in `plugins/codex/oneshot` or `.agents/plugins`. The package intentionally names legacy source-project files only in setup guardrails that stop Codex from using an old vault.
 
 ## Image Checks
 

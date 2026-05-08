@@ -29,7 +29,7 @@ Upload steps:
 6. Add it to a new or existing marketplace.
 7. Set the plugin availability preference for your users.
 8. In Cowork or Claude Code, install or enable OneShot.
-9. Open Claude in the OneShot repo/folder, not an old ULTRAPROMPT folder and not an unrelated project folder.
+9. Open Claude in the OneShot repo/folder, not an old source-project folder and not an unrelated project folder.
 10. Invoke OneShot from the slash menu:
 
 ```text

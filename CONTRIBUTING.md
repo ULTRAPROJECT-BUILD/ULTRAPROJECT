@@ -2,15 +2,15 @@
 
 Thanks for helping improve OneShot. The goal of this project is to make serious AI agent work more planned, resumable, and provably complete.
 
-## Canonical Repository
+## Project Home
 
-The canonical source project that OneShot was derived from lives at:
+The canonical OneShot repository lives at:
 
 ```text
-https://github.com/ULTRAPROMPT-BUILD/ULTRAPROMPT
+https://github.com/oneshot-repo/OneShot
 ```
 
-For this OneShot distribution, use the issue, pull request, security report, and project discussion channels provided by the OneShot maintainers. The ULTRAPROMPT URL above is provenance for the source project, not the support channel for OneShot.
+Use this repository's issues, pull requests, security reports, and discussions for OneShot work. Source-project attribution, where required, is kept in [NOTICE](NOTICE).
 
 ## Contribution License
 

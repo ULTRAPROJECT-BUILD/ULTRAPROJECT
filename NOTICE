@@ -1,14 +1,15 @@
 OneShot
 Copyright 2026 OneShot contributors
 
-This product includes software developed by the ULTRAPROMPT contributors
-(https://github.com/ULTRAPROMPT-BUILD/ULTRAPROMPT).
+Canonical project:
 
-The canonical ULTRAPROMPT project is:
+    https://github.com/oneshot-repo/OneShot
+
+Portions of this product were derived from software developed by the
+ULTRAPROMPT contributors:
 
     https://github.com/ULTRAPROMPT-BUILD/ULTRAPROMPT
 
-ULTRAPROMPT and related project branding identify the canonical source project.
 The Apache License, Version 2.0 does not grant trademark rights.
 See TRADEMARKS.md for brand and compatibility guidance.
 

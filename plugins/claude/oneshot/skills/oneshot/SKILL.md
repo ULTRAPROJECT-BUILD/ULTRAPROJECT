@@ -15,7 +15,7 @@ A valid OneShot workspace must contain:
 - skills/orchestrator.md
 - vault/
 
-It must also identify as OneShot, not legacy ULTRAPROMPT. Check at least one of these identifiers:
+It must also identify as OneShot, not as an older source-project checkout. Check at least one of these identifiers:
 
 - README.md contains "# OneShot"
 - oneshot.py exists
@@ -23,7 +23,7 @@ It must also identify as OneShot, not legacy ULTRAPROMPT. Check at least one of 
 
 If the current workspace is missing those files, do not run. Tell the user: "OneShot needs both the OneShot repo/folder and the Claude plugin. Open Claude in the OneShot folder, then run `/oneshot` again."
 
-If the current workspace appears to be an old ULTRAPROMPT checkout, such as README.md naming ULTRAPROMPT or `ultraprompt.py` existing without `oneshot.py`, do not use that vault. Tell the user to open the actual OneShot repo/folder and run `/oneshot` again.
+If the current workspace appears to be an older source-project checkout instead of OneShot, do not use that vault. Tell the user to open the actual OneShot repo/folder and run `/oneshot` again.
 
 When the workspace is verified as OneShot, read SYSTEM.md and skills/orchestrator.md, especially the Critical Rules block at the top of orchestrator.md. Follow the orchestrator skill literally. Treat the files in that OneShot repo as the source of truth, not chat memory.
 
