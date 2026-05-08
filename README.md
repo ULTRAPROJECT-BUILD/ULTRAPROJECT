@@ -82,7 +82,7 @@ Work until the project is delivered: all acceptance criteria satisfied, required
 
 ## How to use it
 
-**IMPORTANT: WHEN YOU RUN ONESHOT, IF THE ORCHESTRATOR DOES ANY WORK ITSELF AND DIDN'T SPAWN AN EXECUTOR AGENT TO DO IT, IT ISN'T WORKING PROPERLY.**
+**Important:** In a normal OneShot run, the orchestrator should coordinate the project and spawn executor agents to do the work. If the orchestrator starts doing implementation work itself, use the [Option B starter prompt](#option-b-codex-or-another-coding-agent) instead.
 
 The simplest version in Claude Desktop:
 
