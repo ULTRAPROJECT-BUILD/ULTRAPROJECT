@@ -58,11 +58,16 @@ Install the plugin if you want the `/oneshot` command:
 You do not need the Claude plugin for this path. Open your coding agent in the OneShot folder and use this full starter prompt:
 
 ```text
-Oneshot this:
+Run a OneShot for this:
 
 [Your prompt, specs, project, goal, etc.]
+Before starting, check whether the current workspace contains OneShot repo files:
 
-Before starting, read SYSTEM.md and skills/orchestrator.md, especially the Critical Rules block at the top of orchestrator.md. Follow the orchestrator skill literally. Treat the files in this repo as the source of truth, not chat memory.
+SYSTEM.md
+skills/orchestrator.md
+vault/
+
+If those files exist, and before starting the project, read SYSTEM.md and skills/orchestrator.md, especially the Critical Rules block at the top of orchestrator.md. Follow the orchestrator skill literally. Treat the files in that repo as the source of truth, not chat memory. DO NOT RUN UNLESS THESE FILES ARE READ END TO END.
 
 If details are missing, make reasonable implementation assumptions, record them in the project file, and keep going.
 
@@ -77,13 +82,15 @@ Work until the project is delivered: all acceptance criteria satisfied, required
 
 ## How to use it
 
+**IMPORTANT: WHEN YOU RUN ONESHOT, IF THE ORCHESTRATOR DOES ANY WORK ITSELF AND DIDN'T SPAWN AN EXECUTOR AGENT TO DO IT, IT ISN'T WORKING PROPERLY.**
+
 The simplest version in Claude Desktop:
 
 ```text
 /oneshot build a small habit-tracking app I can run locally
 ```
 
-Without the Claude plugin, use the full `Oneshot this:` starter prompt above from the OneShot folder.
+Without the Claude plugin, use the full `Run a OneShot for this:` starter prompt above from the OneShot folder.
 
 For real results, tell the agent five things:
 
