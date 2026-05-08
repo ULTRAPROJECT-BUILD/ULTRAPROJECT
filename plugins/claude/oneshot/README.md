@@ -33,15 +33,15 @@ Under the hood, OneShot asks the agent to:
 ## Starter Prompts
 
 ```text
-OneShot this: build the app described below and keep going until it runs locally.
+/oneshot build the app described below and keep going until it runs locally.
 ```
 
 ```text
-Run OneShot for this prompt and deliver the finished result.
+/oneshot deliver the finished result from the prompt I paste next.
 ```
 
 ```text
-OneShot this game idea. I want to paste the prompt now and come back to a playable build.
+/oneshot build this game idea so I can come back to a playable build.
 ```
 
 ## Package Layout

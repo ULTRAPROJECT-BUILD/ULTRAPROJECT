@@ -26,11 +26,16 @@ codex -C /path/to/OneShot
 Then use the full starter prompt:
 
 ```text
-Oneshot this:
+Run a OneShot for this:
 
 [Your prompt, specs, project, goal, etc.]
+Before starting, check whether the current workspace contains OneShot repo files:
 
-Before starting, read SYSTEM.md and skills/orchestrator.md, especially the Critical Rules block at the top of orchestrator.md. Follow the orchestrator skill literally. Treat the files in this repo as the source of truth, not chat memory.
+SYSTEM.md
+skills/orchestrator.md
+vault/
+
+If those files exist, and before starting the project, read SYSTEM.md and skills/orchestrator.md, especially the Critical Rules block at the top of orchestrator.md. Follow the orchestrator skill literally. Treat the files in that repo as the source of truth, not chat memory. DO NOT RUN UNLESS THESE FILES ARE READ END TO END.
 
 If details are missing, make reasonable implementation assumptions, record them in the project file, and keep going.
 
