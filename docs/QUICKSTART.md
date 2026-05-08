@@ -1,81 +1,34 @@
 # OneShot Quickstart
 
-This is the shortest path for each host.
+OneShot has one official workflow now: open the OneShot folder in your coding agent and paste the full starter prompt.
 
-- **Claude:** download the OneShot repo, install the plugin, open Claude in the OneShot folder, type `/oneshot`, and paste the job.
-- **Codex or another coding agent:** open the OneShot folder, then paste the full `Run a OneShot for this:` starter prompt below.
+There is no plugin to install, no slash command to remember, and no separate package to upload.
 
-## Claude: Install OneShot
+## 1. Get The Folder
 
-OneShot has two pieces:
-
-- The **OneShot repo/folder**, which stores the workflow, vault, projects, tickets, and proof.
-- The **Claude plugin**, which gives Claude the `/oneshot` command.
-
-Download or clone the OneShot repo from the [latest release](https://github.com/oneshot-repo/OneShot/releases/tag/v0.1.0), then put the folder somewhere permanent.
-
-Download one of the Claude plugin artifacts from the same release:
-
-```text
-oneshot-claude-plugin-0.1.0.plugin
-```
-
-or:
-
-```text
-oneshot-claude-plugin-0.1.0.zip
-```
-
-Upload it in Claude Desktop or your Claude organization plugin marketplace, then enable OneShot.
-
-If you are building from source instead of downloading a release artifact, run this from the OneShot repo root:
+Clone the repo:
 
 ```bash
-scripts/package_claude_plugin.sh
+git clone https://github.com/oneshot-repo/OneShot.git ~/Documents/OneShot
 ```
 
-The script creates both upload formats under `dist/claude/`.
+Or download the source zip from the [latest release](https://github.com/oneshot-repo/OneShot/releases/tag/v0.1.0) and unzip it somewhere permanent.
 
-## Claude: Use `/oneshot`
+## 2. Open The Folder
 
-Open Claude Code or Cowork in the OneShot folder, then run:
+Open or select the OneShot folder in Claude, Codex, or another coding agent that can read files, edit files, and run commands.
 
-```text
-/oneshot <your prompt, specs, project, goal, etc.>
-```
+Do not open an old source-project folder or an unrelated target project folder. The OneShot folder contains the vault, project records, tickets, and proof trail.
 
-Example:
+## 3. Paste The Starter Prompt
 
-```text
-/oneshot build a polished local-first budgeting app with CSV import, charts, PDF export, setup docs, screenshots, and proof that the main flows work
-```
-
-OneShot already carries the strict delivery contract inside the plugin. You do not need to paste the long orchestration prompt by hand.
-
-Do not open Claude in an old source-project folder or an unrelated project folder. A different vault can send work to the wrong place.
-
-Some Claude Code plugin contexts display the fully qualified plugin namespace:
-
-```text
-/oneshot:oneshot <your prompt, specs, project, goal, etc.>
-```
-
-That is the same OneShot skill. Select the OneShot entry from the slash menu when in doubt.
-
-## Codex: Use The OneShot Folder
-
-Codex does not upload a `.plugin` file and does not use Claude-style `/oneshot` slash commands. Open Codex in the OneShot folder:
-
-```bash
-codex -C /path/to/OneShot
-```
-
-Start the run with the full starter prompt:
+Replace the bracketed line with your actual request:
 
 ```text
 Run a OneShot for this:
 
 [Your prompt, specs, project, goal, etc.]
+
 Before starting, check whether the current workspace contains OneShot repo files:
 
 SYSTEM.md
@@ -83,6 +36,8 @@ skills/orchestrator.md
 vault/
 
 If those files exist, and before starting the project, read SYSTEM.md and skills/orchestrator.md, especially the Critical Rules block at the top of orchestrator.md. Follow the orchestrator skill literally. Treat the files in that repo as the source of truth, not chat memory. DO NOT RUN UNLESS THESE FILES ARE READ END TO END.
+
+Follow the orchestrator/executor split exactly. The orchestrator may create the project shell, snapshot directories, checkpoint logs, and ticket metadata inline. The orchestrator must not author project plans, creative briefs, deliverables, QC reports, polish reviews, gate reports, claim ledgers, or verification manifests inline. Those require the delegated skill, spawned executor, or gate-review path described in orchestrator.md.
 
 If details are missing, make reasonable implementation assumptions, record them in the project file, and keep going.
 
@@ -93,7 +48,7 @@ When ambiguity exists, do not choose the smaller or easier interpretation. Prese
 Work until the project is delivered: all acceptance criteria satisfied, required proof gathered, final review passed, and deliverables handed off. Stop only if I explicitly pause/kill the run, or if every executable path is blocked by a legal, credential, approval, physical-world, or safety constraint. In that case, write a complete blocker report listing every blocked path and exactly what is needed to unblock each one.
 ```
 
-## Write A Better OneShot Prompt
+## Write A Better Request
 
 You can paste a rough ask, but better prompts usually include:
 
@@ -109,11 +64,11 @@ You do not need to describe OneShot's internal process. Describe the result you 
 
 OneShot is for work that may take an hour, a day, or a longer resumed project. It keeps the agent aimed at full delivery: files changed, checks run, assumptions recorded, blockers named, and handoff clear.
 
-OneShot does not run as a hidden background service. The active Claude, Codex, or compatible local agent does the work while OneShot supplies the delivery workflow.
+OneShot does not run as a hidden background service. The active Claude, Codex, or compatible local agent does the work while the OneShot folder supplies the delivery workflow.
 
 ## Resume Later
 
-If the session ends, reopen the same project in your agent and ask it to resume the active OneShot project from disk:
+If the session ends, reopen the same OneShot folder in your agent and ask it to resume the active project from disk:
 
 ```text
 Resume the active OneShot project in this repo. Do not create a new project.
@@ -125,10 +80,10 @@ Progress lives in the OneShot repo vault.
 
 ## Developer Source Setup
 
-Use this only if you are developing OneShot, validating the package, or building release artifacts yourself.
+Use this only if you are developing OneShot or validating the repo yourself.
 
 ```bash
-cd oneshot
+cd OneShot
 python3 -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip
@@ -136,10 +91,10 @@ pip install -e .
 oneshot
 ```
 
-The `oneshot` helper bootstraps local config examples and checks for an available agent CLI. The main user workflows are still the Claude plugin command or the Codex marketplace skill.
+The `oneshot` helper bootstraps local config examples and checks for an available agent CLI. The main workflow is still folder plus starter prompt.
 
 ## Next
 
 - [README.md](../README.md) for the product overview and example prompts
 - [SETUP.md](SETUP.md) for deeper environment setup
-- [PUBLISHING.md](PUBLISHING.md) for public-release packaging and checks
+- [PUBLISHING.md](PUBLISHING.md) for public-release checks
