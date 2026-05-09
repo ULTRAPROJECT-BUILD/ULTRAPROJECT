@@ -4,7 +4,7 @@
 
 ### One prompt. Full delivery.
 
-OneShot is a chat-native project delivery system for jobs too big for one chat. You open the OneShot folder, paste one prompt, and a coding agent keeps working until the job is finished.
+OneShot is a chat-native project delivery system for jobs too big for one chat. You open the OneShot folder, paste one prompt, and your coding agent keeps working until the job is finished.
 
 Works with Claude, Codex, or any capable coding agent that can open a folder, edit files, and run commands.
 
