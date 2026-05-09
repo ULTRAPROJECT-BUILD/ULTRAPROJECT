@@ -43,7 +43,7 @@ Or download the source zip from the [latest release](https://github.com/oneshot-
 Then open or select the OneShot folder in Claude, Codex, or your coding agent. Paste this full starter prompt:
 
 ```text
-Run a OneShot for this:
+OneShot this:
 
 [Your prompt, specs, project, goal, etc.]
 
