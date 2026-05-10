@@ -173,13 +173,13 @@ agent_routing:
       monthly_credit_budget: 10000
       priority: 1  # control-plane preference; worker routing is task-type driven
     codex:
-      cli: "/opt/homebrew/bin/codex exec"
+      cli: "codex exec"
       enabled: true
       strengths: [code-review, bug-fixing, refactoring, test-generation, code-writing, debugging, execution-briefs, proof-manifests, evidence-audits, quality-checks]
       monthly_credit_budget: 10000
       priority: 2
     gemini:
-      cli: "/opt/homebrew/bin/gemini"
+      cli: "gemini"
       enabled: false
       strengths: [artifact-cleanup, receipt-cleanup, docs-cleanup, bounded-rewrites]
       monthly_credit_budget: 10000

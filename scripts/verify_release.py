@@ -31,6 +31,12 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from platform_support import shell_run_kwargs
+
 TIMESTAMP_FMT = "%Y-%m-%dT%H:%M:%S"
 DEFAULT_TIMEOUT_SECONDS = 900
 DEFAULT_IGNORED_NAMES = {
@@ -138,8 +144,7 @@ def run_command(command: str, cwd: Path, timeout_seconds: int) -> dict:
         proc = subprocess.run(
             command,
             cwd=cwd,
-            shell=True,
-            executable="/bin/zsh",
+            **shell_run_kwargs(),
             text=True,
             capture_output=True,
             timeout=timeout_seconds,

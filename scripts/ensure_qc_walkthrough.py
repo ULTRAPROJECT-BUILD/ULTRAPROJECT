@@ -18,6 +18,12 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from platform_support import launch_path
+
 TIMESTAMP_FMT = "%Y-%m-%dT%H:%M:%S"
 WALKTHROUGH_NAME_RE = re.compile(r"(walkthrough|playthrough|screen[-_ ]?record(?:ing)?|demo)", re.IGNORECASE)
 INTERACTIVE_WEB_KEYWORD_RE = re.compile(
@@ -242,7 +248,17 @@ def run_capture(plan: dict, *, duration: float, display_id: int, fps: int, audio
         }
 
     if plan["mode"] == "desktop" and plan.get("launch_path"):
-        subprocess.run(["open", plan["launch_path"]], check=False)
+        try:
+            launch_path(Path(plan["launch_path"]))
+        except RuntimeError as exc:
+            return {
+                "status": "failed",
+                "output_path": plan["output_path"],
+                "command": None,
+                "returncode": 1,
+                "stdout": "",
+                "stderr": str(exc),
+            }
         if open_wait_seconds > 0:
             time.sleep(open_wait_seconds)
 

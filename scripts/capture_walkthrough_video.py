@@ -26,6 +26,12 @@ import tempfile
 import time
 from pathlib import Path
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from platform_support import desktop_capture_backend
+
 
 def base_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
@@ -52,16 +58,16 @@ def base_parser() -> argparse.ArgumentParser:
     desktop = subparsers.add_parser("desktop", help="Record the desktop/native app surface via ffmpeg.")
     desktop.add_argument("--output", help="Output path (.mp4, .mov, or .webm).")
     desktop.add_argument("--duration", type=float, default=8.0, help="Total recording duration in seconds.")
-    desktop.add_argument("--display-id", type=int, default=0, help="AVFoundation display ID.")
+    desktop.add_argument("--display-id", type=int, default=0, help="AVFoundation display ID (macOS only).")
     desktop.add_argument("--fps", type=int, default=12, help="Capture framerate.")
-    desktop.add_argument("--audio-device", default="none", help="AVFoundation audio device ID or 'none'.")
+    desktop.add_argument("--audio-device", default="none", help="AVFoundation audio device ID or 'none' (macOS only).")
     desktop.add_argument(
         "--scale-width",
         type=int,
         default=1600,
         help="Optional max output width for smaller review artifacts. Set 0 to disable scaling.",
     )
-    desktop.add_argument("--list-devices", action="store_true", help="Print available AVFoundation devices and exit.")
+    desktop.add_argument("--list-devices", action="store_true", help="Print desktop capture backend device info and exit.")
     return parser
 
 
@@ -181,36 +187,73 @@ def record_web(args: argparse.Namespace) -> Path:
 
 def list_desktop_devices() -> int:
     ffmpeg = require_ffmpeg()
-    result = run([ffmpeg, "-f", "avfoundation", "-list_devices", "true", "-i", ""], check=False)
-    text = result.stderr or result.stdout
-    print(text.strip())
+    backend = desktop_capture_backend()
+    if backend == "avfoundation":
+        result = run([ffmpeg, "-f", "avfoundation", "-list_devices", "true", "-i", ""], check=False)
+        text = result.stderr or result.stdout
+        print(text.strip())
+    elif backend == "gdigrab":
+        print("Windows desktop capture uses ffmpeg gdigrab input: desktop")
+    elif backend == "x11grab":
+        display = os.environ.get("ONESHOT_X11_DISPLAY") or os.environ.get("DISPLAY") or ":0.0"
+        size = os.environ.get("ONESHOT_X11_VIDEO_SIZE") or "1920x1080"
+        print(f"Linux desktop capture uses ffmpeg x11grab display={display} video_size={size}")
+    else:
+        raise SystemExit(f"Unsupported desktop capture backend: {backend}")
     return 0
 
 
-def record_desktop(args: argparse.Namespace) -> Path:
-    ffmpeg = require_ffmpeg()
-    output = Path(args.output).expanduser().resolve()
-    ensure_parent(output)
-    if output.suffix.lower() == ".mp4":
-        temp_output = output
+def build_desktop_capture_command(args: argparse.Namespace, ffmpeg: str, temp_output: Path, backend: str | None = None) -> list[str]:
+    resolved_backend = backend or desktop_capture_backend()
+    if resolved_backend == "avfoundation":
+        input_spec = f"{args.display_id}:{args.audio_device}"
+        cmd = [
+            ffmpeg,
+            "-y",
+            "-f",
+            "avfoundation",
+            "-framerate",
+            str(args.fps),
+            "-i",
+            input_spec,
+            "-t",
+            str(args.duration),
+        ]
+    elif resolved_backend == "gdigrab":
+        cmd = [
+            ffmpeg,
+            "-y",
+            "-f",
+            "gdigrab",
+            "-framerate",
+            str(args.fps),
+            "-i",
+            "desktop",
+            "-t",
+            str(args.duration),
+        ]
+    elif resolved_backend == "x11grab":
+        display = os.environ.get("ONESHOT_X11_DISPLAY") or os.environ.get("DISPLAY")
+        if not display:
+            raise SystemExit("Linux desktop capture requires DISPLAY or ONESHOT_X11_DISPLAY.")
+        video_size = os.environ.get("ONESHOT_X11_VIDEO_SIZE") or "1920x1080"
+        cmd = [
+            ffmpeg,
+            "-y",
+            "-f",
+            "x11grab",
+            "-video_size",
+            video_size,
+            "-framerate",
+            str(args.fps),
+            "-i",
+            display,
+            "-t",
+            str(args.duration),
+        ]
     else:
-        fd, temp_name = tempfile.mkstemp(suffix=".mp4", prefix="desktop-walkthrough-")
-        os.close(fd)
-        temp_output = Path(temp_name)
+        raise SystemExit(f"Unsupported desktop capture backend: {resolved_backend}")
 
-    input_spec = f"{args.display_id}:{args.audio_device}"
-    cmd = [
-        ffmpeg,
-        "-y",
-        "-f",
-        "avfoundation",
-        "-framerate",
-        str(args.fps),
-        "-i",
-        input_spec,
-        "-t",
-        str(args.duration),
-    ]
     if args.scale_width and args.scale_width > 0:
         cmd.extend(["-vf", f"scale=min(iw\\,{args.scale_width}):-2"])
     cmd.extend(
@@ -224,6 +267,21 @@ def record_desktop(args: argparse.Namespace) -> Path:
             str(temp_output),
         ]
     )
+    return cmd
+
+
+def record_desktop(args: argparse.Namespace) -> Path:
+    ffmpeg = require_ffmpeg()
+    output = Path(args.output).expanduser().resolve()
+    ensure_parent(output)
+    if output.suffix.lower() == ".mp4":
+        temp_output = output
+    else:
+        fd, temp_name = tempfile.mkstemp(suffix=".mp4", prefix="desktop-walkthrough-")
+        os.close(fd)
+        temp_output = Path(temp_name)
+
+    cmd = build_desktop_capture_command(args, ffmpeg, temp_output)
     result = run(cmd, check=False)
     if result.returncode != 0:
         raise SystemExit(f"Desktop walkthrough capture failed:\n{result.stderr}")

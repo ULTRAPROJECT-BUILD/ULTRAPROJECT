@@ -59,13 +59,13 @@ DEFAULT_ROUTING = {
             "priority": 1,
         },
         "codex": {
-            "cli": "/opt/homebrew/bin/codex exec",
+            "cli": "codex exec",
             "enabled": False,
             "monthly_credit_budget": 100,
             "priority": 2,
         },
         "gemini": {
-            "cli": "/opt/homebrew/bin/gemini",
+            "cli": "gemini",
             "enabled": False,
             "monthly_credit_budget": 100,
             "priority": 3,
@@ -2072,7 +2072,8 @@ def stitch_server_uses_local_proxy() -> bool:
         return False
     command = str(stitch.get("command", "")).strip().lower()
     args = stitch.get("args") or []
-    if command not in {"node", "nodejs", "/opt/homebrew/bin/node"} and not command.endswith("/node"):
+    command_name = Path(command.replace("\\", "/")).name
+    if command_name not in {"node", "nodejs", "node.exe", "nodejs.exe"}:
         return False
     resolved_args = [str(arg) for arg in args if isinstance(arg, (str, Path))]
     proxy_path = str((REPO_ROOT / STITCH_PROXY_SERVER_RELATIVE).resolve())
@@ -3622,8 +3623,19 @@ def append_entry(metering_path: Path, platform_path: Path, entry: dict) -> None:
     write_metering(effective_path, frontmatter, routing, entries)
 
 
+def split_cli_command(cli: str) -> list[str]:
+    command = shlex.split(cli, posix=os.name != "nt")
+    if os.name == "nt":
+        command = [token.strip('"') for token in command]
+    return command
+
+
+def command_basename(command: str) -> str:
+    return Path(command.replace("\\", "/")).name.lower()
+
+
 def build_command(agent: str, cli: str, prompt: str, cwd: str) -> list[str]:
-    command = shlex.split(cli)
+    command = split_cli_command(cli)
     if not command:
         raise SystemExit(f"No CLI configured for agent '{agent}'")
 
@@ -3639,7 +3651,7 @@ def build_command(agent: str, cli: str, prompt: str, cwd: str) -> list[str]:
             command.append("--dangerously-skip-permissions")
         return command
 
-    if agent == "codex" and len(command) >= 2 and command[0].endswith("codex") and command[1] == "exec":
+    if agent == "codex" and len(command) >= 2 and command_basename(command[0]) in {"codex", "codex.exe"} and command[1] == "exec":
         command.extend(["--dangerously-bypass-approvals-and-sandbox", "--skip-git-repo-check", "--cd", cwd, prompt])
         return command
 
