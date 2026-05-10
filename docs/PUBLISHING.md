@@ -9,7 +9,7 @@ OneShot is distributed as a repo/folder. Do not attach plugin packages or docume
 1. Run tests:
 
 ```bash
-python3 -m pytest tests
+python -m pytest tests
 ```
 
 2. Scan public docs for stale plugin instructions, local-only paths, or private state:

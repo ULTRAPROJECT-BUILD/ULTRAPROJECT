@@ -14,7 +14,7 @@ import time
 import uuid
 from collections import defaultdict
 from datetime import datetime, timedelta
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import yaml
 
@@ -59,13 +59,13 @@ DEFAULT_ROUTING = {
             "priority": 1,
         },
         "codex": {
-            "cli": "/opt/homebrew/bin/codex exec",
+            "cli": "codex exec",
             "enabled": False,
             "monthly_credit_budget": 100,
             "priority": 2,
         },
         "gemini": {
-            "cli": "/opt/homebrew/bin/gemini",
+            "cli": "gemini",
             "enabled": False,
             "monthly_credit_budget": 100,
             "priority": 3,
@@ -498,7 +498,10 @@ def parse_scalar(value: str):
     if not value:
         return ""
     if value.startswith('"') and value.endswith('"'):
-        return value[1:-1]
+        try:
+            return json.loads(value)
+        except json.JSONDecodeError:
+            return value[1:-1]
     if value.startswith("'") and value.endswith("'"):
         return value[1:-1]
     if value.startswith("[") and value.endswith("]"):
@@ -2072,7 +2075,8 @@ def stitch_server_uses_local_proxy() -> bool:
         return False
     command = str(stitch.get("command", "")).strip().lower()
     args = stitch.get("args") or []
-    if command not in {"node", "nodejs", "/opt/homebrew/bin/node"} and not command.endswith("/node"):
+    command_name = Path(command.replace("\\", "/")).name
+    if command_name not in {"node", "nodejs", "node.exe", "nodejs.exe"}:
         return False
     resolved_args = [str(arg) for arg in args if isinstance(arg, (str, Path))]
     proxy_path = str((REPO_ROOT / STITCH_PROXY_SERVER_RELATIVE).resolve())
@@ -2220,7 +2224,7 @@ def format_stitch_auth_snapshot(ticket_path: Path, auth_url: str, state: dict) -
         "3. If the browser lands on a localhost connection error page, copy the full callback URL from the address bar.\n"
         "4. Complete the auth handoff with:\n\n"
         "```bash\n"
-        f"python3 scripts/agent_runtime.py complete-stitch-auth --callback-url '<PASTE_FULL_CALLBACK_URL>'\n"
+        f"python scripts/agent_runtime.py complete-stitch-auth --callback-url '<PASTE_FULL_CALLBACK_URL>'\n"
         "```\n\n"
         "## Authorization URL\n\n"
         f"{auth_url}\n"
@@ -3622,8 +3626,19 @@ def append_entry(metering_path: Path, platform_path: Path, entry: dict) -> None:
     write_metering(effective_path, frontmatter, routing, entries)
 
 
+def split_cli_command(cli: str) -> list[str]:
+    command = shlex.split(cli, posix=os.name != "nt")
+    if os.name == "nt":
+        command = [token.strip('"') for token in command]
+    return command
+
+
+def command_basename(command: str) -> str:
+    return PurePosixPath(command.replace("\\", "/")).name.lower()
+
+
 def build_command(agent: str, cli: str, prompt: str, cwd: str) -> list[str]:
-    command = shlex.split(cli)
+    command = split_cli_command(cli)
     if not command:
         raise SystemExit(f"No CLI configured for agent '{agent}'")
 
@@ -3639,7 +3654,7 @@ def build_command(agent: str, cli: str, prompt: str, cwd: str) -> list[str]:
             command.append("--dangerously-skip-permissions")
         return command
 
-    if agent == "codex" and len(command) >= 2 and command[0].endswith("codex") and command[1] == "exec":
+    if agent == "codex" and len(command) >= 2 and command_basename(command[0]) in {"codex", "codex.exe"} and command[1] == "exec":
         command.extend(["--dangerously-bypass-approvals-and-sandbox", "--skip-git-repo-check", "--cd", cwd, prompt])
         return command
 

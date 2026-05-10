@@ -286,7 +286,7 @@ Return:
 | Render crashes with memory error | Video too long or too many concurrent renders | Reduce `--concurrency` flag, render in segments, increase Node memory with `--max-old-space-size=8192` |
 | Black frames in output | Component returns null or transparent background | Add explicit `backgroundColor` to `AbsoluteFill`, verify scene timing with `<Sequence>` `from` and `durationInFrames` |
 | Audio out of sync | Mismatched frame timing between audio and visual sequences | Align `<Audio>` components with their parent `<Sequence>` timing, verify audio file duration matches expected scene length |
-| FFmpeg not found | FFmpeg not installed or not in PATH | Verify with `which ffmpeg`, install via Homebrew if needed: `brew install ffmpeg` |
+| FFmpeg not found | FFmpeg not installed or not in PATH | Verify with `ffmpeg -version`; install with the host package manager, e.g. `brew install ffmpeg`, `winget install Gyan.FFmpeg`, or `sudo apt install ffmpeg` |
 | Render produces wrong resolution | Composition dimensions set incorrectly | Verify `width={1080} height={1920}` in the `<Composition>` component |
 | File too large for email | High bitrate or long duration | Re-encode with higher CRF value (23-28), or reduce resolution |
 | TypeScript compilation errors | Missing type definitions or syntax errors | Run `npx tsc --noEmit` to check types before rendering, install `@types/react` if missing |

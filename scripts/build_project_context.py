@@ -42,7 +42,9 @@ CURRENT_WAVE_RE = re.compile(r"^Current wave:\s*(.+?)\s*$", re.MULTILINE)
 FRONTMATTER_TS_KEYS = ("captured", "updated", "completed", "created")
 BULLET_FIELD_RE = re.compile(r"^- \*\*(.+?):\*\*\s*(.+?)\s*$")
 ACTIVE_ASSUMPTION_STATUSES = {"open", "validating"}
-ABS_PATH_RE = re.compile(r"(/(?:Users|Applications|opt|private|var|Volumes|tmp)[^\s`\"'()<>\]]+)")
+ABS_PATH_RE = re.compile(
+    r"((?:/(?:Users|Applications|opt|private|var|Volumes|tmp)|[A-Za-z]:[\\/])[^\s`\"'()<>\]]+)"
+)
 FILE_SUFFIX_HINTS = {".md", ".txt", ".json", ".yaml", ".yml", ".png", ".jpg", ".jpeg", ".gif", ".svg", ".mp4", ".mov", ".pdf"}
 CODE_MARKER_FILES = (
     "package.json",
@@ -139,7 +141,7 @@ def parse_labeled_bullets(section_text: str) -> dict[str, str]:
 
 def relative_to_platform(path: Path, platform_root: Path) -> str:
     try:
-        return str(path.resolve().relative_to(platform_root.resolve()))
+        return path.resolve().relative_to(platform_root.resolve()).as_posix()
     except ValueError:
         return str(path.resolve())
 

@@ -49,7 +49,7 @@ For personal use you can ignore this section. The defaults work out of the box. 
 
 ## Running the System
 
-When writing or updating vault records, get timestamp values from the machine-local clock (`date +"%Y-%m-%dT%H:%M"` in the current system timezone). Do not infer them, and do not write UTC values as naive local times.
+When writing or updating vault records, get timestamp values from the machine-local clock (`date +"%Y-%m-%dT%H:%M"` on macOS/Linux/WSL, `Get-Date -Format "yyyy-MM-ddTHH:mm"` in PowerShell, or an equivalent local Python datetime command). Do not infer them, and do not write UTC values as naive local times.
 
 **Manual (development):**
 ```bash

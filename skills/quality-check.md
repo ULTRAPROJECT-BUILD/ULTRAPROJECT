@@ -112,7 +112,7 @@ For each file type, run the appropriate checks:
 - **Walkthrough video (MANDATORY for interactive web deliverables, recommended for motion-heavy marketing surfaces):**
   First try the auto-capture helper:
   ```bash
-  python3 scripts/ensure_qc_walkthrough.py \
+  python scripts/ensure_qc_walkthrough.py \
     --deliverables-root "{deliverables_path}" \
     --brief "{creative_brief_path}" \
     --qc-report "{qc_report_path}" \
@@ -123,7 +123,7 @@ For each file type, run the appropriate checks:
 
   Manual fallback:
   ```bash
-  python3 scripts/capture_walkthrough_video.py web \
+  python scripts/capture_walkthrough_video.py web \
     --url "http://localhost:3000" \
     --output "{deliverables_path}/qc-walkthrough.mp4" \
     --duration 8 \
@@ -133,7 +133,7 @@ For each file type, run the appropriate checks:
 - If upstream stages were supposed to produce benchmark/design screenshots (for example Stitch comparison artifacts), verify those files exist and cite them too. Missing upstream-owned artifacts should block the producing stage; missing QC-owned artifacts should block QC.
 - **Graceful degradation check:** Verify the page is usable with JavaScript disabled. This requires **Playwright Python API** (agent-browser cannot disable JS):
   ```bash
-  python3 -c "
+  python -c "
   from playwright.sync_api import sync_playwright
   with sync_playwright() as p:
       browser = p.chromium.launch()
@@ -164,8 +164,8 @@ For each file type, run the appropriate checks:
   ```bash
   # Install rendering tools if not available
   # LibreOffice exposes 'soffice' on macOS, 'libreoffice' on Linux
-  which libreoffice || which soffice || brew install --cask libreoffice
-  which pdftoppm || brew install poppler
+  libreoffice --version || soffice --version
+  pdftoppm -v
 
   # Derive PDF filename from PPTX path (e.g., my-deck.pptx → my-deck.pdf)
   # Convert PPTX to PDF
@@ -231,21 +231,21 @@ Read the creative brief's "Target runtime and user acceptance test" section. For
 |-----------------|----------------|---------------|
 | HTML website | Browser | `agent-browser`: open page, screenshot, snapshot -i for interactive elements, click/fill smoke test. Use Playwright Python API only for JS-disabled testing and console error capture. |
 | Godot project | Godot engine | Export to HTML5: `godot --headless --export-release "Web" /tmp/export/index.html` → `agent-browser --allow-file-access open "file:///tmp/export/index.html"` → screenshot → snapshot -i → click Start ref → check for errors. If export fails, the project is broken. |
-| Python script/tool | Python | Run with sample inputs: `python3 tool.py --help` or test command → verify exit code 0, check stderr for errors |
+| Python script/tool | Python | Run with sample inputs: `python tool.py --help` or test command → verify exit code 0, check stderr for errors |
 | Node.js app | Node | `node app.js` or `npm start` → verify it starts, hit endpoints if applicable |
 | MCP server | MCP protocol | Run full [[test-mcp-server]] including tool invocation and artifact verification |
 | PPTX/slides | LibreOffice + visual | Convert to PDF → per-slide PNGs via LibreOffice headless → read each slide image → verify no overlapping shapes, text overflow, or broken layouts. Programmatic checks alone are NOT sufficient. |
 | PDF/document | Preview/reader | Open with `open` or `qlmanage -p` → verify it renders, check page count |
 | Mobile app (iOS) | iOS Simulator | `agent-browser -p ios --device "iPhone 16 Pro" open {url}` → snapshot -i → tap refs → screenshot. Requires Xcode + Appium. |
 | Mobile app (Android) | Android Emulator | Build APK → launch in emulator → `agent-browser` connect via remote debugging → snapshot → tap → screenshot |
-| Desktop app | Native OS | Launch the executable → verify main window, primary function, then run `python3 scripts/ensure_qc_walkthrough.py --deliverables-root {deliverables_path} --brief {creative_brief_path} --qc-report {qc_report_path} --json-out {deliverables_path}/qc-walkthrough-report.json` or fall back to `python3 scripts/capture_walkthrough_video.py desktop --output {deliverables_path}/qc-walkthrough.mp4 --duration 8` for any reviewable UI flow |
+| Desktop app | Native OS | Launch the executable → verify main window, primary function, then run `python scripts/ensure_qc_walkthrough.py --deliverables-root {deliverables_path} --brief {creative_brief_path} --qc-report {qc_report_path} --json-out {deliverables_path}/qc-walkthrough-report.json` or fall back to `python scripts/capture_walkthrough_video.py desktop --output {deliverables_path}/qc-walkthrough.mp4 --duration 8` for any reviewable UI flow |
 | API | HTTP | Hit endpoints with curl/requests → verify responses match spec |
 | Data/CSV | Pandas or viewer | Load and verify: row count, column names, no parse errors, sample values make sense. Check against [[deliverable-standards]] for the Data/CSV type. |
 | Game (any engine) | Engine + browser | Full playthrough verification — see **Game Quality Playthrough** below. Use `agent-browser` for navigation/screenshots, Playwright Python API for state injection and console capture. |
 
 **Rules:**
 1. If the runtime test fails (crash, error, blank screen, broken functionality), the verdict is **FAIL — Broken** regardless of how clean the code looks.
-2. If you can't run the test (missing dependency, no export template, etc.), install what's needed. You're a self-extending agent — `brew install`, `pip install`, download the export template, whatever it takes.
+2. If you can't run the test (missing dependency, no export template, etc.), install what's needed with the host package manager or project toolchain (`brew`, `winget`, `apt`, `pip`, etc.), download the export template, whatever it takes.
 3. If after best effort you truly cannot test it automatically, create a **mandatory** human-review ticket with exact steps for manual testing. Do NOT mark QC as PASS. Use **PASS with caveats** and list what couldn't be verified.
 4. Log all runtime proof results with evidence: exit codes, screenshots, walkthrough video filenames, console output, error messages. For interactive browser/native deliverables, the QC report must cite the walkthrough filename explicitly.
 5. **Step 2b is necessary but not sufficient for code/software deliverables.** A binary that launches is not proof that it works correctly. Step 2d (Verification Protocol Execution) provides the full proof chain. Do not skip 2d because 2b passed.
@@ -350,7 +350,7 @@ This step is distinct from Step 2b (Runtime Verification). Step 2b verifies the 
 **Rules:**
 - The protocol is not optional. If the brief defines one and QC skips it, the QC report is invalid.
 - Build failures block test execution. Critical test failures block functional proof.
-- If a protocol step requires a tool that isn't installed, install it (`brew install`, `rustup`, `apt-get`).
+- If a protocol step requires a tool that isn't installed, install it with the appropriate host package manager or toolchain (`brew`, `winget`, `apt`, `rustup`, etc.).
 - If a step truly cannot be executed (requires proprietary hardware), note as "unverifiable" and create a human-review ticket. Use **PASS with caveats**, never clean PASS.
 
 ### Step 2e: Evidence Freshness and Consistency Check (MANDATORY)
@@ -383,7 +383,7 @@ This step is distinct from Step 2b (Runtime Verification). Step 2b verifies the 
 
 3. **Run the bridge validate command:**
    ```bash
-   python3 scripts/refactor_bridge.py validate \
+   python scripts/refactor_bridge.py validate \
      --target {target_codebase_path} \
      --changed-files {comma_separated_file_paths}
    ```
@@ -491,7 +491,7 @@ Beyond "does it exist," assess whether the work is good enough to ship:
 - **Analytical / research quality:** For research decks, analyses, or reports, verify the conclusions are supported by the cited evidence, that numbers are internally consistent, and that caveats/risks are stated clearly enough for a skeptical reader.
 - **Operational / process quality:** For playbooks, SOPs, or system docs, verify the steps are executable in sequence, prerequisites are explicit, escalation paths are documented, and handoff language is concrete rather than vague.
 - **Playbook overreach check:** For project plans, creative briefs, platform specs, and other frontier/high-novelty planning artifacts, verify that archived playbooks are used as bounded prior art rather than silent proof. Missing `Playbook Usage Contract` / `Why This Cannot Just Be The Playbook` sections, using a playbook as direct capability proof, or cloning an old phase plan without fresh reasoning is a FAIL.
-- **Mechanical check for frontier planning artifacts:** When reviewing a frontier/high-novelty plan or brief and the files exist, run `python3 scripts/check_playbook_overreach.py --plan <plan_path> [--brief <brief_path>] [--project <project_path>]`. A non-zero result is a FAIL unless the issue is fixed and the checker passes.
+- **Mechanical check for frontier planning artifacts:** When reviewing a frontier/high-novelty plan or brief and the files exist, run `python scripts/check_playbook_overreach.py --plan <plan_path> [--brief <brief_path>] [--project <project_path>]`. A non-zero result is a FAIL unless the issue is fixed and the checker passes.
 - **Campaign / outreach quality:** For lead-gen, outbound, or marketing work, verify target-audience fit, CTA clarity, offer specificity, and compliance requirements for the channel.
 - **Missing planning artifact:** If this should have had a creative brief and none exists, treat that as a process failure and do not ship as PASS.
 
@@ -518,7 +518,7 @@ Read the Enterprise Quality Gate section of [[deliverable-standards]]. For each 
 
 For any deliverable that has user interaction — games, web apps, interactive dashboards, tools with controls, forms, or any UI with buttons/keys/mouse input — you MUST run automated interaction smoke tests before issuing a verdict. Screenshots alone are NOT sufficient. A game can render beautifully and be completely unplayable.
 
-For browser-based or native interactive deliverables, run `python3 scripts/ensure_qc_walkthrough.py` after the smoke path passes so QC auto-captures `qc-walkthrough.mp4` when the surface is inferable. If the helper cannot capture a required walkthrough and the UI is still genuinely not reviewable in video form, the QC report must explain why.
+For browser-based or native interactive deliverables, run `python scripts/ensure_qc_walkthrough.py` after the smoke path passes so QC auto-captures `qc-walkthrough.mp4` when the surface is inferable. If the helper cannot capture a required walkthrough and the UI is still genuinely not reviewable in video form, the QC report must explain why.
 
 **Important framing:** This is **smoke testing** — verifying that controls respond at all, not assessing gameplay quality, balance, or feel. Headless browsers with SwiftShader cannot meaningfully evaluate 3D performance or subjective game feel. The goal is: "does pressing W do anything?" not "is the movement speed fun?"
 

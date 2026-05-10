@@ -31,21 +31,21 @@ inputs:
 2. **Create the project file only** — analyze the goal and write the project file with the goal, context, and high-level notes. **Do NOT create tickets here.** The orchestrator will run [[project-plan]] after this to define architecture decisions, decompose into phases, and create tickets. This ensures every project gets explicit planning, architecture decisions, and artifact tracking regardless of size.
    - **Immediately after writing the project file, generate the derived project context layer** so the project shell has a native orientation surface from the first cycle:
      ```bash
-     python3 scripts/build_project_context.py --project-file "{project_file_path}"
-     python3 scripts/build_project_image_evidence.py --project-file "{project_file_path}"
-     python3 scripts/build_project_video_evidence.py --project-file "{project_file_path}"
-     python3 scripts/refresh_project_text_embeddings.py --project-file "{project_file_path}"
+     python scripts/build_project_context.py --project-file "{project_file_path}"
+     python scripts/build_project_image_evidence.py --project-file "{project_file_path}"
+     python scripts/build_project_video_evidence.py --project-file "{project_file_path}"
+     python scripts/refresh_project_text_embeddings.py --project-file "{project_file_path}"
      ```
      This creates `{project}.derived/current-context.md`, `{project}.derived/artifact-index.yaml`, `{project}.derived/image-evidence-index.yaml`, and `{project}.derived/video-evidence-index.yaml` in a sibling folder next to the project file. They are derived helpers only — the project file remains canonical. See [[SCHEMA]] → "Project Derived Context".
      If the project goal already names a real code workspace, you may also run:
      ```bash
-     python3 scripts/refresh_project_code_index.py --project-file "{project_file_path}"
+     python scripts/refresh_project_code_index.py --project-file "{project_file_path}"
      ```
      This is safe when no code workspace exists yet; it no-ops cleanly.
    - If the project shell already includes screenshots, visual proofs, or Stitch outputs, refresh selective visual embeddings too:
      ```bash
-     python3 scripts/refresh_project_image_embeddings.py --project-file "{project_file_path}"
-     python3 scripts/refresh_project_video_embeddings.py --project-file "{project_file_path}"
+     python scripts/refresh_project_image_embeddings.py --project-file "{project_file_path}"
+     python scripts/refresh_project_video_embeddings.py --project-file "{project_file_path}"
      ```
      This is safe to call repeatedly. It only refreshes embeddings when the manifest changed and no-ops cleanly when the project has no indexed image/video evidence yet.
 

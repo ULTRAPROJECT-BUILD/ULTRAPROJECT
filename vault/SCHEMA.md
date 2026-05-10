@@ -6,7 +6,7 @@ Auxiliary non-markdown files may also exist in the vault for system bookkeeping,
 
 ## Frontmatter Fields
 
-Temporal metadata fields should use ISO 8601 datetime format: `YYYY-MM-DDTHH:MM` (e.g., `2026-03-17T10:30`). Generate these values from the machine-local clock at write time (for example, `date +"%Y-%m-%dT%H:%M"` in the current system timezone). Do not infer them from memory, and do not write UTC or another timezone as a naive local timestamp. This applies to fields such as `created`, `updated`, `completed`, `decided`, `learned`, `captured`, `tos_accepted_date`, and `payment_requested_date`. Calendar-only fields such as `due` and legal `effective_date` may remain `YYYY-MM-DD`. Legacy date-only records may remain until they are next updated.
+Temporal metadata fields should use ISO 8601 datetime format: `YYYY-MM-DDTHH:MM` (e.g., `2026-03-17T10:30`). Generate these values from the machine-local clock at write time (for example, `date +"%Y-%m-%dT%H:%M"` on macOS/Linux/WSL, `Get-Date -Format "yyyy-MM-ddTHH:mm"` in PowerShell, or an equivalent local Python datetime command). Do not infer them from memory, and do not write UTC or another timezone as a naive local timestamp. This applies to fields such as `created`, `updated`, `completed`, `decided`, `learned`, `captured`, `tos_accepted_date`, and `payment_requested_date`. Calendar-only fields such as `due` and legal `effective_date` may remain `YYYY-MM-DD`. Legacy date-only records may remain until they are next updated.
 
 ### Projects (`vault/projects/` or `vault/clients/{slug}/projects/`)
 ```yaml

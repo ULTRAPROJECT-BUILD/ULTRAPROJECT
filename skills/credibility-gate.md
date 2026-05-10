@@ -89,7 +89,7 @@ For each claim:
 Do NOT handwrite the claim ledger when a deterministic build is possible. Use:
 
 ```bash
-python3 scripts/build_claim_ledger.py \
+python scripts/build_claim_ledger.py \
   --verification-profile "{verification_profile}" \
   --doc "{doc_path_1}" \
   --doc "{doc_path_2}" \
@@ -126,7 +126,7 @@ For `software` profile deliverables:
 4. Use the machine verifier, not handwritten prose:
 
    ```bash
-   python3 scripts/verify_release.py \
+   python scripts/verify_release.py \
      --source "{deliverables_path}" \
      --workdir-subpath "{repo_subdir_if_needed}" \
      --command "{documented_command_1}" \

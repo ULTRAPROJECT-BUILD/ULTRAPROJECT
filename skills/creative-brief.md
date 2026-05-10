@@ -170,7 +170,7 @@ Rules:
   Examples:
   - Website: "Open index.html in browser → `agent-browser` full-page screenshot + interaction smoke test via snapshot -i and ref clicks"
   - Godot game: "Export to HTML5 via `godot --headless --export-release Web` → `agent-browser --allow-file-access open` → screenshot → snapshot -i → click Start ref → verify no errors"
-  - Python tool: "Run `python3 tool.py --test` → verify exit code 0 and expected output"
+  - Python tool: "Run `python tool.py --test` → verify exit code 0 and expected output"
   - PPTX slides: "Convert to per-slide PNGs via LibreOffice headless → visually inspect each slide for overlapping shapes, text overflow, broken layouts, and contrast issues"
   - PDF report: "Open with Preview/browser → verify page count, section headers present, no blank pages"
   - API/MCP: "Run test-mcp-server → verify all tools respond"

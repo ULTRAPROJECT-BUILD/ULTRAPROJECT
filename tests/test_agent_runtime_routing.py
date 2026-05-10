@@ -702,7 +702,7 @@ def test_command_spawn_task_detaches_runtime_wrapper(tmp_path, monkeypatch, caps
     assert captured["kwargs"]["start_new_session"] is True
     assert captured["kwargs"]["close_fds"] is True
     command = captured["args"][0]
-    assert command[0].endswith("python3") or command[0].endswith("python")
+    assert Path(command[0]).name in {"python", "python3", "python.exe"}
     assert "run-task" in command
     assert "--ticket-path" in command
     assert payload["runtime_pid"] == 60001

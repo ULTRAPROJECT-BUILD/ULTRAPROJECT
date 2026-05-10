@@ -40,7 +40,7 @@ Understand:
 Run:
 
 ```bash
-python3 scripts/create_project_amendment.py \
+python scripts/create_project_amendment.py \
   --project-file "{project_file}" \
   --request-text "{change_request}" \
   --source-kind "{source_kind}" \

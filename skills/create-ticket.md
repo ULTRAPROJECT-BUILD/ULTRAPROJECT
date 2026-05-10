@@ -59,7 +59,7 @@ inputs:
 3. **Increment the counter** by 1 and write it back to that `.counter`.
 4. **Generate the ticket ID**: `T-` followed by the counter zero-padded to 3 digits (e.g., `T-001`).
 5. **Create the ticket file** at the determined ticket directory as `{id}-{slug}.md` where `{slug}` is a kebab-case version of the title (max 5 words).
-6. Resolve `{now}` from the machine-local clock at write time (for example, `date +"%Y-%m-%dT%H:%M"` in the current system timezone). Do not guess or convert from UTC unless the source value explicitly includes a timezone.
+6. Resolve `{now}` from the machine-local clock at write time (for example, `date +"%Y-%m-%dT%H:%M"` on macOS/Linux/WSL, `Get-Date -Format "yyyy-MM-ddTHH:mm"` in PowerShell, or an equivalent local Python datetime command). Do not guess or convert from UTC unless the source value explicitly includes a timezone.
 7. **Write the file** with this template:
 
 ```markdown
@@ -106,7 +106,7 @@ delivery_surface_verified_at: "{delivery_surface_verified_at or ''}"
 
 8. **Add a project back-link** in the ticket body after the H1 using the literal sentence `Part of project [[{project-slug}]].`
 9. **Append the canonical project task link** by running:
-   - `python3 scripts/ensure_project_ticket_link.py --ticket-path "{ticket_path}"`
+   - `python scripts/ensure_project_ticket_link.py --ticket-path "{ticket_path}"`
    This step is mandatory. `create-ticket` is the sole project-task writer. Do not rely on downstream skills to manually append the ticket to the project's `## Tasks` section.
 10. **UI contract:** If the ticket creates or materially redesigns a user-facing UI surface (landing page, dashboard, web app screen, mobile screen, admin panel, visual refresh), set:
    - `ui_work: true`

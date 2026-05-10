@@ -30,7 +30,7 @@ You are gathering context before starting work on a ticket. Do NOT begin executi
 4. If client-scoped, check for `vault/clients/{client}/preferences.md`. If it exists, read it — this tells you how the client likes to work, what formats they prefer, what approaches succeeded before, and what to avoid. Apply relevant preferences to your work.
 5. If `{project}.derived/current-context.md` and `{project}.derived/artifact-index.yaml` exist in the project's `<slug>.derived/` sibling folder, read them first as the fast orientation layer. If the artifact index includes `code_workspaces` and your task is code-touching, note which workspace is primary and whether GitNexus appears ready before you start wandering through the codebase manually.
 6. If the ticket is deep, review-heavy, or otherwise cross-cutting — and it is not an explicitly clean-room lane like `stress_test` or `artifact_polish_review` — run 1-3 targeted project-scoped hybrid retrieval queries before broad repo wandering.
-   - Use `python3 scripts/search_project_hybrid.py --project-file {project_file} "{query}"` once you know the project file path.
+   - Use `python scripts/search_project_hybrid.py --project-file {project_file} "{query}"` once you know the project file path.
    - Derive queries from the ticket title, acceptance criteria, and current phase goal.
    - Capture only a short retrieval digest: which artifacts, proofs, screenshots, reviews, or briefs look relevant and why.
 
