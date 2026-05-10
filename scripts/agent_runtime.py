@@ -14,7 +14,7 @@ import time
 import uuid
 from collections import defaultdict
 from datetime import datetime, timedelta
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import yaml
 
@@ -3634,7 +3634,7 @@ def split_cli_command(cli: str) -> list[str]:
 
 
 def command_basename(command: str) -> str:
-    return Path(command.replace("\\", "/")).name.lower()
+    return PurePosixPath(command.replace("\\", "/")).name.lower()
 
 
 def build_command(agent: str, cli: str, prompt: str, cwd: str) -> list[str]:
