@@ -41,6 +41,7 @@ def test_claude_hooks_use_python_entrypoints_not_bash_scripts():
     assert commands
     assert all(command.startswith("python .claude/hooks/") for command in commands)
     assert all(not command.endswith(".sh") for command in commands)
+    assert not list((REPO_ROOT / ".claude" / "hooks").glob("*.sh"))
 
 
 def test_core_runtime_has_no_hardcoded_posix_shell_or_homebrew_paths():
