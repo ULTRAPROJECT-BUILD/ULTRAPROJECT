@@ -182,8 +182,10 @@ Rules:
 Run the checker before emitting the final snapshot:
 
 ```bash
-python scripts/check_research_context.py --snapshot "{working_snapshot_path}" --ledger "{ledger_path}" --today "$(date +%Y-%m-%d)" --max-source-age-days 366 --max-inferred-ratio 0.30 --markdown-out "{snapshots_path}/{date}-research-context-check-{project}.md" --json-out "{snapshots_path}/{date}-research-context-check-{project}.json"
+python scripts/check_research_context.py --snapshot "{working_snapshot_path}" --ledger "{ledger_path}" --today "{today}" --max-source-age-days 366 --max-inferred-ratio 0.30 --markdown-out "{snapshots_path}/{date}-research-context-check-{project}.md" --json-out "{snapshots_path}/{date}-research-context-check-{project}.json"
 ```
+
+Set `{today}` from the machine-local date before running the check (`date +%Y-%m-%d` on macOS/Linux/WSL, `Get-Date -Format "yyyy-MM-dd"` in PowerShell, or an equivalent local Python date command).
 
 The checker verifies cited claims include URL and date, cited dates are within last 12 months, the reservation ledger exists, non-inferred claims are not uncited, and claim IDs are well-formed. It sets `low_confidence: true` when inferred claims divided by all claims is more than 30 percent. `low_confidence: true` is not a checker failure; it is a warning that downstream skills must convert currentness claims into assumptions or open questions.
 

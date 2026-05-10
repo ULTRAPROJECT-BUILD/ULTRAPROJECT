@@ -33,8 +33,13 @@ Project-plan owns currentness research. The orchestrator creates or resumes the 
    - Legacy platform: `vault/snapshots/{project}`
 2. Get timestamps from the machine-local clock, never from inference:
    ```bash
+   # macOS/Linux/WSL
    date +"%Y-%m-%dT%H:%M"
    date +%Y-%m-%d
+
+   # Windows PowerShell
+   Get-Date -Format "yyyy-MM-ddTHH:mm"
+   Get-Date -Format "yyyy-MM-dd"
    ```
 3. Run the deterministic trigger helper and write both reports into the project snapshots directory:
    ```bash

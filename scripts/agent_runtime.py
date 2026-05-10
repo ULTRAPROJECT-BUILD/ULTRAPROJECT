@@ -2224,7 +2224,7 @@ def format_stitch_auth_snapshot(ticket_path: Path, auth_url: str, state: dict) -
         "3. If the browser lands on a localhost connection error page, copy the full callback URL from the address bar.\n"
         "4. Complete the auth handoff with:\n\n"
         "```bash\n"
-        f"python3 scripts/agent_runtime.py complete-stitch-auth --callback-url '<PASTE_FULL_CALLBACK_URL>'\n"
+        f"python scripts/agent_runtime.py complete-stitch-auth --callback-url '<PASTE_FULL_CALLBACK_URL>'\n"
         "```\n\n"
         "## Authorization URL\n\n"
         f"{auth_url}\n"

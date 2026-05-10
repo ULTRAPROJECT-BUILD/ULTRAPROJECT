@@ -26,7 +26,7 @@ PHASE_HEADING_RE = re.compile(
     r"^###\s+Phase\s+(?P<number>\d+):\s+(?P<title>.+?)(?:\s+\((?P<status>[^)]+)\))?\s*$",
     re.MULTILINE,
 )
-BRIEF_PATH_RE = re.compile(r"→\s+`?((?:\/|[A-Za-z]:[\\/])[^\s`]+\.md)`?")
+BRIEF_PATH_RE = re.compile(r"(?:→|->)\s+`?((?:\/|[A-Za-z]:[\\/])[^\s`]+\.md)`?")
 PROBE_SECTION_RE = re.compile(r"^##\s+(Phase-Level Adversarial Probe Pack|Adversarial Probe Pack)\s*$", re.IGNORECASE | re.MULTILINE)
 
 EXPLICIT_TRUE_KEYS = (

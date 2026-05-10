@@ -164,8 +164,8 @@ For each file type, run the appropriate checks:
   ```bash
   # Install rendering tools if not available
   # LibreOffice exposes 'soffice' on macOS, 'libreoffice' on Linux
-  which libreoffice || which soffice || brew install --cask libreoffice
-  which pdftoppm || brew install poppler
+  libreoffice --version || soffice --version
+  pdftoppm -v
 
   # Derive PDF filename from PPTX path (e.g., my-deck.pptx → my-deck.pdf)
   # Convert PPTX to PDF
@@ -245,7 +245,7 @@ Read the creative brief's "Target runtime and user acceptance test" section. For
 
 **Rules:**
 1. If the runtime test fails (crash, error, blank screen, broken functionality), the verdict is **FAIL — Broken** regardless of how clean the code looks.
-2. If you can't run the test (missing dependency, no export template, etc.), install what's needed. You're a self-extending agent — `brew install`, `pip install`, download the export template, whatever it takes.
+2. If you can't run the test (missing dependency, no export template, etc.), install what's needed with the host package manager or project toolchain (`brew`, `winget`, `apt`, `pip`, etc.), download the export template, whatever it takes.
 3. If after best effort you truly cannot test it automatically, create a **mandatory** human-review ticket with exact steps for manual testing. Do NOT mark QC as PASS. Use **PASS with caveats** and list what couldn't be verified.
 4. Log all runtime proof results with evidence: exit codes, screenshots, walkthrough video filenames, console output, error messages. For interactive browser/native deliverables, the QC report must cite the walkthrough filename explicitly.
 5. **Step 2b is necessary but not sufficient for code/software deliverables.** A binary that launches is not proof that it works correctly. Step 2d (Verification Protocol Execution) provides the full proof chain. Do not skip 2d because 2b passed.
@@ -350,7 +350,7 @@ This step is distinct from Step 2b (Runtime Verification). Step 2b verifies the 
 **Rules:**
 - The protocol is not optional. If the brief defines one and QC skips it, the QC report is invalid.
 - Build failures block test execution. Critical test failures block functional proof.
-- If a protocol step requires a tool that isn't installed, install it (`brew install`, `rustup`, `apt-get`).
+- If a protocol step requires a tool that isn't installed, install it with the appropriate host package manager or toolchain (`brew`, `winget`, `apt`, `rustup`, etc.).
 - If a step truly cannot be executed (requires proprietary hardware), note as "unverifiable" and create a human-review ticket. Use **PASS with caveats**, never clean PASS.
 
 ### Step 2e: Evidence Freshness and Consistency Check (MANDATORY)

@@ -140,7 +140,7 @@ Return:
 
 ## Error Handling
 
-- **FFmpeg not installed:** Report the error and instruct the operator to install FFmpeg (`brew install ffmpeg` on macOS). Do not proceed without it — audio processing requires FFmpeg.
+- **FFmpeg not installed:** Report the error and instruct the operator to install FFmpeg with the host package manager (`brew install ffmpeg` on macOS, `winget install Gyan.FFmpeg` on Windows, or `sudo apt install ffmpeg` on Debian/Ubuntu). Do not proceed without it — audio processing requires FFmpeg.
 - **ffprobe not installed:** FFprobe ships with FFmpeg. Same resolution as above.
 - **No tracks match the mood/genre:** Broaden the search terms. Try synonyms (e.g., "happy" instead of "upbeat", "ambient" instead of "chill"). If still nothing, fall back to Source 3 (generated audio) and flag it.
 - **Download fails:** Retry once. If it fails again, try the next source in the cascade. Log the failure.

@@ -155,7 +155,7 @@ agent_routing:
   #   claude_fallback / codex_fallback — explicit single-agent overrides; route ALL
   #     work to the named agent regardless of host detection. Useful when one CLI is
   #     unavailable mid-run on a normal-mode setup.
-  # Manage via `python3 scripts/set_agent_mode.py {mode}`.
+  # Manage via `python scripts/set_agent_mode.py {mode}`.
   agent_mode: chat_native
   # host_agent (optional): explicitly declare which CLI hosts the orchestrator.
   # Leave blank to auto-detect via env vars. Set to "claude" or "codex" to override.

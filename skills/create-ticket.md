@@ -59,7 +59,7 @@ inputs:
 3. **Increment the counter** by 1 and write it back to that `.counter`.
 4. **Generate the ticket ID**: `T-` followed by the counter zero-padded to 3 digits (e.g., `T-001`).
 5. **Create the ticket file** at the determined ticket directory as `{id}-{slug}.md` where `{slug}` is a kebab-case version of the title (max 5 words).
-6. Resolve `{now}` from the machine-local clock at write time (for example, `date +"%Y-%m-%dT%H:%M"` in the current system timezone). Do not guess or convert from UTC unless the source value explicitly includes a timezone.
+6. Resolve `{now}` from the machine-local clock at write time (for example, `date +"%Y-%m-%dT%H:%M"` on macOS/Linux/WSL, `Get-Date -Format "yyyy-MM-ddTHH:mm"` in PowerShell, or an equivalent local Python datetime command). Do not guess or convert from UTC unless the source value explicitly includes a timezone.
 7. **Write the file** with this template:
 
 ```markdown

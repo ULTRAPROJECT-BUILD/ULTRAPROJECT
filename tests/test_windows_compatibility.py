@@ -16,6 +16,9 @@ if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
 import capture_walkthrough_video
+import agent_runtime
+import build_project_context
+import plan_phase_adversarial_probe
 import platform_support
 import verify_release
 
@@ -73,6 +76,47 @@ def test_verify_release_command_runner_uses_available_native_shell(tmp_path):
     assert "verify-ok" in result["stdout_tail"]
 
 
+def test_agent_runtime_splits_quoted_windows_cli_paths(monkeypatch):
+    monkeypatch.setattr(agent_runtime.os, "name", "nt", raising=False)
+    command = agent_runtime.build_command(
+        "codex",
+        r'"C:\Program Files\Codex\codex.exe" exec',
+        "Fix the ticket.",
+        r"C:\workspaces\OneShot",
+    )
+
+    assert command[0] == r"C:\Program Files\Codex\codex.exe"
+    assert command[1] == "exec"
+    assert "--cd" in command
+    assert r"C:\workspaces\OneShot" in command
+
+
+def test_frontmatter_windows_paths_round_trip_without_extra_slashes():
+    raw_path = r"C:\Users\Leo\Documents\GitHQ\OneShot\data\executors\T-001.json"
+    rendered = agent_runtime.format_frontmatter_value(raw_path)
+
+    assert agent_runtime.parse_scalar(rendered) == raw_path
+
+
+def test_platform_relative_paths_are_posix_inside_repo(tmp_path):
+    platform_root = tmp_path / "platform"
+    target = platform_root / "vault" / "clients" / "acme" / "projects" / "demo.md"
+    target.parent.mkdir(parents=True)
+    target.write_text("# Demo\n", encoding="utf-8")
+
+    assert build_project_context.relative_to_platform(target, platform_root) == (
+        "vault/clients/acme/projects/demo.md"
+    )
+
+
+def test_phase_probe_regex_recognizes_windows_brief_paths():
+    text = r"- `phase` - `Phase Brief` -> `C:\Users\Leo\OneShot\phase-brief.md`"
+
+    assert plan_phase_adversarial_probe.BRIEF_PATH_RE.findall(text) == [
+        r"C:\Users\Leo\OneShot\phase-brief.md"
+    ]
+
+
 def test_desktop_capture_command_uses_windows_gdigrab_backend():
     output = Path("walkthrough.mp4")
 
@@ -86,6 +130,12 @@ def test_desktop_capture_command_uses_windows_gdigrab_backend():
     assert command[:5] == ["ffmpeg", "-y", "-f", "gdigrab", "-framerate"]
     assert "desktop" in command
     assert str(output) == command[-1]
+
+
+def test_platform_support_maps_windows_desktop_capture_backend():
+    windows = platform_support.detect_host(system="Windows", release="11", env={})
+
+    assert platform_support.desktop_capture_backend(windows) == "gdigrab"
 
 
 def test_desktop_capture_command_keeps_macos_avfoundation_backend():
