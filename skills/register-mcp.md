@@ -70,7 +70,7 @@ Before registering, verify:
   "mcpServers": {
     "{name}": {
       "type": "stdio",
-      "command": "python3",
+      "command": "python",
       "args": ["{absolute_path_to_server.py}"],
       "env": {
         "{VAR_NAME}": "{value_or_placeholder}"

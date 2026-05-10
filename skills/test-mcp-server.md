@@ -22,7 +22,7 @@ You are testing an MCP server to verify it works correctly before deployment.
    - `README.md` exists.
 
 2. **Import check:**
-   - Run `python3 -c "import ast; ast.parse(open('{server_path}/server.py').read())"` to verify syntax.
+   - Run `python -c "import ast; ast.parse(open('{server_path}/server.py').read())"` to verify syntax.
    - Check that the file imports from `mcp.server.fastmcp`.
    - Check that it creates a `FastMCP` instance.
    - Check that it has at least one `@mcp.tool()` decorated function.
@@ -42,7 +42,7 @@ Run a Codex security audit before installing dependencies or starting the server
 1. Install dependencies: `pip install -r {server_path}/requirements.txt`
 2. Start the server in a subprocess:
    ```bash
-   cd {server_path} && timeout 10 python3 server.py &
+   cd {server_path} && timeout 10 python server.py &
    ```
 3. Wait 3 seconds for startup.
 4. Check if the process is still running (didn't crash on startup).

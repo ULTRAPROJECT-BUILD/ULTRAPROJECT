@@ -142,7 +142,7 @@ Add to `.mcp.json`:
 {
   "{name}": {
     "type": "stdio",
-    "command": "python3",
+    "command": "python",
     "args": ["{path}/server.py"],
     "env": {}
   }

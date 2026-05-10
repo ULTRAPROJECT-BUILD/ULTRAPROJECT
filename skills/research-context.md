@@ -76,7 +76,7 @@ For each category, list the initial and likely follow-up WebSearch query strings
 Initialize the ledger:
 
 ```bash
-python3 scripts/research_context_budget.py init --ledger "{ledger_path}" --project "{project}" --categories "Recent launches in genre" "Current tool/library versions" "Deprecated patterns" "New capabilities since cutoff" "Current best practices in domain"
+python scripts/research_context_budget.py init --ledger "{ledger_path}" --project "{project}" --categories "Recent launches in genre" "Current tool/library versions" "Deprecated patterns" "New capabilities since cutoff" "Current best practices in domain"
 ```
 
 The `--websearch-per-category` and `--webfetch-per-category` arguments are legacy annotations only when present; they are not enforced. The ledger exists to show what was actually spent. It is not a call-count cap.
@@ -84,19 +84,19 @@ The `--websearch-per-category` and `--webfetch-per-category` arguments are legac
 Before every search:
 
 ```bash
-python3 scripts/research_context_budget.py reserve --ledger "{ledger_path}" --category "{category}" --kind WebSearch --query "{query}"
+python scripts/research_context_budget.py reserve --ledger "{ledger_path}" --category "{category}" --kind WebSearch --query "{query}"
 ```
 
 Before every fetch:
 
 ```bash
-python3 scripts/research_context_budget.py reserve --ledger "{ledger_path}" --category "{category}" --kind WebFetch --url "{url}"
+python scripts/research_context_budget.py reserve --ledger "{ledger_path}" --category "{category}" --kind WebFetch --url "{url}"
 ```
 
 After each attempted call, record the result:
 
 ```bash
-python3 scripts/research_context_budget.py record --ledger "{ledger_path}" --reservation-id "{reservation_id}" --status "{ok|zero_results|blocked|error|skipped}" --result-count "{count}" --url "{url_or_empty}"
+python scripts/research_context_budget.py record --ledger "{ledger_path}" --reservation-id "{reservation_id}" --status "{ok|zero_results|blocked|error|skipped}" --result-count "{count}" --url "{url_or_empty}"
 ```
 
 Reservation JSON includes `allowed: true` and `reservation_id` for every valid reservation. A reserved call counts as used even if the later network call fails.
@@ -182,7 +182,7 @@ Rules:
 Run the checker before emitting the final snapshot:
 
 ```bash
-python3 scripts/check_research_context.py --snapshot "{working_snapshot_path}" --ledger "{ledger_path}" --today "$(date +%Y-%m-%d)" --max-source-age-days 366 --max-inferred-ratio 0.30 --markdown-out "{snapshots_path}/{date}-research-context-check-{project}.md" --json-out "{snapshots_path}/{date}-research-context-check-{project}.json"
+python scripts/check_research_context.py --snapshot "{working_snapshot_path}" --ledger "{ledger_path}" --today "$(date +%Y-%m-%d)" --max-source-age-days 366 --max-inferred-ratio 0.30 --markdown-out "{snapshots_path}/{date}-research-context-check-{project}.md" --json-out "{snapshots_path}/{date}-research-context-check-{project}.json"
 ```
 
 The checker verifies cited claims include URL and date, cited dates are within last 12 months, the reservation ledger exists, non-inferred claims are not uncited, and claim IDs are well-formed. It sets `low_confidence: true` when inferred claims divided by all claims is more than 30 percent. `low_confidence: true` is not a checker failure; it is a warning that downstream skills must convert currentness claims into assumptions or open questions.

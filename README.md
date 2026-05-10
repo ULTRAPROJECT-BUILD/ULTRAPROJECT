@@ -66,7 +66,7 @@ When ambiguity exists, do not choose the smaller or easier interpretation. Prese
 Work until the project is delivered: all acceptance criteria satisfied, required proof gathered, final review passed, and deliverables handed off. Stop only if I explicitly pause/kill the run, or if every executable path is blocked by a legal, credential, approval, physical-world, or safety constraint. In that case, write a complete blocker report listing every blocked path and exactly what is needed to unblock each one.
 ```
 
-**Platform note:** OneShot is optimized for macOS today. On Windows, install [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install), open Ubuntu, and run the steps above from inside WSL. Claude Desktop can open WSL folders via `\\wsl$\` paths. OneShot's engine is cross-platform, but a few skills assume Unix tools, so WSL is the smoother route. If you want a native Windows workflow, ask your coding agent to help adapt the setup for Windows paths and shell commands.
+**Platform note:** OneShot now includes native Windows-aware runtime helpers. The core workflow runs on macOS, Linux/WSL, and Windows with Python, Git, Node, ripgrep, and a capable coding-agent CLI on PATH. WSL2 is still a good choice if your agent setup or target project depends heavily on Unix shell tooling, but it is no longer required for the core bootstrap, routing, release verification, or walkthrough-planning scripts. A few optional integrations remain OS-specific: the bundled `computer-use` MCP is macOS-oriented, `mlx-whisper` requires Apple Silicon, and desktop video capture depends on ffmpeg plus the host capture backend (`avfoundation` on macOS, `gdigrab` on Windows, `x11grab` on Linux).
 
 ## How to use it
 

@@ -30,7 +30,7 @@ You are not the builder here. Do not start by reading code, work logs, or self-j
 If a review pack was not provided, build it first:
 
 ```bash
-python3 scripts/build_review_pack.py \
+python scripts/build_review_pack.py \
   --deliverables-root "{deliverables_path}" \
   --brief "{creative_brief_path}" \
   {qc_report_args_if_available} \

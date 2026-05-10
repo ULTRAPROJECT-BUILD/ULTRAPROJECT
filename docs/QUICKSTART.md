@@ -91,6 +91,17 @@ pip install -e .
 oneshot
 ```
 
+On native Windows PowerShell, use:
+
+```powershell
+cd OneShot
+py -3 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -e .
+oneshot
+```
+
 The `oneshot` helper bootstraps local config examples and checks for an available agent CLI. The main workflow is still folder plus starter prompt.
 
 ## Next

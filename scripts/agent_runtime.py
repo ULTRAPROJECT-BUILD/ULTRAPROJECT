@@ -498,7 +498,10 @@ def parse_scalar(value: str):
     if not value:
         return ""
     if value.startswith('"') and value.endswith('"'):
-        return value[1:-1]
+        try:
+            return json.loads(value)
+        except json.JSONDecodeError:
+            return value[1:-1]
     if value.startswith("'") and value.endswith("'"):
         return value[1:-1]
     if value.startswith("[") and value.endswith("]"):

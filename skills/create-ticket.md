@@ -106,7 +106,7 @@ delivery_surface_verified_at: "{delivery_surface_verified_at or ''}"
 
 8. **Add a project back-link** in the ticket body after the H1 using the literal sentence `Part of project [[{project-slug}]].`
 9. **Append the canonical project task link** by running:
-   - `python3 scripts/ensure_project_ticket_link.py --ticket-path "{ticket_path}"`
+   - `python scripts/ensure_project_ticket_link.py --ticket-path "{ticket_path}"`
    This step is mandatory. `create-ticket` is the sole project-task writer. Do not rely on downstream skills to manually append the ticket to the project's `## Tasks` section.
 10. **UI contract:** If the ticket creates or materially redesigns a user-facing UI surface (landing page, dashboard, web app screen, mobile screen, admin panel, visual refresh), set:
    - `ui_work: true`

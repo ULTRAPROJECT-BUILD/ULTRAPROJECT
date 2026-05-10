@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import subprocess
 import sys
+import shutil
 from pathlib import Path
 
+import pytest
 import yaml
 
 
@@ -17,6 +19,8 @@ def write_markdown(path: Path, lines: list[str]) -> None:
 
 
 def write_video(path: Path, *, seconds: float = 1.0) -> None:
+    if not shutil.which("ffmpeg"):
+        pytest.skip("ffmpeg is required to synthesize video fixture files")
     path.parent.mkdir(parents=True, exist_ok=True)
     subprocess.run(
         [

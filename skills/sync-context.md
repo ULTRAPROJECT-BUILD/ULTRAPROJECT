@@ -82,9 +82,9 @@ If the project has derived context artifacts in the `<slug>.derived/` sibling fo
 - `{project}.derived/video-evidence-index.yaml`
 
 Treat these as orientation aids, not source of truth. They tell you what matters now and which files are authoritative, but any claim you pass to the executor must still be grounded in the canonical project file, plan, tickets, briefs, or snapshots.
-If the orchestrator refreshed project-scoped text embeddings, prefer `python3 scripts/search_project_hybrid.py --project-file {project_file} "{query}"` for project-local conceptual retrieval before broad vault search.
-If the task is visual or screenshot-driven, assume the orchestrator may also have refreshed selective image embeddings for the project and prefer `python3 scripts/search_media.py --project {project}` over broad global media search.
-If the task is code-touching and the artifact index includes `code_workspaces`, prefer the registered code roots there and use GitNexus MCP for structural code questions after orienting from the current context. If the orchestrator refreshed `python3 scripts/refresh_project_code_index.py --project-file {project_file}`, treat GitNexus as ready; otherwise, it may still be pending.
+If the orchestrator refreshed project-scoped text embeddings, prefer `python scripts/search_project_hybrid.py --project-file {project_file} "{query}"` for project-local conceptual retrieval before broad vault search.
+If the task is visual or screenshot-driven, assume the orchestrator may also have refreshed selective image embeddings for the project and prefer `python scripts/search_media.py --project {project}` over broad global media search.
+If the task is code-touching and the artifact index includes `code_workspaces`, prefer the registered code roots there and use GitNexus MCP for structural code questions after orienting from the current context. If the orchestrator refreshed `python scripts/refresh_project_code_index.py --project-file {project_file}`, treat GitNexus as ready; otherwise, it may still be pending.
 If a curated Nexus/Obsidian vault is open, you may still use Nexus MCP for backlinks or link traversal, but it is optional and should not replace the project-scoped retrieval path.
 
 Extract from the frontmatter:
@@ -143,7 +143,7 @@ If the project targets an existing codebase, augment the context package with AS
 1. Read the current ticket's `file_paths` field (list of file paths the ticket will touch, relative to the target codebase).
 2. Run the bridge script to get token-budgeted code context:
    ```bash
-   python3 scripts/refactor_bridge.py build-context \
+   python scripts/refactor_bridge.py build-context \
      --target {target_codebase_path} \
      --files {comma_separated_file_paths} \
      --token-budget 4000
