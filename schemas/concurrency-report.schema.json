@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/concurrency-report.schema.json",
+  "title": "Visual Specification Concurrency Report",
+  "description": "Validates output from scripts/check_vs_concurrency.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "checked_at": {
+      "description": "Timestamp when concurrency checks were run.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "stale_locks": {
+      "description": "Detected stale visual-spec locks.",
+      "type": "array",
+      "items": {
+        "description": "One stale lock record.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "visual_spec_id": {
+            "description": "Visual spec UUID whose lock is stale.",
+            "type": "string",
+            "minLength": 1
+          },
+          "lock_path": {
+            "description": "Stale lock path.",
+            "type": "string",
+            "minLength": 1
+          },
+          "holder_agent": {
+            "description": "Agent recorded as stale lock holder.",
+            "type": "string"
+          },
+          "lease_expires_at": {
+            "description": "Timestamp when the stale lease expired.",
+            "type": "string",
+            "format": "date-time"
+          },
+          "action_taken": {
+            "description": "Recovery action taken for the stale lock.",
+            "type": "string",
+            "enum": ["none", "renamed_stale", "removed", "operator_review"]
+          }
+        },
+        "required": ["visual_spec_id", "lock_path", "lease_expires_at", "action_taken"]
+      }
+    },
+    "conflicting_amendments": {
+      "description": "Detected conflicting amendment chains.",
+      "type": "array",
+      "items": {
+        "description": "One amendment conflict.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "old_revision": {
+            "description": "Older revision UUID involved in the conflict.",
+            "type": "string"
+          },
+          "new_revision": {
+            "description": "Newer revision UUID involved in the conflict.",
+            "type": "string"
+          },
+          "conflict_reason": {
+            "description": "Reason the revisions conflict.",
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["old_revision", "new_revision", "conflict_reason"]
+      }
+    },
+    "orphaned_locks": {
+      "description": "Locks without a matching visual-spec file or with malformed lease metadata.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "visual_spec_id": {"type": "string"},
+          "lock_path": {"type": "string", "minLength": 1},
+          "holder_agent": {"type": "string"},
+          "acquired_at": {
+            "anyOf": [
+              {"type": "string"},
+              {"type": "null"}
+            ]
+          },
+          "reason": {"type": "string", "minLength": 1}
+        },
+        "required": ["visual_spec_id", "lock_path", "reason"]
+      }
+    },
+    "concurrent_modifications": {
+      "description": "Visual-spec files modified after the related lock was acquired.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "visual_spec_id": {"type": "string", "minLength": 1},
+          "lock_path": {"type": "string", "minLength": 1},
+          "vs_path": {"type": "string", "minLength": 1},
+          "lock_acquired_at": {"type": "string"},
+          "vs_modified_at": {"type": "string", "format": "date-time"},
+          "conflict_reason": {"type": "string", "minLength": 1}
+        },
+        "required": [
+          "visual_spec_id",
+          "lock_path",
+          "vs_path",
+          "lock_acquired_at",
+          "vs_modified_at",
+          "conflict_reason"
+        ]
+      }
+    },
+    "recommended_actions": {
+      "description": "Recommended operator or automated recovery actions.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "checked_at",
+    "stale_locks",
+    "conflicting_amendments",
+    "orphaned_locks",
+    "concurrent_modifications",
+    "recommended_actions"
+  ]
+}

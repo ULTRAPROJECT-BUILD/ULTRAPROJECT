@@ -6,12 +6,6 @@
 npx skills add google-labs-code/stitch-skills --skill react:components --global
 ```
 
-## Example Prompt
-
-```text
-Convert my Landing Page screen in my Podcast Stitch Project to a React component system.
-```
-
 ## Skill Structure
 
 This repository follows the **Agent Skills** open standard. Each skill is self-contained with its own logic, validation scripts, and design tokens.
@@ -21,8 +15,7 @@ skills/react-components/
 ├── SKILL.md           — Core instructions & workflow
 ├── package.json       — Validator dependencies
 ├── scripts/           — Networking & AST validation
-├── resources/         — Style guides & API references
-└── examples/          — Gold-standard code samples
+└── resources/         — Style guides & API references
 ```
 
 ## How it Works

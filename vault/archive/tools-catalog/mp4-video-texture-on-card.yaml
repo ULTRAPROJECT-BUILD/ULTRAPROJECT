@@ -1,0 +1,56 @@
+tool_slug: mp4-video-texture-on-card
+tool_stack_id: hybrid:cycles-bake-vdb-mp4-card@stage1
+display_name: Cycles-bake VDB plus MP4 video texture on card hybrid
+versions:
+  - version: stage1
+    released: 2026-05-12
+capabilities:
+  - id: cinematic_volumetric_render
+    bar_fit_default: HIGH
+    bar_fit_evidence:
+      - type: project_fallback_pattern
+        source: render-fixture prompt
+        summary: The fixture explicitly allows pre-baked VDB-MP4-on-card as the fallback if live VDB cannot hit 60fps.
+      - type: pipeline_pattern
+        source: render-fixture planning replay
+        summary: Offline Cycles quality plus WebGL video-texture mounting keeps the runtime experiential while satisfying zero-spend constraints.
+    known_ceilings:
+      - It is hybrid rather than fully live volumetric simulation.
+      - Camera choreography must hide card boundaries and preserve 3D-world credibility.
+constraints:
+  os: [macos, linux, windows]
+  arch: [arm64, x86_64]
+  acquisition_cost_usd: 0
+  recurrence: none
+  license: mit_plus_gpl_pipeline_components
+  local_runnable: true
+  network_required: false
+  credentials_required: false
+  supported_browsers: [safari-17+, chrome-120+, firefox-115+]
+acquisition:
+  install_method: built_in
+  install_risk: low
+  install_steps_summary: Use Blender, FFmpeg, and three.js already in the project stack and run a video texture canary.
+  canary_type: functional
+  credentials_needed: []
+  credential_handoff: none
+catalog_metadata:
+  source: canonical
+  terms_last_checked: 2026-05-12
+  ttl_days_by_domain:
+    pricing: 90
+    licensing: 180
+    capability_evidence: 365
+  citation_urls:
+    - https://threejs.org/docs/#api/en/textures/VideoTexture
+    - https://ffmpeg.org/
+    - https://docs.blender.org/manual/en/latest/render/cycles/index.html
+  catalog_revision: 1
+  last_validated: 2026-05-12
+related_tools:
+  alternatives_for_capability:
+    cinematic_volumetric_render:
+      - tool_slug: blender-cycles
+        why: Produces the photoreal baked frames.
+      - tool_slug: three-js-raymarched-volume
+        why: Runtime context can still use live WebGL volume and haze around the baked card.

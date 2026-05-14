@@ -6,8 +6,8 @@ This module is the user-facing CLI. It does one job: bootstrap.
     oneshot              # bootstrap config + show readiness
     oneshot --version    # print version
 
-Bootstrap copies `.env.example` -> `.env`, `.mcp.example.json` -> `.mcp.json`,
-and `vault/clients/_registry.example.md` -> `vault/clients/_registry.md` if any
+Bootstrap copies `.env.template` -> `.env`, `.mcp.template.json` -> `.mcp.json`,
+and `vault/clients/_registry.template.md` -> `vault/clients/_registry.md` if any
 of the targets are missing, then verifies that a supported terminal AI coding
 CLI is on PATH.
 
@@ -22,7 +22,7 @@ import shutil
 import sys
 from pathlib import Path
 
-VERSION = "1.0.0"
+VERSION = "0.2.0"
 
 RESET = "\033[0m"
 BOLD = "\033[1m"
@@ -115,7 +115,7 @@ def repo_root(start: Path | None = None) -> Path:
 
     A directory is considered the OneShot repo root if it contains both
     `SYSTEM.md` and a `vault/` directory. Falls back to cwd if no marker is
-    found, so the bootstrap can still copy example files when run from inside
+    found, so the bootstrap can still copy template files when run from inside
     a freshly cloned repo with the markers in place.
     """
     here = (start or Path.cwd()).resolve()
@@ -141,10 +141,10 @@ def copy_if_missing(src: Path, dest: Path) -> bool:
 
 def bootstrap_configs(root: Path) -> list[Path]:
     pairs = [
-        (root / ".env.example", root / ".env"),
-        (root / ".mcp.example.json", root / ".mcp.json"),
+        (root / ".env.template", root / ".env"),
+        (root / ".mcp.template.json", root / ".mcp.json"),
         (
-            root / "vault" / "clients" / "_registry.example.md",
+            root / "vault" / "clients" / "_registry.template.md",
             root / "vault" / "clients" / "_registry.md",
         ),
     ]

@@ -22,12 +22,6 @@ Enables professional-grade UI/UX design workflows through Stitch MCP:
 - Stitch MCP Server access
 - A project `projectId` (can be discovered via `list_projects`)
 
-## Example Prompt
-
-```text
-Design a premium landing page for a mountain resort with a focus on serene luxury and glassmorphism.
-```
-
 ## Skill Structure
 
 ```
@@ -35,8 +29,7 @@ stitch-design/
 ├── SKILL.md           — Core instructions & Prompt Pipeline
 ├── README.md          — This file
 ├── workflows/         — Specialized pipelines (Text-to-UI, Edit, MD)
-├── references/        — UI/UX keywords & Technical Mappings
-└── examples/          — Gold-standard references (Solace Mindfulness)
+└── references/        — UI/UX keywords & Technical Mappings
 ```
 
 ## Works With

@@ -1,0 +1,202 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://oneshot.local/schemas/tools-catalog-entry.schema.json",
+  "title": "Tools Catalog Entry",
+  "description": "Validates canonical Tool Discovery catalog YAML entries.",
+  "type": "object",
+  "additionalProperties": false,
+  "definitions": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "fit": {
+      "type": "string",
+      "enum": ["HIGH", "MEDIUM", "LOW"]
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "source", "summary"],
+      "properties": {
+        "type": {"type": "string", "minLength": 1},
+        "source": {"type": "string", "minLength": 1},
+        "summary": {"type": "string", "minLength": 1}
+      }
+    }
+  },
+  "required": [
+    "tool_slug",
+    "display_name",
+    "versions",
+    "capabilities",
+    "constraints",
+    "acquisition",
+    "catalog_metadata"
+  ],
+  "properties": {
+    "tool_slug": {"$ref": "#/definitions/slug"},
+    "tool_stack_id": {"type": "string", "minLength": 1},
+    "display_name": {"type": "string", "minLength": 1},
+    "versions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["version", "released"],
+        "properties": {
+          "version": {"type": "string", "minLength": 1},
+          "released": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"}
+        }
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "bar_fit_default", "bar_fit_evidence", "known_ceilings"],
+        "properties": {
+          "id": {"$ref": "#/definitions/slug"},
+          "bar_fit_default": {"$ref": "#/definitions/fit"},
+          "bar_fit_evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"$ref": "#/definitions/evidence"}
+          },
+          "known_ceilings": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["os", "arch", "acquisition_cost_usd", "license", "local_runnable"],
+      "properties": {
+        "os": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string"}
+        },
+        "arch": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string"}
+        },
+        "acquisition_cost_usd": {"type": "number", "minimum": 0},
+        "recurrence": {
+          "type": "string",
+          "enum": ["none", "one_time", "monthly", "annual"]
+        },
+        "license": {"type": "string", "minLength": 1},
+        "local_runnable": {"type": "boolean"},
+        "network_required": {"type": "boolean", "default": false},
+        "credentials_required": {"type": "boolean", "default": false},
+        "supported_browsers": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "hardware_notes": {"type": "string"}
+      }
+    },
+    "acquisition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["install_method", "install_risk", "canary_type"],
+      "properties": {
+        "install_method": {
+          "type": "string",
+          "enum": ["package_manager", "binary_download", "vendor_installer", "api_only", "built_in"]
+        },
+        "install_risk": {"type": "string", "enum": ["low", "medium", "high"]},
+        "install_steps_summary": {
+          "type": "string",
+          "not": {
+            "anyOf": [
+              {"pattern": "&&"},
+              {"pattern": "\\|"},
+              {"pattern": ";"},
+              {"pattern": "`"},
+              {"pattern": "\\$\\("}
+            ]
+          }
+        },
+        "canary_type": {"type": "string", "enum": ["functional", "smoke", "not_required"]},
+        "canary_steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type"],
+            "properties": {
+              "type": {"type": "string", "enum": ["command", "assert_path_exists"]},
+              "name": {"type": "string"},
+              "command": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "not": {
+                    "anyOf": [
+                      {"pattern": "&&"},
+                      {"pattern": "\\|"},
+                      {"pattern": ";"},
+                      {"pattern": "`"},
+                      {"pattern": "\\$\\("}
+                    ]
+                  }
+                }
+              },
+              "path": {"type": "string"},
+              "timeout_seconds": {"type": "integer", "minimum": 1, "maximum": 600}
+            }
+          }
+        },
+        "credentials_needed": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "credential_handoff": {
+          "type": "string",
+          "enum": ["none", "operator_out_of_band", "env_var"]
+        }
+      }
+    },
+    "catalog_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "terms_last_checked",
+        "ttl_days_by_domain",
+        "citation_urls",
+        "catalog_revision",
+        "last_validated"
+      ],
+      "properties": {
+        "source": {"type": "string", "enum": ["canonical", "operator-curated", "inferred"]},
+        "terms_last_checked": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+        "ttl_days_by_domain": {
+          "type": "object",
+          "additionalProperties": {"type": "integer", "minimum": 1},
+          "required": ["pricing", "licensing", "capability_evidence"]
+        },
+        "citation_urls": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "catalog_revision": {"type": "integer", "minimum": 1},
+        "last_validated": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"}
+      }
+    },
+    "related_tools": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  }
+}

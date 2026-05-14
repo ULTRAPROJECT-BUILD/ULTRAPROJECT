@@ -37,7 +37,6 @@ OneShot/
 │   │   │   ├── decisions/
 │   │   │   ├── lessons/
 │   │   │   ├── mcps/      ← MCP servers built FOR this workspace
-│   │   │   │   └── _example/
 │   │   │   ├── skills/    ← skill files created FOR this workspace
 │   │   │   └── snapshots/
 │   │   │       └── incoming/
@@ -203,6 +202,8 @@ When the system needs a new MCP or skill, use [[source-capability]] with the 4-t
 4. **Tier 3: Build from scratch** — use [[build-mcp-server]] or [[build-skill]].
 
 After every successful sourcing: run [[archive-capability]] to sanitize and save for future reuse.
+
+Planning-time tool choice is now governed by Step 0.7 in [[project-plan]] and the read-only `tool-discovery` MCP. For every load-bearing capability, planners must survey the tool catalog against the operator's stated bar and structured constraints before binding architecture; unresolved tool-bar tensions surface as OAI-PLAN-NNN and block plan advance until resolved as AD-NNN. Stage 1 reserves `tool_stack_id` in schemas/catalog evidence but does not populate tickets or execution records.
 
 ## Available Tools
 

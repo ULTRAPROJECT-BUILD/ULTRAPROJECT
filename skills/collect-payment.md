@@ -139,7 +139,7 @@ These issues were identified during scope-detection testing and must be resolved
 This skill ships with Stripe as the only payment rail. If you want to add another rail (crypto wallet, ACH, invoicing, etc.), the pattern is:
 
 1. Build or source an MCP that talks to your provider — see [[build-mcp-server]] and [[source-capability]].
-2. Register it in `.mcp.json` (or `.mcp.example.json` for the version-controlled template).
+2. Register it in `.mcp.json` (or `.mcp.template.json` for the version-controlled template).
 3. Extend Step 2 ("Generate Payment Options") and Step 6 ("Check Payment Status") in this skill to call your new MCP alongside Stripe.
 
 The system is designed to be self-extending. The wallet MCP that previously shipped here was removed for the OSS distribution because handling crypto receipts safely is downstream-specific.

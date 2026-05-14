@@ -64,6 +64,11 @@ SEARCH_ROOT_HINTS = (
 )
 SEARCHABLE_SUFFIXES = {".md", ".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg", ".mp4", ".mov", ".webm", ".json", ".yaml", ".yml", ".txt", ".pdf"}
 PROJECT_WORKSPACE_RE = re.compile(r"(/" + r"Users/[A-Za-z0-9._/\-]+)")
+KIND_STEM_ALIASES = {
+    "quality-check": ("quality-check", "quality_check", "formal-qc", "recovery-qc", "phase-1-recovery-qc"),
+    "artifact-polish-review": ("artifact-polish-review", "artifact_polish_review", "polish-review"),
+    "review-pack": ("review-pack", "review_pack"),
+}
 
 
 def parse_args() -> argparse.Namespace:
@@ -124,16 +129,31 @@ def latest_snapshot_matching(
     subtype_values: tuple[str, ...] = (),
     filename_contains: tuple[str, ...] = (),
 ) -> Path | None:
-    candidates: list[Path] = []
     snapshots_dir = Path(layout["snapshots_dir"])
+    project_snapshots_dir = snapshots_dir / project
+    scoped_candidates: list[Path] = []
+    fallback_candidates: list[Path] = []
     normalized_subtype_values = {value.strip().lower().replace("_", "-") for value in subtype_values}
-    for path in sorted(snapshots_dir.glob("*.md")):
-        if not path_matches_project(path, project):
+    snapshot_paths: list[Path] = []
+    if project_snapshots_dir.exists():
+        snapshot_paths.extend(sorted(project_snapshots_dir.rglob("*.md")))
+    snapshot_paths.extend(sorted(snapshots_dir.glob("*.md")))
+
+    for path in snapshot_paths:
+        project_scoped = is_project_scoped_snapshot(path, layout)
+        if not project_scoped and not path_matches_project(path, project):
             continue
         data = parse_frontmatter_map(path)
         subtype = str(data.get("subtype", "")).strip().lower().replace("_", "-")
         type_value = str(data.get("type", "")).strip().lower().replace("_", "-")
-        if subtype_values and subtype not in normalized_subtype_values and type_value not in normalized_subtype_values:
+        stem = path.stem.lower().replace("_", "-")
+        stem_kind_match = False
+        for value in normalized_subtype_values:
+            aliases = KIND_STEM_ALIASES.get(value, (value,))
+            if any(alias in stem for alias in aliases):
+                stem_kind_match = True
+                break
+        if subtype_values and subtype not in normalized_subtype_values and type_value not in normalized_subtype_values and not stem_kind_match:
             continue
         if phase is not None:
             phase_value = data.get("phase")
@@ -143,11 +163,36 @@ def latest_snapshot_matching(
                 snapshot_phase = None
             if snapshot_phase is not None and snapshot_phase != phase:
                 continue
-        stem = path.stem.lower()
         if filename_contains and not all(token in stem for token in filename_contains):
             continue
-        candidates.append(path.resolve())
-    return choose_latest_path(candidates)
+        if project_scoped:
+            scoped_candidates.append(path.resolve())
+        else:
+            fallback_candidates.append(path.resolve())
+    return choose_latest_path(scoped_candidates) or choose_latest_path(fallback_candidates)
+
+
+def is_project_scoped_snapshot(path: Path, layout: dict[str, Any]) -> bool:
+    project_snapshots_dir = Path(layout["snapshots_dir"]) / str(layout["project"])
+    try:
+        path.resolve().relative_to(project_snapshots_dir.resolve())
+        return True
+    except ValueError:
+        return False
+
+
+def resolve_review_surface_root(
+    default_root: Path,
+    layout: dict[str, Any],
+    *,
+    review_pack: Path | None,
+) -> Path:
+    if review_pack and is_project_scoped_snapshot(review_pack, layout):
+        parent = review_pack.resolve().parent
+        project_snapshots_dir = (Path(layout["snapshots_dir"]) / str(layout["project"])).resolve()
+        if parent != project_snapshots_dir:
+            return parent
+    return default_root
 
 
 def resolve_brief_paths(project_file: Path, plan_path: Path, layout: dict[str, Any], phase: int) -> list[Path]:
@@ -506,14 +551,19 @@ def build_report(project_file: Path, *, explicit_plan: Path | None, phase_number
     )
 
     qc_reports = [path for path in [latest_qc] if path is not None]
+    review_surface_root = resolve_review_surface_root(
+        deliverables_root,
+        layout,
+        review_pack=review_pack,
+    )
     review_pack_preview = build_review_pack_report(
         argparse.Namespace(
-            deliverables_root=str(deliverables_root),
+            deliverables_root=str(review_surface_root),
             brief=[str(path) for path in brief_paths],
             qc_report=[str(path) for path in qc_reports],
             max_files_per_category=12,
-            json_out=str(deliverables_root / "_unused-review-pack.json"),
-            markdown_out=str(deliverables_root / "_unused-review-pack.md"),
+            json_out=str(review_surface_root / "_unused-review-pack.json"),
+            markdown_out=str(review_surface_root / "_unused-review-pack.md"),
         )
     )
 

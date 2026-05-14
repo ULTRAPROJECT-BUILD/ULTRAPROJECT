@@ -248,6 +248,73 @@ def test_build_phase_gate_packet_accepts_quality_check_type_snapshot(tmp_path):
     assert report["evidence_docs"]["quality_check"][0].endswith("2026-01-03-qc-phase1-demo-project.md")
 
 
+def test_build_phase_gate_packet_prefers_project_scoped_recovery_docs(tmp_path):
+    build_phase_gate_packet = load_module("build_phase_gate_packet_under_test_project_scope", BUILD_PHASE_GATE_PACKET_PATH)
+    paths = build_paths(tmp_path)
+    write_project(tmp_path)
+    write_plan(tmp_path)
+    write_brief(tmp_path)
+    write_ticket(
+        tmp_path,
+        ticket_id="T-100",
+        title="QC approvals proof",
+        task_type="quality_check",
+        body_lines=["Evidence: `deliverables/artifacts/t100-proof/proof-pack.json`"],
+    )
+    write_ticket(
+        tmp_path,
+        ticket_id="T-101",
+        title="Artifact polish review",
+        task_type="artifact_polish_review",
+        body_lines=["Review complete."],
+    )
+    project_snapshots = paths["snapshots"] / "demo-project"
+    recovery_root = project_snapshots / "t-187-phase-1-gate-recovery"
+    write_snapshot(
+        paths["snapshots"] / "2026-01-04-T-183-gate-discovery-quality-check-demo-project.md",
+        ['type: quality-check', 'project: "demo-project"', "phase: 1", "captured: 2026-01-04T09:00"],
+        ["Stale discovery mirror references unrelated media."],
+    )
+    write_snapshot(
+        paths["snapshots"] / "2026-01-04-T-183-gate-discovery-artifact-polish-review-demo-project.md",
+        ['type: artifact-polish-review', 'project: "demo-project"', "captured: 2026-01-04T09:00"],
+        ["Stale polish mirror."],
+    )
+    write_snapshot(
+        paths["snapshots"] / "2026-01-04-T-183-gate-discovery-review-pack-demo-project.md",
+        ['type: review-pack', 'project: "demo-project"', "captured: 2026-01-04T09:00"],
+        ["Stale review pack mirror."],
+    )
+    write_snapshot(
+        project_snapshots / "2026-01-03-T-187-formal-qc-phase-1-recovery.md",
+        ['type: snapshot', 'project: "demo-project"', "phase: 1", "captured: 2026-01-03T12:00"],
+        ["Fresh project-scoped QC references `qc-walkthrough-phase-1-home.mp4`."],
+    )
+    write_snapshot(
+        project_snapshots / "2026-01-03-T-187-artifact-polish-review-phase-1-recovery.md",
+        ['type: snapshot', 'project: "demo-project"', "captured: 2026-01-03T12:01"],
+        ["Fresh project-scoped polish review."],
+    )
+    write_snapshot(
+        recovery_root / "2026-01-03-T-187-review-pack.md",
+        [],
+        ["# Review Pack", "", "Fresh project-scoped review pack."],
+    )
+    (recovery_root / "runtime-evidence").mkdir(parents=True)
+    (recovery_root / "runtime-evidence" / "qc-walkthrough-phase-1-home.mp4").write_bytes(b"video")
+    (paths["deliverables"] / "qc-walkthrough.webm").write_bytes(b"foreign-video")
+
+    report = build_phase_gate_packet.build_report(paths["project"], explicit_plan=None, phase_number=1)
+
+    assert report["evidence_docs"]["quality_check"][0].endswith("2026-01-03-T-187-formal-qc-phase-1-recovery.md")
+    assert report["evidence_docs"]["artifact_polish_review"].endswith(
+        "2026-01-03-T-187-artifact-polish-review-phase-1-recovery.md"
+    )
+    assert report["evidence_docs"]["review_pack"].endswith("t-187-phase-1-gate-recovery/2026-01-03-T-187-review-pack.md")
+    walkthrough_paths = [artifact["path"] for artifact in report["review_surface"]["walkthrough_artifacts"]]
+    assert walkthrough_paths == [str((recovery_root / "runtime-evidence" / "qc-walkthrough-phase-1-home.mp4").resolve())]
+
+
 def test_derive_search_roots_includes_review_pack_and_docs_children(tmp_path, monkeypatch):
     build_phase_gate_packet = load_module("build_phase_gate_packet_under_test_roots", BUILD_PHASE_GATE_PACKET_PATH)
     snapshots = tmp_path / "snapshots"

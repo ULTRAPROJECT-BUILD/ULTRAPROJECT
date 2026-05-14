@@ -15,11 +15,11 @@ python3 -m pytest tests
 2. Scan public docs for stale plugin instructions, local-only paths, or private state:
 
 ```bash
-rg -n '/Users/|Credit balance|personal skill|this machine|local-desktop-app-uploads|disabled-oneshot|(^|[[:space:]])/oneshot\\b|\\.plugin|plugin marketplace|package_claude_plugin' \
-  README.md docs examples --glob '!docs/PUBLISHING.md'
+rg -n '/U[s]ers/|Credit balance|personal skill|this machine|local-desktop-app-uploads|disabled-oneshot|(^|[[:space:]])/oneshot\\b|\\.plugin|plugin marketplace|package_claude_plugin' \
+  README.md docs --glob '!docs/PUBLISHING.md'
 ```
 
-Expected result: no hits, except examples where the matched word is part of an unrelated topic.
+Expected result: no hits.
 
 3. Check git status:
 

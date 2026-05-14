@@ -19,6 +19,7 @@ import re
 import sys
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
@@ -30,6 +31,8 @@ from resolve_briefs import BriefRecord, brief_sort_key, matches_phase, matches_t
 TIMESTAMP_FMT = "%Y-%m-%dT%H:%M:%S"
 GRADE_ORDER = ["F", "D-", "D", "D+", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+"]
 GRADE_RANK = {grade: idx for idx, grade in enumerate(GRADE_ORDER)}
+HEX_LITERAL_RE = re.compile(r"#[0-9a-fA-F]{3,8}\b")
+PIXEL_LITERAL_RE = re.compile(r"\b\d+(?:\.\d+)?px\b", re.IGNORECASE)
 
 
 def now() -> str:
@@ -217,6 +220,92 @@ def serialize_record(record: BriefRecord | None) -> dict | None:
     }
 
 
+def load_body(path: Path) -> str:
+    """Load markdown body without frontmatter."""
+    text = path.read_text(encoding="utf-8")
+    if not text.startswith("---\n"):
+        return text
+    parts = text.split("---", 2)
+    if len(parts) < 3:
+        return text
+    return parts[2].lstrip("\n")
+
+
+def normalize_visual_target_mode(*values: object) -> str:
+    """Normalize a visual quality target mode from candidate values."""
+    for value in values:
+        text = normalize_text(value).lower().replace("-", "_").replace(" ", "_")
+        if text:
+            return text
+    return "none"
+
+
+def run_brief_adequacy(brief_path: Path) -> dict[str, Any]:
+    """Run the autonomous brief adequacy check in-process."""
+    import check_brief_specificity_adequacy as adequacy
+
+    return adequacy.evaluate_brief(brief_path)
+
+
+def run_visual_ambition(brief_path: Path) -> dict[str, Any]:
+    """Detect visual ambition signals for a brief."""
+    import detect_visual_ambition
+
+    return detect_visual_ambition.detect_ambition(brief_path)
+
+
+def resolve_visual_spec_planning(
+    *,
+    ticket_path: Path,
+    ticket_frontmatter: dict[str, Any],
+    brief_path: Path,
+    brief_frontmatter: dict[str, Any],
+    project: str,
+) -> dict[str, Any]:
+    """Determine whether a downstream visual-spec ticket/plan marker exists."""
+    if str(brief_frontmatter.get("spawns_visual_spec") or "").strip():
+        brief_declares = normalize_bool_text(brief_frontmatter.get("spawns_visual_spec")) in {"true", "yes"}
+        if brief_declares:
+            return {"planned": True, "reason": "brief frontmatter declares spawns_visual_spec=true", "matches": [str(brief_path)]}
+    if normalize_bool_text(ticket_frontmatter.get("spawns_visual_spec")) in {"true", "yes"}:
+        return {"planned": True, "reason": "ticket frontmatter declares spawns_visual_spec=true", "matches": [str(ticket_path)]}
+
+    matches: list[str] = []
+    if ticket_path.parent.exists():
+        for candidate in sorted(ticket_path.parent.glob("*.md")):
+            if candidate.resolve() == ticket_path.resolve():
+                continue
+            frontmatter = parse_frontmatter_map(candidate)
+            if normalize_text(frontmatter.get("project")) != project:
+                continue
+            task_type = normalize_text(frontmatter.get("task_type")).lower()
+            title = normalize_text(frontmatter.get("title")).lower()
+            if task_type == "visual_spec" or "visual spec" in title or "visual-spec" in candidate.name.lower():
+                matches.append(str(candidate.resolve()))
+    return {
+        "planned": bool(matches),
+        "reason": "found downstream visual-spec ticket(s)" if matches else "no downstream visual-spec ticket or spawns_visual_spec marker found",
+        "matches": matches,
+    }
+
+
+def detect_pixel_token_overreach(brief_body: str) -> dict[str, Any]:
+    """Detect token-level literals that belong in a visual spec rather than the brief."""
+    occurrences = HEX_LITERAL_RE.findall(brief_body) + PIXEL_LITERAL_RE.findall(brief_body)
+    deduped: list[str] = []
+    seen: set[str] = set()
+    for occurrence in occurrences:
+        key = occurrence.lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(occurrence)
+    return {
+        "found": bool(deduped),
+        "occurrences": deduped[:20],
+    }
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--ticket-path", required=True, help="Path to the creative-brief ticket.")
@@ -332,6 +421,78 @@ def build_report(args: argparse.Namespace) -> dict:
             "details": pass_reason,
         },
     ]
+
+    target_brief_path = Path(target_brief.path).expanduser().resolve() if target_brief is not None else None
+    target_brief_frontmatter = parse_frontmatter_map(target_brief_path) if target_brief_path and target_brief_path.exists() else {}
+    target_brief_body = load_body(target_brief_path) if target_brief_path and target_brief_path.exists() else ""
+    visual_quality_target_mode = normalize_visual_target_mode(
+        target_brief_frontmatter.get("visual_quality_target_mode"),
+        ticket_frontmatter.get("visual_quality_target_mode"),
+    )
+
+    ambition_report: dict[str, Any] | None = None
+    adequacy_report: dict[str, Any] | None = None
+    vs_plan_report: dict[str, Any] | None = None
+    pixel_token_report: dict[str, Any] | None = None
+
+    if target_brief_path and target_brief_path.exists():
+        ambition_report = run_visual_ambition(target_brief_path)
+        adequacy_report = run_brief_adequacy(target_brief_path)
+        pixel_token_report = detect_pixel_token_overreach(target_brief_body)
+        vs_plan_report = resolve_visual_spec_planning(
+            ticket_path=ticket_path,
+            ticket_frontmatter=ticket_frontmatter,
+            brief_path=target_brief_path,
+            brief_frontmatter=target_brief_frontmatter,
+            project=project,
+        )
+
+        ambition_detected = bool(ambition_report.get("ambition_detected")) if ambition_report else False
+        require_vs_plan = ambition_detected and visual_quality_target_mode != "none"
+        adequacy_verdict = normalize_text((adequacy_report or {}).get("verdict")).lower()
+        adequacy_ok = adequacy_verdict in {"pass", "pass_with_low_confidence_flag"}
+        adequacy_details: dict[str, Any] | str = adequacy_report or "brief adequacy did not run"
+        if adequacy_verdict == "pass_with_low_confidence_flag" and isinstance(adequacy_details, dict):
+            adequacy_details = {**adequacy_details, "low_confidence": True}
+
+        checks.extend(
+            [
+                {
+                    "name": "visual_ambition_detected",
+                    "ok": True,
+                    "details": ambition_report or {"ambition_detected": False, "ambition_score": "none"},
+                },
+                {
+                    "name": "brief_specificity_adequacy",
+                    "ok": adequacy_ok,
+                    "details": adequacy_details,
+                },
+                {
+                    "name": "visual_spec_handoff_planned",
+                    "ok": (not require_vs_plan) or bool(vs_plan_report and vs_plan_report.get("planned")),
+                    "details": {
+                        "required": require_vs_plan,
+                        "visual_quality_target_mode": visual_quality_target_mode,
+                        "ambition_detected": ambition_detected,
+                        "planning": vs_plan_report or {"planned": False, "reason": "target brief unavailable"},
+                    },
+                },
+                {
+                    "name": "brief_avoids_visual_spec_token_literals",
+                    "ok": True,
+                    "details": {
+                        "warning": bool(pixel_token_report and pixel_token_report.get("found")),
+                        "message": (
+                            "Brief contains pixel/token literals that should usually live in the visual spec."
+                            if pixel_token_report and pixel_token_report.get("found")
+                            else "No obvious hex/pixel literals found in the brief body."
+                        ),
+                        "occurrences": (pixel_token_report or {}).get("occurrences", []),
+                    },
+                },
+            ]
+        )
+
     verdict = "PASS" if all(check["ok"] for check in checks) else "FAIL"
     return {
         "generated_at": now(),
@@ -347,9 +508,14 @@ def build_report(args: argparse.Namespace) -> dict:
         "required_grade": normalize_grade(args.required_grade) or "A",
         "search_roots": [str(path) for path in search_roots],
         "selection_reason": selection_reason,
+        "visual_quality_target_mode": visual_quality_target_mode,
         "target_brief": serialize_record(target_brief),
         "matching_reviews": sorted(review_matches, key=lambda entry: entry.get("updated") or "", reverse=True),
         "latest_review": latest_review,
+        "visual_ambition": ambition_report,
+        "brief_specificity_adequacy": adequacy_report,
+        "visual_spec_planning": vs_plan_report,
+        "brief_visual_spec_token_warning": pixel_token_report,
         "checks": checks,
         "verdict": verdict,
     }

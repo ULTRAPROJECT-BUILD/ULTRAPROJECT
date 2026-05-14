@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/amendment-lock.schema.json",
+  "title": "Visual Specification Amendment Lock",
+  "description": "Validates vault/locks/visual-spec/{visual_spec_id}.lock content.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "visual_spec_id": {
+      "description": "Logical visual specification UUID protected by this lock.",
+      "type": "string",
+      "format": "uuid"
+    },
+    "holder_agent": {
+      "description": "Agent process or role holding the lock.",
+      "type": "string",
+      "minLength": 1
+    },
+    "holder_pid": {
+      "description": "Operating-system process ID of the lock holder.",
+      "type": "integer",
+      "minimum": 1
+    },
+    "holder_session_id": {
+      "description": "Agent session identifier holding the lock.",
+      "type": "string",
+      "minLength": 1
+    },
+    "base_revision_id": {
+      "description": "Revision UUID on which the amendment is based.",
+      "type": "string",
+      "format": "uuid"
+    },
+    "acquired_at": {
+      "description": "Timestamp when the lock was acquired.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "lease_expires_at": {
+      "description": "Timestamp when the lock lease expires if not renewed.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "lease_renewed_at": {
+      "description": "Timestamp when the lease was last renewed.",
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "visual_spec_id",
+    "holder_agent",
+    "holder_pid",
+    "holder_session_id",
+    "base_revision_id",
+    "acquired_at",
+    "lease_expires_at",
+    "lease_renewed_at"
+  ]
+}

@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/brand-system.schema.json",
+  "title": "Brand System Frontmatter",
+  "description": "Validates vault/archive/brand-systems/{brand}.md frontmatter.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "type": {
+      "description": "Artifact discriminator for brand system records.",
+      "const": "brand-system"
+    },
+    "brand_slug": {
+      "description": "Stable brand system slug.",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "version": {
+      "description": "Brand system version in semver form.",
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+(\\.\\d+)?$"
+    },
+    "client_organization_id": {
+      "description": "Organization identifier that owns or supplied the brand system.",
+      "type": "string",
+      "minLength": 1
+    },
+    "color_palette": {
+      "description": "Semantic brand color tokens.",
+      "type": "object",
+      "minProperties": 5,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_-]*$"
+      },
+      "additionalProperties": {
+        "description": "Hex color value for a semantic brand token.",
+        "type": "string",
+        "pattern": "^#[0-9A-Fa-f]{6}$"
+      }
+    },
+    "typography": {
+      "description": "Brand typography system.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "display_family": {
+          "description": "Preferred display type family.",
+          "type": "string",
+          "minLength": 1
+        },
+        "body_family": {
+          "description": "Preferred body type family.",
+          "type": "string",
+          "minLength": 1
+        },
+        "fallback_stack": {
+          "description": "Fallback font stack.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "scale": {
+          "description": "Named brand type sizes.",
+          "type": "object",
+          "minProperties": 3,
+          "additionalProperties": {
+            "description": "Type size in points or CSS pixels.",
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        }
+      },
+      "required": ["display_family", "body_family", "fallback_stack", "scale"]
+    },
+    "application_rules": {
+      "description": "Rules for applying brand tokens and assets across media.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "logo_usage": {
+          "description": "Rules for lockups, clear space, sizing, and backgrounds.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "color_usage": {
+          "description": "Rules for semantic color application and restrictions.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "typography_usage": {
+          "description": "Rules for brand typography usage.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "medium_overrides": {
+          "description": "Optional per-medium application overrides.",
+          "type": "object",
+          "additionalProperties": {
+            "description": "Rules for a specific medium.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "required": ["logo_usage", "color_usage", "typography_usage"]
+    },
+    "voice_tone_guidelines": {
+      "description": "Voice and tone rules that shape visible language.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "references_dir": {
+      "description": "Repository-relative directory containing brand references.",
+      "type": "string",
+      "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._@/-]+$"
+    },
+    "anti_patterns": {
+      "description": "Brand anti-patterns that must be avoided.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "clip_centroid_path": {
+      "description": "Repository-relative path to the computed brand CLIP centroid.",
+      "type": "string",
+      "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._@/-]+$"
+    }
+  },
+  "required": [
+    "type",
+    "brand_slug",
+    "version",
+    "client_organization_id",
+    "color_palette",
+    "typography",
+    "application_rules",
+    "voice_tone_guidelines",
+    "references_dir",
+    "anti_patterns",
+    "clip_centroid_path"
+  ]
+}

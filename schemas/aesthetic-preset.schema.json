@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/aesthetic-preset.schema.json",
+  "title": "Aesthetic Preset Frontmatter",
+  "description": "Validates vault/archive/visual-aesthetics/presets/{preset}.md frontmatter.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "axes": {
+      "description": "Six-axis preset profile.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "density": {"description": "Preset density value.", "type": "string", "enum": ["sparse", "balanced", "dense", "ultra_dense"]},
+        "topology": {"description": "Preset topology value.", "type": "string", "minLength": 1},
+        "expressiveness": {"description": "Preset expressiveness value.", "type": "string", "enum": ["quiet", "restrained", "editorial", "expressive", "playful", "cinematic"]},
+        "motion": {"description": "Preset motion value.", "type": "string", "enum": ["static", "subtle", "functional", "expressive", "cinematic", "rapid"]},
+        "platform": {"description": "Preset platform idiom value.", "type": "string", "minLength": 1},
+        "trust": {"description": "Preset trust posture value.", "type": "string", "minLength": 1}
+      },
+      "required": ["density", "topology", "expressiveness", "motion", "platform", "trust"]
+    },
+    "mediumRef": {
+      "description": "Medium applicability annotation for this preset.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "medium": {
+          "description": "Medium identifier.",
+          "type": "string",
+          "enum": [
+            "web_ui",
+            "native_ui",
+            "presentation",
+            "brand_identity",
+            "video_animation",
+            "3d_render",
+            "document_typography",
+            "game_ui",
+            "data_visualization"
+          ]
+        },
+        "applicability": {
+          "description": "Whether the preset is a primary or secondary fit for the medium.",
+          "type": "string",
+          "enum": ["primary", "secondary"]
+        }
+      },
+      "required": ["medium", "applicability"]
+    }
+  },
+  "properties": {
+    "type": {
+      "description": "Artifact discriminator for aesthetic presets.",
+      "const": "aesthetic-preset"
+    },
+    "name": {
+      "description": "Preset slug.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]*$"
+    },
+    "description": {
+      "description": "Human-readable description of the preset's visual posture.",
+      "type": "string",
+      "minLength": 1
+    },
+    "axes": {
+      "description": "Preset axis defaults.",
+      "$ref": "#/$defs/axes"
+    },
+    "applies_to_mediums": {
+      "description": "Mediums to which this preset applies.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/mediumRef"
+      }
+    },
+    "adjacent_presets": {
+      "description": "Preset slugs considered adjacent for adversarial review.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_-]*$"
+      }
+    },
+    "version": {
+      "description": "Preset version in semver form.",
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+(\\.\\d+)?$"
+    },
+    "last_validated": {
+      "description": "Timestamp when the preset was last validated against references and fixtures.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "clip_centroid_path": {
+      "description": "Repository-relative path to the preset CLIP centroid.",
+      "type": "string",
+      "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._@/-]+$"
+    }
+  },
+  "required": [
+    "type",
+    "name",
+    "description",
+    "axes",
+    "applies_to_mediums",
+    "adjacent_presets",
+    "version",
+    "last_validated",
+    "clip_centroid_path"
+  ]
+}

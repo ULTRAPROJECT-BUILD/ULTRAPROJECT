@@ -5,7 +5,7 @@ description: Creates and maintains a living architectural plan for every project
 inputs:
   - project (required — project slug)
   - client (optional — client slug)
-  - mode (optional — "create" or "update"; default: "create")
+  - mode (optional — "create", "update", or "update_ad_for_tool_replan"; default: "create")
   - goal (required for create — the high-level objective)
   - client_answers (optional — client's clarification answers for context)
   - research_context_path (optional — explicit research-context snapshot override; normally Step 0 resolves or creates this)
@@ -22,6 +22,7 @@ You are creating or updating a living architectural plan for a project. This pla
 The orchestrator triggers this skill for **every new project** after creating the project file:
 - **Create mode:** A new project needs architecture decisions, phased decomposition, and Phase 1 tickets. Even small projects benefit from explicit decisions and artifact tracking — use 1-2 phases for simple work.
 - **Update mode:** A phase completes and the project needs to advance to the next phase with new tickets.
+- **update_ad_for_tool_replan mode:** An OAI-TOOL decision approved an execution-time tool replan. Revise only the affected architecture decision and affected-ticket tool bindings; do not rerun Step 0.7 from scratch.
 
 ## Step 0: Research Context Gate (MANDATORY)
 
@@ -49,6 +50,24 @@ Project-plan owns currentness research. The orchestrator creates or resumes the 
 10. If the snapshot has `low_confidence: true`, currentness claims are hypotheses, not facts. Convert any used low-confidence or inferred claims into `## Assumption Register` rows or `## Open Questions` entries with validation methods.
 11. Always write `## Current Research Inputs` in the plan before `## Architecture Decisions`, even when research was skipped. This section is the mechanical proof that project-plan ran Step 0.
 
+## Step 0.7: Tool Survey + Bar-Fitness Map (MANDATORY)
+
+Run this after Step 0 and before the Goal Compiler. Operator-named tools are inputs to validate, not binding architecture until they survive this step.
+
+1. Extract every load-bearing capability from the operator prompt, client answers, research-context output, and brief. A capability is load-bearing if its failure would cause Tier 3 REJECT or descope the core deliverable. Carry the operator's bar in the operator's words wherever possible.
+2. Extract the binding constraint envelope as structured data: OS, architecture, hardware, browser runtime, host availability, budget, local-runnable requirement, network policy, license/IP constraint, deliverable type, performance target, credential policy, canary type, evidence threshold, and install-risk threshold. Do not collapse this into a free-form bar string.
+3. Query the read-only `tool-discovery` MCP with `survey_tools(capability, bar, constraints, client_slug, freshness_policy)`. If strict freshness reports stale catalog data, either explicitly refresh via `propose_refresh` or proceed only by recording `evidence_confidence: stale_accepted` in the survey snapshot.
+4. Write the tool survey snapshot to the project snapshots directory, with a stable pointer in the plan:
+   ```markdown
+   tool_survey_snapshot: {snapshots_path}/{date}-tool-survey-{project}.md
+   ```
+5. In the plan, include a `## Load-Bearing Capabilities` section listing each surveyed capability and bar. The Plan QA checker uses this section mechanically.
+6. Build the Bar-Fitness Map. For each load-bearing capability, list the top candidates with bar-fitness, constraint-fit, excluded constraints, installed state, acquisition summary, canary type, evidence confidence, and catalog freshness.
+7. Detect tool-bar tensions. A tension exists when the operator-named tool is LOW or MEDIUM fitness and a HIGH-fitness alternative exists, when the bar appears impossible inside the stated constraint envelope, or when no unnamed tool clears the bar within constraints.
+8. For every tension, create an OAI-PLAN-NNN entry in the project log using the format in [[orchestrator]]. The OAI must include the structured `decision_authorization` block and, when a selected tool requires acquisition, the `tool_presence_canary` block with dependent blocked tickets. If the operator approves a paid tool with `paid_via: spending_mcp`, annotate the affected AD with `reservation_id: pending_acquire_tool_execution`; [[acquire-tool]] populates the concrete reservation_id at execute time after manifest approval.
+9. Block plan advance until every OAI-PLAN-NNN has `decision_state: resolved` and `ad_binding: AD-NNN`.
+10. Every AD-NNN that binds a tool MUST carry `tool_stack_refs: [<tool_stack_id>, ...]` using the catalog `tool_stack_id` values selected by the resolved OAI-PLAN or survey. This is mechanical identity for execution-time Tool-Fit Retrospectives.
+
 ## Create Mode
 
 ### Step 1: Analyze the Goal
@@ -69,7 +88,7 @@ Project-plan owns currentness research. The orchestrator creates or resumes the 
    a. First, try to find a way to deliver what they asked for — source or build the needed tools (Three.js, Blender, Unity export, etc). The platform can build any MCP or skill it needs.
    b. If after genuine effort you determine it's truly not feasible, write an admin escalation explaining: what the client asked for, why it's difficult, what you'd propose instead, and ask for approval BEFORE making the tradeoff. **Skip external communication for practice client** — log the decision in the project file instead.
    c. **Never silently downgrade a client requirement.** Practical tradeoffs are fine when approved — silent deviations are not.
-4. For each decision, write a clear choice and rationale. If a decision cannot be made yet, add it to Open Questions.
+4. For each decision, write a clear choice and rationale. If the decision binds a tool, include `tool_stack_refs: [<tool_stack_id>, ...]`. If a decision cannot be made yet, add it to Open Questions.
 
 ### Step 1aa: Goal Compiler (MANDATORY)
 
@@ -237,13 +256,21 @@ When working with an existing codebase, the Refactor Engine bridge provides doma
    - For `classic` projects, **Phase 1 MUST be the vertical slice** — not "setup" or "scaffolding." Phase 1 produces a playable/usable/viewable end-to-end path through the core experience.
    - For `capability-waves` projects, Phase 1 must still produce an honest proving move, but it does **not** need to be a fake product slice when the real mission is platform or capability truth. Existing-platform campaigns may use Phase 1 for the first assault/proof lane (for example, Chromium native-code truth or backend isolation) if that is the real first thing that must be proven.
 4. **Spike tickets go in Phase 0 (Discovery)** if there are unresolved technical risks. Phase 0 is optional — only use it when there's genuine uncertainty that could invalidate the architecture. Otherwise go straight to Phase 1. **Note:** If Step 1c already created a Phase 0 (Index & Analyze) for an existing-codebase project, spike tickets should be added to Phase 0 alongside the index ticket, or placed in Phase 0.5 if the spikes depend on the index completing first.
-5. For each phase, define:
+5. **Phase 1.5 Visual Specification lifecycle:** For user-facing visual work with ambition signals and a detected medium, the plan must leave room for [[visual-spec]] between the governing creative brief and any UI implementation/review tickets.
+   - Phase 1.5 is not an operator approval phase by default. It is an autonomous contract-locking phase run by the orchestrator before UI build/self-review/QC/artifact-polish work.
+   - The plan or ticket graph should make the dependency explicit: creative brief -> visual_spec -> UI build tickets -> self-review -> quality_check -> artifact_polish_review.
+   - The VS ticket uses `task_type: visual_spec`; isolated adjudication work inside it uses `task_type: visual_spec_review`.
+   - Build tickets that depend on the visual contract must be blocked until the VS gate passes and must receive `visual_spec_path`, `visual_axes`, `visual_quality_target_medium`, `visual_quality_target_mode`, `visual_quality_target_preset`, `visual_spec_id`, `revision_id`, and `resolver_generation`.
+   - The creative brief should name target medium/preset signals and anti-patterns, but should not lock pixel-level tokens. [[visual-spec]] owns references, anchor mockups, token extraction, contrast validation, and the `vs_full` gate.
+   - Operator checkpoints are exceptional and come only from initial-prompt directives such as `STOP AFTER VS_LOCK`, `OPERATOR_REVIEW VS_ADJUDICATION`, or `APPROVE WAIVER MANUALLY`.
+   - If no visual ambition is detected or no supported medium can be resolved, record the skip reason and proceed with the normal UI metadata/quality pipeline.
+6. For each phase, define:
    - **Goal**: What this phase produces (one sentence)
    - **Entry criteria**: What must be true before this phase starts
    - **Exit criteria**: What must be true before moving to the next phase — be specific and verifiable. **Every exit criterion must be tagged with its executability classification** (see below).
    - **Estimated ticket count**: Rough estimate (will be refined when the phase starts)
-6. Phases should be ordered so that earlier phases reduce uncertainty for later ones. Put the riskiest/most uncertain work early.
-7. **Capability register (MANDATORY for `capability-waves` projects):**
+7. Phases should be ordered so that earlier phases reduce uncertainty for later ones. Put the riskiest/most uncertain work early.
+8. **Capability register (MANDATORY for `capability-waves` projects):**
    Track the core capability lanes the project must drive to the target verdict. Use a table under `## Capability Register` with one row per lane:
    - `Capability`
    - `Current Verdict`
@@ -253,7 +280,7 @@ When working with an existing codebase, the Refactor Engine bridge provides doma
    - `Active Wave`
    - `Next Proof`
    This is the living truth for campaign projects. The plan is incomplete if the hard mission capabilities are only implied by phases and never made explicit.
-8. **Dynamic wave log (MANDATORY for `capability-waves` projects):**
+9. **Dynamic wave log (MANDATORY for `capability-waves` projects):**
    Add a `## Dynamic Wave Log` table. Waves are the tactical units that may be inserted, merged, reordered, or retired as proof results come in. For each wave, track:
    - `Wave`
    - `Status` (`active`, `planned`, `complete`, `failed`, `superseded`)
@@ -263,28 +290,28 @@ When working with an existing codebase, the Refactor Engine bridge provides doma
    - `Success Signal`
    - `Tickets`
    Only define the **current wave and the next 1-2 likely waves** concretely. Later work should remain hypotheses, not fake certainty.
-9. **Wave discipline for `capability-waves`:**
+10. **Wave discipline for `capability-waves`:**
    - The active wave, not the whole anchor phase, is the thing that gets ticketized and executed next.
    - When a proof fails, update the capability register and dynamic wave log before pretending the original sequence still makes sense.
    - If a capability remains below target after a wave closes, create or activate the next wave **inside the same phase** unless the anchor phase itself is genuinely complete.
-10. **Criterion classification (MANDATORY for all exit criteria in all phases):**
+11. **Criterion classification (MANDATORY for all exit criteria in all phases):**
    Every exit criterion must be tagged:
    - `[EXECUTABLE]` — can be verified in the current build environment with available tools
    - `[INFRASTRUCTURE-DEPENDENT]` — requires external service, live database, display server, or hardware not guaranteed in the build environment. **Must include fallback evidence** (e.g., "unit tests cover this code path" or "mock-based integration test verifies the handler").
    - `[MANUAL]` — requires human judgment (visual taste, UX feel, accessibility with screen reader). Deferred to admin usability review phase.
    Gate reviewers evaluate only EXECUTABLE criteria as hard gates. INFRASTRUCTURE-DEPENDENT criteria pass if fallback evidence exists. MANUAL criteria are deferred. This prevents wasted gate iterations on untestable items.
-11. **Mission traceability (MANDATORY for all exit criteria in all phases):**
+12. **Mission traceability (MANDATORY for all exit criteria in all phases):**
    Every exit criterion must include a `[TRACES: {goal}]` tag that maps it back to a specific mission goal, workstream, or stated requirement from the original client/admin request. Use the exact goal label (e.g., `[TRACES: WS-2 relationship-resolution scalability]` or `[TRACES: "mobile-responsive lead capture"]`). After writing all exit criteria for all phases:
    - List every non-negotiable goal/workstream from the original request.
    - For each goal, verify at least one exit criterion across all phases traces to it.
    - **If any mission goal has zero exit criteria tracing to it, the plan is incomplete.** Add exit criteria that prove the goal is met, or escalate to admin: "Goal '{goal}' cannot be met within project scope. Here's why. Awaiting admin decision to descope or extend."
    - **Exit criteria that accept known-partial results on a core mission goal must be explicitly flagged as `[PARTIAL-COVERAGE]` and justified.** The justification must explain what would be required for full coverage and why it's not achievable in this project. The phase gate will evaluate whether the partial coverage is honestly justified or is scope avoidance.
-12. **Exit criteria fidelity check (MANDATORY after writing all exit criteria):**
+13. **Exit criteria fidelity check (MANDATORY after writing all exit criteria):**
    After all exit criteria are defined, apply the same fidelity check from Step 1 (item 5) to the exit criteria themselves — not just architecture decisions. For each exit criterion, ask: "Does this criterion accept less than what the client/admin explicitly asked for?" If yes:
    a. First, try to write a stronger criterion that matches the stated requirement.
    b. If a stronger criterion is genuinely infeasible, write an admin escalation explaining: what the admin asked for, what the exit criterion accepts instead, why the gap exists, and ask for approval BEFORE finalizing the plan. **Skip external communication for practice client** — log the decision in the project file instead.
    c. **Never silently set an exit criterion below the stated mission.** Achievable-but-insufficient criteria are worse than honest escalation — they create the illusion of progress while missing the point.
-13. **For projects producing code/software deliverables, insert a Verification Manifest phase between the last build phase and the QA phase.** Other domains may use the same phase when the deliverable needs mixed proof types (builds, inspections, runtime proofs, external validations, manual checks):
+14. **For projects producing code/software deliverables, insert a Verification Manifest phase between the last build phase and the QA phase.** Other domains may use the same phase when the deliverable needs mixed proof types (builds, inspections, runtime proofs, external validations, manual checks):
    ```
    ### Phase N: Verification Manifest & Proof Execution (planned)
    **Goal:** Generate verification manifest from brief, execute mixed proof items against the built deliverable, fix all CODE_DEFECT failures
@@ -572,7 +599,9 @@ The project plan is the most important artifact in the pipeline — a bad plan p
    - If this exits non-zero, revise the plan before running the model gate. Required structural elements (Current Research Inputs, Architecture Decisions, frontier sections, Capability Register/Dynamic Wave Log when applicable, exit-criteria taxonomy tags, reverse trace coverage, [PARTIAL-COVERAGE] tag enforcement) are non-negotiable — they are the rubric items that the cross-context model reviewer is *most* likely to misclassify as "non-blocking tightening." This script removes that decision from the model.
    - The model gate in Step 3 evaluates qualitative judgment (architecture soundness, scale matching, mission alignment); the mechanical floor is set here.
 
-2e. **Include research-context in Plan QA.** The Plan QA prompt must tell the reviewer to inspect `## Current Research Inputs`. When a `{research_context_path}` exists, the reviewer must also read it and verify that cited current facts may inform architecture, low-confidence or inferred claims become assumptions/open questions, and no plan decision overclaims current tooling or vendor capability without a fresh citation.
+2e. **Tool Survey sub-check.** `check_plan_compliance.py` invokes `scripts/check_tool_survey.py` as a sub-check. It blocks Plan QA when any declared load-bearing capability lacks a tool-survey entry, constraints are free-form instead of structured, any OAI-PLAN-NNN remains unresolved or lacks `ad_binding: AD-NNN`, a referenced AD is missing, an ACCEPT checkpoint carries judgment-only `forward_watch`, or a ticket blocked by `tool_presence_canary` is attempted before canary pass. Treat its failures as mechanical blockers. Treat its stale-evidence and unreasoned-recommendation-override warnings as warnings to address in the model review prompt.
+
+2f. **Include research-context in Plan QA.** The Plan QA prompt must tell the reviewer to inspect `## Current Research Inputs`. When a `{research_context_path}` exists, the reviewer must also read it and verify that cited current facts may inform architecture, low-confidence or inferred claims become assumptions/open questions, and no plan decision overclaims current tooling or vendor capability without a fresh citation.
 
 3. **Run plan review** via the gate reviewer role (auto-routed per `agent_routing.agent_mode` in [[platform]]). Always reference requirements by file path, never inline raw text:
    <!-- GATE-ONLY: --force-agent is correct here because this is a gate/review, not ticket execution -->
@@ -610,6 +639,7 @@ The project plan is the most important artifact in the pipeline — a bad plan p
      - bounded parallel batches when memory or shared-state limits matter
      Example: six independent repo re-index/evidence runs should usually become six repo tickets plus one aggregate summary ticket, not one monolithic "re-index all 6 repos" ticket.
    - **Code ticket type rule:** If a ticket's primary work is implementing or modifying code, set `task_type: code_build` (not `build`).
+   - **Tool-stack binding rule:** If a ticket's execution depends on a selected tool stack, include `tool_stack_refs: [<tool_stack_id>, ...]` in ticket frontmatter. The refs must match the governing AD-NNN unless the ticket explicitly exercises multiple stacks.
    - **Cleanup ticket type rule:** If a ticket's primary work is bounded non-code cleanup, do NOT lazily use `general`. Choose the narrow cleanup type that matches the work:
      - `artifact_cleanup` for stale artifact refresh, proof-pack/report wording alignment, stale status cleanup, review-pack consistency fixes, and supersession-note/documentation cleanup tied to artifacts
      - `receipt_cleanup` for JSON receipt cleanup, command normalization, and machine-readable evidence metadata cleanup
@@ -692,6 +722,7 @@ Read the closed tickets from the completed phase or completed wave. For each tic
    - **Wave handoff rule:** Use `python3 scripts/check_wave_handoff.py` as the mechanical wave closeout check whenever you are closing one wave and activating the next inside the same anchor phase. Treat `PASS + GREEN` as a normal handoff, `PASS + YELLOW` as "new wave must start behind a supplement brief," and `FAIL + RED` as "do not hand off yet."
    - **Fan-out rule for deep independent runs:** When the next phase contains multiple independent repo/workspace/shard/unit jobs, decompose them into child tickets plus one aggregate ticket rather than a single sequential deep ticket. Keep the units isolated so retries, evidence capture, and downstream unblocking can happen incrementally.
    - **Code ticket type rule:** If a ticket's primary work is implementing or modifying code, set `task_type: code_build` (not `build`).
+   - **Tool-stack binding rule:** If a new or carried-forward ticket depends on a selected tool stack, include or update `tool_stack_refs: [<tool_stack_id>, ...]` in frontmatter. Replanned tickets must point at the revised AD's stack, not the superseded stack.
    - **Cleanup ticket type rule:** For bounded non-code cleanup tickets, prefer `artifact_cleanup`, `receipt_cleanup`, or `docs_cleanup` instead of `general` using the same distinctions as Step 5 above. These are the narrow Gemini lanes and should only be used for low-risk cleanup work that does not change code or project strategy.
    - **Frontend design rule:** Carry forward `ui_work: true`, `design_mode`, and tag `ui-design` for any ticket that changes a user-facing UI surface. Carry forward `stitch_required: true` plus tag `stitch-required` only when the governing design mode is `stitch_required`.
    - Carry forward `public_surface: true` / tag `public-surface` for public-facing marketing surfaces, `existing_surface_redesign: true` / tag `existing-surface-redesign` when redesigning an already-existing user-facing surface, `page_contract_required: true` / tag `page-contract-required` for top-level nav surfaces, and `route_family_required: true` / tag `route-family-required` for governed operator-console routes.
@@ -713,6 +744,29 @@ If an executor discovers that an architecture decision needs to change mid-proje
 2. The orchestrator reads the decision record and triggers project-plan in update mode.
 3. The plan's Architecture Decisions table is updated with the new choice, rationale, and date.
 4. Any open tickets that depend on the changed decision are flagged for review.
+
+## update_ad_for_tool_replan Mode
+
+Use this mode only after the operator resolves an OAI-TOOL-NNN with a tool-replan decision. Inputs from the orchestrator must include:
+
+- `ad_to_revise`: the prior AD-NNN
+- `oai_tool_id`: the resolved OAI-TOOL-NNN
+- `selected_tool_slug`
+- `selected_tool_stack_refs`
+- `affected_tickets`
+- `updated_constraints`
+
+Procedure:
+
+1. Read the current plan, the resolved OAI-TOOL response, the prior AD, and the affected ticket files. Do not rerun Step 0.7 or regenerate the full plan.
+2. Add a revised AD-NNN that supersedes `ad_to_revise`, names the selected tool, records `tool_stack_refs: [<selected_tool_stack_refs>]`, cites the OAI-TOOL decision, and records the updated constraints that drove the replan.
+3. Mark the superseded AD as replaced/superseded without deleting its history.
+4. Update only affected tickets so their frontmatter carries the revised `tool_stack_refs`. Tickets that still intentionally exercise the old stack must say so explicitly.
+5. Append Plan History:
+   ```markdown
+   - {now}: OAI-TOOL-NNN approved tool replan. Revised AD-<old> to AD-<new>; affected tickets rebound to <tool_stack_refs>.
+   ```
+6. Return control to the orchestrator. Acquisition remains manual/operator-owned until Stage 3; this mode must not install tools, spend money, reserve spend, or mutate `.mcp.json`.
 
 ## Error Handling
 

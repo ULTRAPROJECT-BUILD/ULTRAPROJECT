@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/specificity-candidates.schema.json",
+  "title": "Specificity Candidates",
+  "description": "Validates {date}-specificity-candidates-{project}.json produced by extract_specificity_candidates.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "candidate": {
+      "description": "A brief-derived specificity candidate.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "Candidate name or phrase extracted from the brief.",
+          "type": "string",
+          "minLength": 1
+        },
+        "brief_quote": {
+          "description": "Verbatim source quote from the brief.",
+          "type": "string",
+          "minLength": 1
+        },
+        "source_paragraph_index": {
+          "description": "Zero-based paragraph index in the source brief.",
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": ["name", "brief_quote", "source_paragraph_index"]
+    },
+    "workflowCandidate": {
+      "description": "A brief-derived workflow verb candidate.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "verb": {
+          "description": "Candidate workflow verb or verb phrase.",
+          "type": "string",
+          "minLength": 1
+        },
+        "brief_quote": {
+          "description": "Verbatim source quote from the brief.",
+          "type": "string",
+          "minLength": 1
+        },
+        "source_paragraph_index": {
+          "description": "Zero-based paragraph index in the source brief.",
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": ["verb", "brief_quote", "source_paragraph_index"]
+    }
+  },
+  "properties": {
+    "project": {
+      "description": "Project slug from which candidates were extracted.",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "brief_path": {
+      "description": "Repository-relative creative brief path.",
+      "type": "string",
+      "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._@/#-]+$"
+    },
+    "client": {
+      "description": "Optional client slug when the candidate artifact belongs to a client-isolated workspace.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_][A-Za-z0-9_-]*$"
+    },
+    "extracted_at": {
+      "description": "Timestamp when extraction completed.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "extractor_agent": {
+      "description": "Agent or model session that performed extraction.",
+      "type": "string",
+      "minLength": 1
+    },
+    "candidate_entities": {
+      "description": "Candidate project-specific domain entities.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/candidate"
+      }
+    },
+    "candidate_workflow_verbs": {
+      "description": "Candidate project-specific workflow verbs.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/workflowCandidate"
+      }
+    },
+    "candidate_invariants": {
+      "description": "Candidate brand, regulatory, organizational, or contextual invariants.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/candidate"
+      }
+    },
+    "candidate_specific_signals": {
+      "description": "Candidate distinctive signals from the brief.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/candidate"
+      }
+    }
+  },
+  "required": [
+    "project",
+    "brief_path",
+    "extracted_at",
+    "extractor_agent",
+    "candidate_entities",
+    "candidate_workflow_verbs",
+    "candidate_invariants",
+    "candidate_specific_signals"
+  ]
+}

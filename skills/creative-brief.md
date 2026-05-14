@@ -31,6 +31,34 @@ You are creating the brief before real work begins. This is the most important s
 
 ## Process
 
+### Step 0: Creative direction riff (unstructured)
+
+Before any structured planning, spend ~10 minutes as a creative director. Write 3 distinct concepts for this prompt, including one that surprises you. Do not score them yet. For each, name: what would make this specific audience stop, feel something, and trust the result. Pick the one direction most likely to make a human care, and write one sentence about what would be visibly unforgettable about it.
+
+Save the riff to `vault/snapshots/{project}/{date}-creative-direction-riff-{project}.md`. No frontmatter required. No required sections. Mess is allowed. The brief author (you, in Step 4) will civilize it.
+
+The chosen direction must be traceable in the brief's Visual Quality Bar — name it explicitly and say "we chose this register over [the others] because [reasoning]."
+
+### Step 0.5: Classify the deliverable type
+
+Before any context-gathering or research, classify the deliverable. The classification determines which flow runs.
+
+**Deliverable types:**
+
+- **`product_app`** — a tool, app, game, utility, or service product that users INTERACT with. The output is a thing that DOES something. Brief focus: user experience, mechanics, controls, data model.
+- **`brand_marketing_site`** — a marketing website for a brand, business, service, agency, or product. The output represents an entity. Brief focus: brand identity, voice, register, narrative, named-reference quality bar.
+- **`hybrid`** — only when both branding AND product mechanics are genuinely needed and neither is the dominant deliverable (rare).
+
+**Default:** `product_app`. Only classify as `brand_marketing_site` when the prompt explicitly asks for brand identity, brand materials, brand voice, marketing site, marketing website, agency site, company website, or names a *business* whose presence on the web is what's being built. If the prompt is ambiguous, lean `product_app` unless the prompt also asks for brand/identity/voice.
+
+**Record the classification** in the brief frontmatter as `deliverable_type: product_app | brand_marketing_site | hybrid`. The classification is the single most consequential decision in the flow.
+
+**Skip rules:**
+
+- If `deliverable_type: product_app`: SKIP Step 3c (Visual Quality Bar / Route Family / Narrative Structure / Page Contracts) entirely. SKIP the brand-system originator step (build-brand-system skill) entirely. SKIP the visual-spec adjudication rounds and adversarial pass entirely. Use Step 3p instead (below).
+- If `deliverable_type: brand_marketing_site`: run the full current flow (Step 3c + brand-system + visual-spec).
+- If `deliverable_type: hybrid`: run both, but the product-brief sections take precedence over the brand-system sections when they conflict.
+
 ### Step 1: Understand the Context
 
 1. Read the project file first, then the current ticket if `ticket_id` is provided.
@@ -236,7 +264,7 @@ Rules:
 - Define what "done well" looks like with specific, measurable criteria.
 - Example: "The hero section should feel like a premium brand — not a template. Full-bleed imagery, large confident typography, clear CTA above the fold."
 - Example: "The 3D renders should look photorealistic at first glance, not obviously low-poly or toy-like."
-- Example: "The stock research report must name specific tickers, show evidence for each thesis, separate technical vs fundamental reasoning, and surface risks clearly enough that a skeptical reader can audit the logic."
+- Example: "The analysis report must name the evaluated entities, show evidence for each thesis, separate quantitative and qualitative reasoning, and surface risks clearly enough that a skeptical reader can audit the logic."
 - Example: "The outreach sequence must speak to the target segment's actual pain points, use a concrete CTA, and avoid sounding like a bulk AI spam draft."
 
 **Tooling & Plugins (inventory only — do not install here):**
@@ -312,6 +340,40 @@ QC must verify the tool against ALL stress test criteria, not just the happy-pat
    - Source/fix the capability before proceeding.
    - Do NOT substitute a prose-only Visual Specification when the operator/project explicitly made Stitch the source of truth unless an explicit admin override changes the design mode.
 
+### Step 3p: Product Specification (for `deliverable_type: product_app`)
+
+This step replaces Step 3c for product/app deliverables. Do NOT also run Step 3c.
+
+**Required brief sections for product_app:**
+
+1. **Concrete competitor experiences** — 3-5 named real-world products or experiences that establish the *functional bar*. NOT aesthetic references for visual language — experiential references for "how the thing should feel to use." Each reference must include: (a) URL or named product, (b) what specifically to borrow, (c) what to adapt or improve. Example: *"Tinder for swipe UX — borrow the card stack with rotation; adapt the green/red feedback for cat voting context."*
+
+2. **Tone in plain English (≤2 sentences)** — not register language, not voice principles, just plain words. Example: *"Playful, fun, and addictive — not corporate, not minimal, not serious."* If the tone needs anti-patterns, list 1-3 specific things the tone is NOT.
+
+3. **App structure (screens / states / routes)** — every screen the user sees, in order. Each screen: name, what's on it, what the user does there.
+
+4. **User actions / mechanics / controls table** — every action the user can take and what happens. Includes both touch and keyboard/mouse equivalents if relevant.
+
+5. **Data model** — what the app stores, how it's structured, where it lives (localStorage, IndexedDB, server, etc.).
+
+6. **Acceptance criteria** — concrete user-experience checklist. Each item is something the user can observe working or not working. Examples: *"Swipe gesture works on mobile (touch events) and desktop (mouse drag)"*, *"ELO algorithm correctly updates both cats' ratings after each battle (K=32)"*.
+
+7. **Palette** — vibrant or restrained is fine, BUT the palette must be *committed* and *personality-bearing*. List concrete hex values with semantic per-color usage. Example: *"Cat Orange #FF6B35 — primary buttons, active states, winner highlights."* Do NOT default to warm-neutral + ink unless the product genuinely calls for restraint.
+
+8. **Typography** — personality-driven, not defensibility-driven. Pick fonts that match the tone. For a fun voting app: rounded display (Fredoka One) + friendly sans (Nunito) + scoreboard mono (JetBrains Mono). For a serious productivity tool: humanist sans + functional mono.
+
+9. **Media specification** — name every concrete image, icon, or visual asset the deliverable needs, with source strategy. If the product has subjects (cats, food, products), enumerate them. The `subject_presence_contract` in the visual-spec frontmatter (if a VS is produced) must match.
+
+10. **Quality bar** — user-experience checklist. Each row: criterion, how to verify. Examples: *"Loads instantly and works."*, *"Swipe feels native."*, *"Animations are polished."*
+
+11. **Anti-patterns** — what the product must NOT be (Bootstrap default look, empty first-run, broken on mobile, ELO math wrong, silent voting, etc.).
+
+12. **Technical requirements** — rendering tech, file format, browser support, performance budget. If single-file, say so.
+
+**Brand-system handoff:** SKIP. Product/app deliverables do not originate brand-systems. The palette and typography in the brief ARE the brand for this product. Future projects can reuse them, but no brand-system file is required for product_app deliverables.
+
+**Visual-spec:** OPTIONAL for product_app. If the product has a genuinely complex visual surface (e.g., a multi-route SaaS with a design system), the visual-spec can run with `craft_depth: standard` and `mode: custom` against the brief's palette. Mandatory adjudication rounds and adversarial pass are DISABLED for product_app — single-pass review only.
+
 ### Step 3c: Visual Quality Bar, Route Family, Narrative Structure, and Page Contracts (for UI projects)
 
 For user-facing UI/frontend work, the brief must define not just *what exists* but *why the surface feels right*. Stitch is one possible source of truth, not the only acceptable concept mechanism.
@@ -321,11 +383,41 @@ Design-mode expectations:
 - `concept_required`: the default for user-facing UI. The sections below are still mandatory, but the source of truth can be the brief/references/concept package rather than Stitch.
 - `implementation_only`: reference the already-approved source of truth explicitly and keep the brief focused on faithful execution rather than new concept invention.
 
+**Visual Specification handoff (Phase 1.5):** When the brief detects or declares `visual_quality_target_medium`, it must prepare [[visual-spec]] to lock the actual visual contract. The brief names the target direction; [[visual-spec]] owns the pixel-level contract.
+
+Add these fields or an equivalent short section when visual ambition is present:
+
+```markdown
+## Visual Specification Target
+
+- **visual_quality_target_medium:** {web_ui|native_ui|presentation|brand_identity|video_animation|3d_render|document_typography|game_ui|data_visualization}
+- **visual_quality_target_mode:** {preset|custom|brand_system|none, or "auto"}
+- **visual_quality_target_preset:** {named preset such as operator_triage/operator_admin/apple_consumer/apple_native, or "auto"}
+- **Reference signals:** {named systems, URLs, brand assets, or operator-provided references}
+- **Anti-pattern signals:** {specific visual directions the VS should reject}
+- **Audience context:** {environment, frequency, pressure, user role, experience, concurrent attention}
+```
+
+Rules:
+- Do NOT specify pixel-level tokens in the creative brief. Do not lock exact colors, row heights, type sizes, radii, shadows, or motion timings unless they are non-negotiable brand/legal constraints. [[visual-spec]] derives and validates those.
+- Do specify concrete aesthetic intent, named references, forbidden drifts, audience/use context, and product-specific texture that [[visual-spec]] can turn into axes, references, mockups, adjudication questions, and tokens.
+- If the brief names `Linear`, `Stripe Dashboard`, `Apple.com`, `System Settings`, or another known visual system, state whether it is a target, adjacent comparison, or anti-pattern. Do not leave named systems ambiguous.
+- If the project has brand assets, note where they live and whether they are authoritative. [[visual-spec]] will route to `brand_system` mode only when the assets are real enough to govern the mockups.
+- If the operator explicitly asked to skip or waive VS, record the exact phrase. The orchestrator still parses initial-prompt directives and owns the actual checkpoint/waiver behavior.
+
 1. **Visual Quality Bar (mandatory for all user-facing UI):** Add a section named `## Visual Quality Bar` that makes the taste bar explicit:
    - Define the intended visual direction in concrete terms (e.g. editorial, cinematic, productized, utilitarian, premium consumer, operational dashboard).
    - Name at least 3 failure modes to avoid.
    - Forbid generic fallback patterns when relevant: card soup, weak hierarchy, too many boxed sections, interchangeable SaaS layout, shallow hero copy, visually unprioritized CTAs.
    - State what should feel immediately true within 2 seconds of loading the page.
+
+**Subject-presence contract (required for consumer / service / venue / product surfaces):**
+
+Populate the `subject_presence_contract` block in the visual-spec frontmatter. Name the deliverable's primary subject and lock where it must visibly appear. The default for required_locations is `[home_first_viewport, og_tile]` plus any product-specific surface.
+
+If the surface genuinely should NOT contain the subject (typography manifesto, brand-mark redesign, internal admin tool), set `required: false` and provide a `waiver_reason`. Default is `required: true`.
+
+This forces the brief to answer where the primary subject appears explicitly. Negative constraints must NOT mutate into a missing primary subject; the contract enforces visible subject presence in art-directed modalities.
 
 2. **Narrative Structure (mandatory for public-facing surfaces):** If the surface is a landing page, homepage, pricing page, marketing site, or other public-facing first-impression page, add a `## Narrative Structure` section that defines the persuasion sequence.
    - Example structure:
@@ -390,6 +482,82 @@ Design-mode expectations:
    - Destructive actions belong in a clearly labeled danger zone within a broader surface.
 
 ### Step 4: Write the Brief
+
+### Step 4 (product_app variant) — write the brief
+
+Brief structure for product_app:
+
+```
+---
+type: snapshot
+title: "Creative Brief — {Product Name}"
+project: "{project-slug}"
+captured: {iso-datetime}
+agent: creative-brief
+deliverable_type: product_app
+tags: [creative, brief, planning, ...]
+---
+
+# Creative Brief — {Product Name}
+
+## Client
+{plain client info if applicable, else "Platform showcase" or "Internal"}
+
+## Objective
+{1-3 paragraphs describing WHAT the thing does, the spiritual lineage / inspirations, the tone}
+
+## Audience
+{who uses it, primary interaction context}
+
+## References
+{3-5 concrete competitor experiences with what to borrow / what to adapt}
+
+## Deliverable Contract
+### Outputs
+### App Structure (Screens / States)
+### Acceptance Criteria
+### Proof Standard
+### Failure Modes to Avoid
+
+## Scope Matrix
+### IN Scope
+### OUT of Scope
+
+## Runtime Acceptance Test
+{table: deliverable | target runtime | test procedure | pass criteria}
+
+## Presentation Direction
+### Palette {committed, personality-bearing, semantic per-color usage}
+### Typography {personality-driven}
+### Imagery Style
+### Layout
+
+## Media Specification
+{table of every concrete asset needed}
+
+## Content Direction
+### Tone {plain English}
+### Headlines approach
+### Microcopy examples
+
+## Quality Bar
+{user-experience checklist with how-to-verify}
+
+## Technical Requirements
+### Rendering
+### File Format
+### Browser / Platform Support
+### Performance
+
+## Anti-Patterns to Avoid
+{numbered list of specific things the product must not be}
+```
+
+### Step 4 (brand_marketing_site variant) — write the brief
+
+For brand_marketing_site, keep the existing brief structure with all current sections: Mission Alignment Map, Proof Strategy, Deliverable Contract, Runtime Acceptance Test, Verification Protocol, Visual Quality Bar (with named references), Composition Anchors, Narrative Structure, Anti-pattern list, Accessibility, Performance, Brand-system handoff.
+
+The two flows produce categorically different briefs. That's the point.
 
 Save the brief to one of these paths:
 
@@ -558,7 +726,7 @@ Per [[deliverable-standards]] Enterprise Quality Gate. All fields below are mand
 **Security requirements:** {what to audit — e.g., "Zero critical/high vulnerabilities in pip audit," "No eval/exec on user input," "All credentials from env vars." Reference OWASP Top 10 for web deliverables.}
 **Recovery strategy:** {checkpoint/resume for read-only tools, atomic rollback for mutating tools, N/A for static deliverables — e.g., "Indexer checkpoints to SQLite every 1000 files, resume on restart," "Refactoring uses git branches — abort reverts to original branch"}
 
-## Anti-Patterns to Avoid
+## Risks To Watch For At Review (optional)
 - {specific thing NOT to do — e.g., "no stock photo grids," "no Lorem ipsum," "no default Bootstrap look"}
 ```
 
@@ -599,7 +767,7 @@ Per [[deliverable-standards]] Enterprise Quality Gate. All fields below are mand
 ## Principles
 
 - **Research before creating.** 10 minutes of reference gathering saves hours of mediocre iteration.
-- **Be specific.** "Make it look good" is not a brief. "Warm earth tones, generous whitespace, editorial typography, hero image with depth of field" is a brief. So is "Deliver a stock deck with a one-slide thesis per ticker, explicit downside risks, and a clear evidence trail."
+- **Be specific.** "Make it look good" is not a brief. "Warm earth tones, generous whitespace, editorial typography, hero image with depth of field" is a brief. So is "Deliver a research deck with a one-slide thesis per evaluated entity, explicit downside risks, and a clear evidence trail."
 - **Set the bar high.** The quality bar should describe work you'd be proud to put in a portfolio, not work that merely satisfies a checkbox.
 - **Name what to avoid.** Anti-patterns are as important as aspirations. "No generic stock photos" prevents the most common failure mode.
 - **Research-context is input, not proof.** A research-context claim that a capability exists is not enough for a PASS row; the brief must show that the capability is available in this run.

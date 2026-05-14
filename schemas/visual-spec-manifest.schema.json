@@ -1,0 +1,290 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/visual-spec-manifest.schema.json",
+  "title": "Visual Specification Manifest",
+  "description": "Validates manifest.json files in visual-spec reference sibling directories.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "path": {
+      "description": "Repository-relative path without traversal.",
+      "type": "string",
+      "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._@/#-]+$"
+    },
+    "sha256": {
+      "description": "Lowercase SHA-256 hash.",
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "phash": {
+      "description": "Lowercase perceptual hash.",
+      "type": "string",
+      "pattern": "^[a-f0-9]{16,64}$"
+    },
+    "medium": {
+      "description": "Supported visual medium.",
+      "type": "string",
+      "enum": [
+        "web_ui",
+        "native_ui",
+        "presentation",
+        "brand_identity",
+        "video_animation",
+        "3d_render",
+        "document_typography",
+        "game_ui",
+        "data_visualization"
+      ]
+    },
+    "axes": {
+      "description": "Resolved six-axis visual profile.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "density": {"description": "Information density target.", "type": "string", "enum": ["sparse", "balanced", "dense", "ultra_dense"]},
+        "topology": {"description": "Layout or composition topology.", "type": "string", "minLength": 1},
+        "expressiveness": {"description": "Expressive posture.", "type": "string", "enum": ["quiet", "restrained", "editorial", "expressive", "playful", "cinematic"]},
+        "motion": {"description": "Motion posture.", "type": "string", "enum": ["static", "subtle", "functional", "expressive", "cinematic", "rapid"]},
+        "platform": {"description": "Platform idiom.", "type": "string", "minLength": 1},
+        "trust": {"description": "Trust and risk posture.", "type": "string", "minLength": 1}
+      },
+      "required": ["density", "topology", "expressiveness", "motion", "platform", "trust"]
+    }
+  },
+  "properties": {
+    "spec_version": {
+      "description": "Manifest format version, defaulting to 3.0 and constrained to 3.0 or higher.",
+      "type": "string",
+      "default": "3.0",
+      "pattern": "^(?:[3-9]|[1-9][0-9]+)\\.\\d+(\\.\\d+)?$"
+    },
+    "medium": {
+      "description": "Visual medium represented by this manifest.",
+      "$ref": "#/$defs/medium"
+    },
+    "medium_plugin_version": {
+      "description": "Semver version of the medium plugin used.",
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+(\\.\\d+)?$"
+    },
+    "project": {
+      "description": "Project slug represented by the manifest.",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "visual_axes": {
+      "description": "Universal visual axes resolved for the VS.",
+      "$ref": "#/$defs/axes"
+    },
+    "visual_axes_medium_extensions": {
+      "description": "Medium-specific axis values resolved for the VS.",
+      "type": "object",
+      "additionalProperties": {
+        "description": "Resolved medium extension value.",
+        "type": ["string", "number", "boolean", "array", "object"]
+      }
+    },
+    "preset": {
+      "description": "Preset or custom aesthetic label used by this manifest.",
+      "type": "string"
+    },
+    "adjacent_preset_rejected": {
+      "description": "Adjacent preset considered and rejected.",
+      "type": "string"
+    },
+    "captured": {
+      "description": "Timestamp when the manifest was captured.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "tokens_locked": {
+      "description": "Whether the manifest contains locked tokens.",
+      "type": "boolean"
+    },
+    "tokens_locked_at": {
+      "description": "Timestamp when tokens were locked.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "assets": {
+      "description": "All source and generated assets used by the visual specification.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "description": "A single manifest asset.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "description": "Repository-relative asset path.",
+            "$ref": "#/$defs/path"
+          },
+          "sha256": {
+            "description": "SHA-256 hash of the asset bytes.",
+            "$ref": "#/$defs/sha256"
+          },
+          "phash": {
+            "description": "Perceptual hash for visual assets.",
+            "$ref": "#/$defs/phash"
+          },
+          "clip_embedding_hash": {
+            "description": "SHA-256 hash of the CLIP embedding for this asset.",
+            "$ref": "#/$defs/sha256"
+          },
+          "width": {
+            "description": "Asset width in pixels where applicable.",
+            "type": "integer",
+            "minimum": 1
+          },
+          "height": {
+            "description": "Asset height in pixels where applicable.",
+            "type": "integer",
+            "minimum": 1
+          },
+          "role": {
+            "description": "Role this asset plays in the VS workflow.",
+            "type": "string",
+            "enum": ["reference", "anti_pattern", "mockup", "revision", "token_source", "runtime_capture", "report", "other"]
+          },
+          "source_url": {
+            "description": "Original URL for externally sourced assets.",
+            "type": "string",
+            "format": "uri"
+          },
+          "screen": {
+            "description": "Screen, slide, frame, chart, or scene name represented by the asset.",
+            "type": "string"
+          },
+          "rev": {
+            "description": "Revision number represented by the asset, if applicable.",
+            "type": "integer",
+            "minimum": 0
+          },
+          "stage": {
+            "description": "VS stage that produced or consumed the asset.",
+            "type": "string",
+            "enum": ["scaffold", "iterate", "adjudicate", "adversarial", "extract", "runtime", "telemetry"]
+          }
+        },
+        "required": ["path", "sha256", "role", "stage"]
+      }
+    },
+    "tokens": {
+      "description": "Locked token payload for the medium, with web-style family names used as the universal manifest shape.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "color": {"description": "Color token family.", "type": "object"},
+        "type": {"description": "Type token family.", "type": "object"},
+        "spacing": {"description": "Spacing token family.", "type": "object"},
+        "radius": {"description": "Corner radius token family.", "type": "object"},
+        "elevation": {"description": "Elevation or shadow token family.", "type": "object"},
+        "motion": {"description": "Motion timing token family.", "type": "object"},
+        "density": {"description": "Density token family.", "type": "object"},
+        "focus": {"description": "Focus-ring token family.", "type": "object"}
+      },
+      "required": ["color", "type", "spacing", "radius", "elevation", "motion", "density", "focus"]
+    },
+    "iteration_summary": {
+      "description": "Summary of mockup iterations completed before lock.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "anchors_count": {"description": "Number of anchors iterated.", "type": "integer", "minimum": 1},
+        "total_revisions": {"description": "Total captured revisions across anchors.", "type": "integer", "minimum": 1},
+        "notes": {"description": "Concise iteration summary.", "type": "string"}
+      },
+      "required": ["anchors_count", "total_revisions", "notes"]
+    },
+    "adjudication": {
+      "description": "Final adjudication summary.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "rounds": {"description": "Number of adjudication rounds.", "type": "integer", "minimum": 1},
+        "final_verdict": {"description": "Final adjudication verdict.", "type": "string", "enum": ["PASS", "REVISE", "FAIL"]},
+        "report_path": {"description": "Repository-relative final adjudication report path.", "$ref": "#/$defs/path"}
+      },
+      "required": ["rounds", "final_verdict", "report_path"]
+    },
+    "adversarial_pass": {
+      "description": "Adversarial pass summary.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "reviewer_session_id": {"description": "Adversarial reviewer session identifier.", "type": "string", "minLength": 1},
+        "adjacent_preset_argued": {"description": "Adjacent preset argued by the reviewer.", "type": "string"},
+        "verdict": {"description": "Adversarial pass verdict.", "type": "string", "enum": ["selected_upheld", "adjacent_preferred", "inconclusive", "revise"]},
+        "report_path": {"description": "Repository-relative adversarial report path.", "$ref": "#/$defs/path"}
+      },
+      "required": ["reviewer_session_id", "adjacent_preset_argued", "verdict", "report_path"]
+    },
+    "contrast_validation": {
+      "description": "Contrast validation output.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "pass": {"description": "Whether contrast validation passed.", "type": "boolean"},
+        "wcag_level": {"description": "WCAG level evaluated.", "type": "string", "enum": ["AA", "AAA", "custom"]},
+        "violations": {"description": "Contrast violations found.", "type": "array", "items": {"type": "string"}}
+      },
+      "required": ["pass", "wcag_level", "violations"]
+    },
+    "semantic_layout_validation": {
+      "description": "Semantic layout validation output.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "pass": {"description": "Whether semantic layout validation passed.", "type": "boolean"},
+        "checks": {"description": "Named semantic checks that were run.", "type": "array", "items": {"type": "string"}},
+        "failures": {"description": "Semantic layout failures.", "type": "array", "items": {"type": "string"}}
+      },
+      "required": ["pass", "checks", "failures"]
+    },
+    "clip_embedding": {
+      "description": "CLIP embedding summary for preset and anti-pattern distance checks.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "model": {"description": "CLIP model identifier.", "type": "string", "minLength": 1},
+        "centroid_hash": {"description": "SHA-256 hash of the centroid vector.", "$ref": "#/$defs/sha256"},
+        "distance_to_preset": {"description": "Cosine distance to selected preset centroid.", "type": "number", "minimum": 0, "maximum": 2},
+        "distance_to_anti_pattern": {"description": "Cosine distance to nearest anti-pattern centroid.", "type": "number", "minimum": 0, "maximum": 2}
+      },
+      "required": ["model", "centroid_hash", "distance_to_preset"]
+    },
+    "outcome_data": {
+      "description": "Post-build outcome data associated with this manifest.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "visual_gate_first_attempt": {"description": "First visual gate verdict.", "type": "string", "enum": ["PASS", "REVISE", "FAIL", "WAIVED", "NOT_RUN"]},
+        "visual_gate_final": {"description": "Final visual gate verdict.", "type": "string", "enum": ["PASS", "REVISE", "FAIL", "WAIVED", "NOT_RUN"]},
+        "revision_count_during_build": {"description": "Number of visual revisions during build.", "type": "integer", "minimum": 0},
+        "operator_acceptance": {"description": "Operator acceptance outcome.", "type": "string", "enum": ["accepted", "accepted_with_notes", "rejected", "waived", "unknown"]}
+      }
+    }
+  },
+  "required": [
+    "spec_version",
+    "medium",
+    "medium_plugin_version",
+    "project",
+    "visual_axes",
+    "visual_axes_medium_extensions",
+    "preset",
+    "adjacent_preset_rejected",
+    "captured",
+    "tokens_locked",
+    "tokens_locked_at",
+    "assets",
+    "tokens",
+    "iteration_summary",
+    "adjudication",
+    "adversarial_pass",
+    "contrast_validation",
+    "semantic_layout_validation",
+    "clip_embedding",
+    "outcome_data"
+  ]
+}

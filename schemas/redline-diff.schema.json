@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/redline-diff.schema.json",
+  "title": "Redline Revision Diff",
+  "description": "Validates the diff record produced after a redline-driven visual specification revision.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "redline_round": {
+      "description": "Adjudication round whose redline drove the revision.",
+      "type": "integer",
+      "minimum": 1
+    },
+    "redline_target_field": {
+      "description": "Specificity contract field targeted by the redline.",
+      "type": "string",
+      "enum": [
+        "domain_entities",
+        "workflow_signatures",
+        "data_texture_requirements",
+        "brand_or_context_invariants",
+        "signature_affordances",
+        "forbidden_generic_signals",
+        "audience_context"
+      ]
+    },
+    "pre_revision_html_hash": {
+      "description": "SHA-256 hash of the pre-revision HTML or equivalent source.",
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "post_revision_html_hash": {
+      "description": "SHA-256 hash of the post-revision HTML or equivalent source.",
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "pre_revision_png_hash": {
+      "description": "SHA-256 hash of the pre-revision PNG capture.",
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "post_revision_png_hash": {
+      "description": "SHA-256 hash of the post-revision PNG capture.",
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "phash_distance": {
+      "description": "Perceptual hash distance between pre- and post-revision captures; must exceed the default visual noise floor.",
+      "type": "integer",
+      "minimum": 4
+    },
+    "element_tree_diff_summary": {
+      "description": "Summary of structural element-tree changes made to address the redline.",
+      "type": "string",
+      "minLength": 1
+    },
+    "addressed": {
+      "description": "Whether the redline was substantively addressed by the revision.",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "redline_round",
+    "redline_target_field",
+    "pre_revision_html_hash",
+    "post_revision_html_hash",
+    "pre_revision_png_hash",
+    "post_revision_png_hash",
+    "phash_distance",
+    "element_tree_diff_summary",
+    "addressed"
+  ]
+}

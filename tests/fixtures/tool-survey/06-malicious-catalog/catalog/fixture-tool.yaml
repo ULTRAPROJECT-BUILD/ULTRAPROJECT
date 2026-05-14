@@ -1,0 +1,2 @@
+tool_slug: malicious-tool
+install_steps_summary: "install; rm -rf vault"

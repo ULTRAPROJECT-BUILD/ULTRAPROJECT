@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/token-payload-presentation.schema.json",
+  "title": "Presentation Token Payload",
+  "description": "Validates the tokens block in manifest.json for presentation visual specifications.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "stageTypeStyle": {
+      "description": "Projection-safe presentation type style.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "family": {
+          "description": "Font family used on stage.",
+          "type": "string",
+          "minLength": 1
+        },
+        "size": {
+          "description": "Type size in points.",
+          "type": "number",
+          "minimum": 10,
+          "maximum": 240
+        },
+        "weight": {
+          "description": "Font weight for projected use.",
+          "type": ["string", "integer"]
+        },
+        "leading": {
+          "description": "Line height in points or ratio.",
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "tracking": {
+          "description": "Letter spacing in points.",
+          "type": "number",
+          "minimum": -2,
+          "maximum": 12
+        }
+      },
+      "required": ["family", "size", "weight", "leading", "tracking"]
+    }
+  },
+  "properties": {
+    "slide_grid": {
+      "description": "Master-page geometry for slide layouts.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "page_width": {
+          "description": "Slide width in points or pixels.",
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "page_height": {
+          "description": "Slide height in points or pixels.",
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "margin": {
+          "description": "Outer slide margin.",
+          "type": "number",
+          "minimum": 0
+        },
+        "columns": {
+          "description": "Number of grid columns.",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 24
+        },
+        "rows": {
+          "description": "Number of grid rows.",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 24
+        },
+        "gutter": {
+          "description": "Grid gutter width.",
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": ["page_width", "page_height", "margin", "columns", "rows", "gutter"]
+    },
+    "stage_spotlight": {
+      "description": "Default focal-point geometry for stage composition.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "x": {"description": "Focal point x-coordinate.", "type": "number", "minimum": 0},
+        "y": {"description": "Focal point y-coordinate.", "type": "number", "minimum": 0},
+        "width": {"description": "Focal region width.", "type": "number", "exclusiveMinimum": 0},
+        "height": {"description": "Focal region height.", "type": "number", "exclusiveMinimum": 0},
+        "safe_zone_pct": {"description": "Safe zone around the focal point as percentage of slide dimensions.", "type": "number", "minimum": 0, "maximum": 50}
+      },
+      "required": ["x", "y", "width", "height", "safe_zone_pct"]
+    },
+    "type_on_stage": {
+      "description": "Named presentation type styles sized for projection.",
+      "type": "object",
+      "minProperties": 5,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_-]*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/stageTypeStyle"
+      }
+    },
+    "slide_color": {
+      "description": "Semantic slide color tokens.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "background": {"description": "Primary slide background color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "background_alt": {"description": "Alternate slide background color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "text_primary": {"description": "Primary projected text color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "text_secondary": {"description": "Secondary projected text color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "accent": {"description": "Accent color for emphasis.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "rule": {"description": "Rule, divider, or gridline color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"}
+      },
+      "required": ["background", "background_alt", "text_primary", "text_secondary", "accent", "rule"]
+    },
+    "transition": {
+      "description": "Named transition tokens.",
+      "type": "object",
+      "minProperties": 3,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_-]*$"
+      },
+      "additionalProperties": {
+        "description": "Transition definition.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "description": "Transition type.",
+            "type": "string",
+            "enum": ["none", "cut", "fade", "push", "wipe", "zoom", "morph"]
+          },
+          "duration_ms": {
+            "description": "Transition duration in milliseconds.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 5000
+          },
+          "easing": {
+            "description": "Transition easing curve.",
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["type", "duration_ms", "easing"]
+      }
+    },
+    "build_pacing": {
+      "description": "Element-entry timing rules for slide builds.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "entry_delay_ms": {
+          "description": "Default delay before first element entry.",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "stagger_ms": {
+          "description": "Default stagger between element entries.",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "max_simultaneous_elements": {
+          "description": "Maximum elements that should enter simultaneously.",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "rules": {
+          "description": "Specific pacing rules for element classes or slide types.",
+          "type": "array",
+          "items": {
+            "description": "One build pacing rule.",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "selector": {
+                "description": "Element class, slide type, or semantic selector.",
+                "type": "string",
+                "minLength": 1
+              },
+              "timing": {
+                "description": "Timing behavior for the selector.",
+                "type": "string",
+                "enum": ["with_previous", "after_previous", "on_click", "auto"]
+              },
+              "delay_ms": {
+                "description": "Additional delay in milliseconds.",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 10000
+              }
+            },
+            "required": ["selector", "timing", "delay_ms"]
+          }
+        }
+      },
+      "required": ["entry_delay_ms", "stagger_ms", "max_simultaneous_elements", "rules"]
+    }
+  },
+  "required": [
+    "slide_grid",
+    "stage_spotlight",
+    "type_on_stage",
+    "slide_color",
+    "transition",
+    "build_pacing"
+  ]
+}

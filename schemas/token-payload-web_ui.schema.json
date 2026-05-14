@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/token-payload-web_ui.schema.json",
+  "title": "Web UI Token Payload",
+  "description": "Validates the tokens block in manifest.json for web_ui visual specifications.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "typeStyle": {
+      "description": "Named web typography style.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "family": {
+          "description": "Font family or CSS font-family stack.",
+          "type": "string",
+          "minLength": 1
+        },
+        "size": {
+          "description": "Font size in CSS pixels.",
+          "type": "number",
+          "minimum": 6,
+          "maximum": 160
+        },
+        "weight": {
+          "description": "Numeric font weight.",
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 950
+        },
+        "leading": {
+          "description": "Line-height ratio or CSS pixel line height.",
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "tracking": {
+          "description": "Letter spacing in CSS pixels.",
+          "type": "number",
+          "minimum": -2,
+          "maximum": 8
+        }
+      },
+      "required": ["family", "size", "weight", "leading", "tracking"]
+    },
+    "motionTiming": {
+      "description": "Named motion timing token.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "description": "Duration in milliseconds.",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5000
+        },
+        "easing": {
+          "description": "CSS easing function or named easing curve.",
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": ["duration_ms", "easing"]
+    }
+  },
+  "properties": {
+    "color": {
+      "description": "Web UI semantic color tokens.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "surface": {"description": "Default page or app surface color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "surface-elevated": {"description": "Elevated surface color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "border": {"description": "Default border color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "text-primary": {"description": "Primary text color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "text-secondary": {"description": "Secondary text color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "text-tertiary": {"description": "Tertiary text color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "accent": {"description": "Default accent color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "accent-hover": {"description": "Accent color in hover state.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "accent-pressed": {"description": "Accent color in pressed state.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "success": {"description": "Success semantic color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "warning": {"description": "Warning semantic color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "danger": {"description": "Danger semantic color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "focus-ring": {"description": "Focus-ring color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"}
+      },
+      "required": [
+        "surface",
+        "surface-elevated",
+        "border",
+        "text-primary",
+        "text-secondary",
+        "text-tertiary",
+        "accent",
+        "accent-hover",
+        "accent-pressed",
+        "success",
+        "warning",
+        "danger",
+        "focus-ring"
+      ]
+    },
+    "type": {
+      "description": "Named web typography styles.",
+      "type": "object",
+      "minProperties": 5,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_-]*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/typeStyle"
+      }
+    },
+    "spacing": {
+      "description": "Web spacing scale.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "description": "Base spacing unit in CSS pixels.",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "scale": {
+          "description": "Spacing scale values in CSS pixels.",
+          "type": "array",
+          "minItems": 6,
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "required": ["base", "scale"]
+    },
+    "radius": {
+      "description": "Named corner radius tokens in CSS pixels.",
+      "type": "object",
+      "minProperties": 4,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_-]*$"
+      },
+      "additionalProperties": {
+        "description": "Corner radius value in CSS pixels.",
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 64
+      }
+    },
+    "elevation": {
+      "description": "Named CSS shadow tokens.",
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_-]*$"
+      },
+      "additionalProperties": {
+        "description": "CSS box-shadow value.",
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "motion": {
+      "description": "Named web motion timing tokens.",
+      "type": "object",
+      "minProperties": 3,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_-]*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/motionTiming"
+      }
+    },
+    "density": {
+      "description": "Density constraints for web UI layouts.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "rows_visible_at_800pt": {
+          "description": "Minimum rows visible at 800pt content height.",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        }
+      },
+      "required": ["rows_visible_at_800pt"]
+    },
+    "focus": {
+      "description": "Focus-ring geometry and visibility tokens.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "description": "Focus ring offset in CSS pixels.",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16
+        },
+        "color_alpha_pct": {
+          "description": "Focus ring alpha percentage.",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "radius": {
+          "description": "Focus ring radius in CSS pixels.",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 64
+        }
+      },
+      "required": ["offset", "color_alpha_pct", "radius"]
+    }
+  },
+  "required": ["color", "type", "spacing", "radius", "elevation", "motion", "density", "focus"]
+}

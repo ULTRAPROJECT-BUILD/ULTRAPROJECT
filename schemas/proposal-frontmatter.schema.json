@@ -1,0 +1,183 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/proposal-frontmatter.schema.json",
+  "title": "Preset Update Proposal Frontmatter",
+  "description": "Validates frontmatter for vault/archive/visual-aesthetics/proposals/{preset}-{date}-proposal.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "type": {
+      "description": "Artifact discriminator for preset update proposals.",
+      "const": "preset-update-proposal"
+    },
+    "preset": {
+      "description": "Preset slug proposed for update.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]*$"
+    },
+    "proposed_axis_or_token": {
+      "description": "Axis or token path proposed for change.",
+      "type": "string",
+      "minLength": 1
+    },
+    "current_value": {
+      "description": "Current preset value.",
+      "type": ["string", "number", "boolean"]
+    },
+    "proposed_value": {
+      "description": "Proposed new preset value.",
+      "type": ["string", "number", "boolean"]
+    },
+    "projects_overriding": {
+      "description": "Projects that overrode this preset value.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9_-]*$"
+      }
+    },
+    "projects_with_aesthetic-default-wrong_reason": {
+      "description": "Projects whose override reason was aesthetic-default-wrong.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9_-]*$"
+      }
+    },
+    "outcome_delta": {
+      "description": "Outcome delta comparing override projects to preset-default projects.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "revision_count_delta": {
+          "description": "Mean revision count delta; negative means the proposed value performed better.",
+          "type": "number"
+        },
+        "operator_acceptance_delta_pct": {
+          "description": "Operator acceptance rate delta in percentage points.",
+          "type": "number",
+          "minimum": -100,
+          "maximum": 100
+        },
+        "delivery_grade_delta": {
+          "description": "Numericized delivery grade delta.",
+          "type": "number"
+        },
+        "sample_size": {
+          "description": "Number of projects included in the outcome comparison.",
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": ["revision_count_delta", "operator_acceptance_delta_pct", "delivery_grade_delta", "sample_size"]
+    },
+    "regression_check_result": {
+      "description": "High-level regression check result.",
+      "type": "string",
+      "enum": ["pass", "fail", "operator_review_required", "not_run"]
+    },
+    "regression_check_projects_evaluated": {
+      "description": "Number of historical projects evaluated by regression checks.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "regression_check_worse_projects": {
+      "description": "Projects that regressed under the proposed change.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9_-]*$"
+      }
+    },
+    "rejected_alternatives": {
+      "description": "Alternatives considered and rejected before this proposal.",
+      "type": "array",
+      "items": {
+        "description": "A rejected alternative value.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "value": {
+            "description": "Alternative value that was considered.",
+            "type": ["string", "number", "boolean"]
+          },
+          "reason": {
+            "description": "Why the alternative was rejected.",
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["value", "reason"]
+      }
+    },
+    "cohort_check": {
+      "description": "Cohort diversity and holdout validation checks.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "distinct_clients": {"description": "Distinct client count in the evidence cohort.", "type": "integer", "minimum": 0},
+        "distinct_organizations": {"description": "Distinct organization count in the evidence cohort.", "type": "integer", "minimum": 0},
+        "distinct_domains": {"description": "Distinct domain count in the evidence cohort.", "type": "integer", "minimum": 0},
+        "reviewer_diversity_pass": {"description": "Whether reviewer diversity threshold passed.", "type": "boolean"},
+        "holdout_validation_pass": {"description": "Whether holdout validation passed.", "type": "boolean"}
+      },
+      "required": ["distinct_clients", "distinct_organizations", "distinct_domains", "reviewer_diversity_pass", "holdout_validation_pass"]
+    },
+    "tag_audit": {
+      "description": "Audit proving override tags and reasons were not polluted by unrelated projects.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "audited_projects": {"description": "Number of projects audited.", "type": "integer", "minimum": 0},
+        "invalid_tags": {"description": "Invalid or suspicious tags found.", "type": "array", "items": {"type": "string"}},
+        "pass": {"description": "Whether the tag audit passed.", "type": "boolean"}
+      },
+      "required": ["audited_projects", "invalid_tags", "pass"]
+    },
+    "regression_check": {
+      "description": "Detailed regression check output embedded in the proposal frontmatter.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "method": {"description": "Regression check method.", "type": "string", "enum": ["real_rendering", "simulate_only", "manual_review"]},
+        "status": {"description": "Regression check status.", "type": "string", "enum": ["pass", "fail", "operator_review_required", "not_run"]},
+        "report_path": {"description": "Repository-relative regression report path.", "type": "string", "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._@/#-]+$"}
+      },
+      "required": ["method", "status", "report_path"]
+    },
+    "operator_decision": {
+      "description": "Operator decision on this proposal.",
+      "type": "string",
+      "enum": ["pending", "approved", "rejected", "needs_more_data", "superseded"]
+    },
+    "created": {
+      "description": "Timestamp when the proposal was created.",
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "type",
+    "preset",
+    "proposed_axis_or_token",
+    "current_value",
+    "proposed_value",
+    "projects_overriding",
+    "projects_with_aesthetic-default-wrong_reason",
+    "outcome_delta",
+    "regression_check_result",
+    "regression_check_projects_evaluated",
+    "regression_check_worse_projects",
+    "rejected_alternatives",
+    "cohort_check",
+    "tag_audit",
+    "regression_check",
+    "operator_decision",
+    "created"
+  ]
+}

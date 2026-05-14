@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/resolver-output.schema.json",
+  "title": "Visual Specification Resolver Output",
+  "description": "Validates resolution.json output from scripts/resolve_visual_spec.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "ticket_path": {
+      "description": "Ticket path being resolved.",
+      "type": "string",
+      "minLength": 1
+    },
+    "project": {
+      "description": "Project slug for resolution.",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "client": {
+      "description": "Client slug or identifier for workspace isolation.",
+      "type": "string",
+      "minLength": 1
+    },
+    "phase": {
+      "description": "Phase identifier considered by the resolver.",
+      "type": ["string", "null"]
+    },
+    "wave": {
+      "description": "Wave identifier considered by the resolver.",
+      "type": ["string", "null"]
+    },
+    "resolved_vs_path": {
+      "description": "Path to the resolved visual spec, or null when none applies.",
+      "anyOf": [
+        {"type": "string", "minLength": 1},
+        {"type": "null"}
+      ]
+    },
+    "resolved_vs_id": {
+      "description": "Resolved logical visual_spec_id, or null when no VS applies.",
+      "anyOf": [
+        {"type": "string", "format": "uuid"},
+        {"type": "null"}
+      ]
+    },
+    "resolved_revision_id": {
+      "description": "Resolved active revision_id, or null when no VS applies.",
+      "anyOf": [
+        {"type": "string", "format": "uuid"},
+        {"type": "null"}
+      ]
+    },
+    "resolved_scope": {
+      "description": "Scope level at which the VS was resolved.",
+      "type": "string",
+      "enum": ["ticket", "wave", "phase", "project", "none"]
+    },
+    "resolved_at": {
+      "description": "Timestamp when resolution completed.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "resolver_generation": {
+      "description": "Resolver generation number used for ticket-spawn barriers.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "freshness": {
+      "description": "Whether the resolved VS predates the ticket creation timestamp.",
+      "type": "string",
+      "enum": ["fresh", "stale", "none"]
+    },
+    "rerun_results": {
+      "description": "Optional project-wide resolver rerun results.",
+      "anyOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "scanned_tickets": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "stale_tickets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "ticket_path": {"type": "string", "minLength": 1},
+                  "old_vs_revision": {
+                    "anyOf": [
+                      {"type": "string", "format": "uuid"},
+                      {"type": "null"}
+                    ]
+                  },
+                  "new_vs_revision": {
+                    "anyOf": [
+                      {"type": "string", "format": "uuid"},
+                      {"type": "null"}
+                    ]
+                  }
+                },
+                "required": ["ticket_path", "old_vs_revision", "new_vs_revision"]
+              }
+            }
+          },
+          "required": ["scanned_tickets", "stale_tickets"]
+        }
+      ]
+    }
+  },
+  "required": [
+    "ticket_path",
+    "project",
+    "client",
+    "phase",
+    "wave",
+    "resolved_vs_path",
+    "resolved_vs_id",
+    "resolved_revision_id",
+    "resolved_scope",
+    "resolved_at",
+    "resolver_generation",
+    "freshness",
+    "rerun_results"
+  ]
+}

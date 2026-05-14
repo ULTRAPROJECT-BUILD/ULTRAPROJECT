@@ -1,0 +1,62 @@
+tool_slug: blender-mantaflow-gas
+tool_stack_id: blender:mantaflow-gas@4.5
+display_name: Blender Mantaflow gas solver
+versions:
+  - version: "4.5"
+    released: 2025-12-01
+capabilities:
+  - id: cinematic_volumetric_render
+    bar_fit_default: MEDIUM
+    bar_fit_evidence:
+      - type: vendor_documentation
+        source: https://docs.blender.org/manual/en/latest/physics/fluid/type/domain/gas/index.html
+        summary: Gas domains are designed for smoke, fire, and plume behavior rather than art-directed volumetric material surfaces.
+      - type: project_observation
+        source: render-fixture evidence
+        summary: Same-stack iterations reached material-shape correctness but read diagrammatic against the feature-quality reality bar.
+    known_ceilings:
+      - Material-shape composition reads diagrammatic without artist-directed surface sculpting outside the solver.
+      - Surface crust geometry and turnover require mesh or texture work beyond the gas solve.
+  - id: smoke_column_render
+    bar_fit_default: HIGH
+    bar_fit_evidence:
+      - type: vendor_documentation
+        source: https://docs.blender.org/manual/en/latest/physics/fluid/type/domain/gas/index.html
+        summary: Mantaflow gas domains are first-class for smoke and fire volumes.
+    known_ceilings:
+      - Large domains need careful cache sizing on laptop hardware.
+constraints:
+  os: [macos, linux, windows]
+  arch: [arm64, x86_64]
+  acquisition_cost_usd: 0
+  recurrence: none
+  license: gpl_v3
+  local_runnable: true
+  network_required: false
+  credentials_required: false
+acquisition:
+  install_method: package_manager
+  install_risk: low
+  install_steps_summary: Install Blender with the platform package manager and verify the version.
+  canary_type: functional
+  credentials_needed: []
+  credential_handoff: none
+catalog_metadata:
+  source: canonical
+  terms_last_checked: 2026-05-12
+  ttl_days_by_domain:
+    pricing: 90
+    licensing: 180
+    capability_evidence: 365
+  citation_urls:
+    - https://docs.blender.org/manual/en/latest/physics/fluid/type/domain/gas/index.html
+    - https://www.blender.org/about/license/
+  catalog_revision: 1
+  last_validated: 2026-05-12
+related_tools:
+  alternatives_for_capability:
+    cinematic_volumetric_render:
+      - tool_slug: houdini-indie
+        why: Native production fluid tooling has higher headroom for material-like volumes.
+      - tool_slug: mp4-video-texture-on-card
+        why: Pre-rendered Cycles bake can satisfy the bar inside a WebGL runtime.

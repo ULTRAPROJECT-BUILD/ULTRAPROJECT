@@ -1,0 +1,52 @@
+tool_slug: three-js-raymarched-volume
+tool_stack_id: npm:three-raymarched-volume@latest
+display_name: three.js raymarched volume renderer
+versions:
+  - version: latest
+    released: 2026-01-01
+capabilities:
+  - id: webgl_volume_renderer
+    bar_fit_default: HIGH
+    bar_fit_evidence:
+      - type: vendor_documentation
+        source: https://threejs.org/examples/#webgl2_volume_perlin
+        summary: three.js examples include WebGL2 volume rendering and raymarching patterns.
+    known_ceilings:
+      - Browser volume rendering is performance-sensitive and needs aggressive proof on target hardware.
+  - id: cinematic_volumetric_render
+    bar_fit_default: MEDIUM
+    bar_fit_evidence:
+      - type: project_observation
+        source: render-fixture planning replay
+        summary: Suitable for mounting baked or sampled volumes but not a full photoreal simulation source by itself.
+    known_ceilings:
+      - Procedural noise alone is explicitly disallowed by the fixture.
+constraints:
+  os: [macos, linux, windows]
+  arch: [arm64, x86_64]
+  acquisition_cost_usd: 0
+  recurrence: none
+  license: mit
+  local_runnable: true
+  network_required: false
+  credentials_required: false
+  supported_browsers: [safari-17+, chrome-120+, firefox-115+]
+acquisition:
+  install_method: package_manager
+  install_risk: low
+  install_steps_summary: Install three from npm inside the project and run a WebGL2 volume smoke scene.
+  canary_type: functional
+  credentials_needed: []
+  credential_handoff: none
+catalog_metadata:
+  source: canonical
+  terms_last_checked: 2026-05-12
+  ttl_days_by_domain:
+    pricing: 90
+    licensing: 180
+    capability_evidence: 365
+  citation_urls:
+    - https://threejs.org/
+    - https://threejs.org/examples/#webgl2_volume_perlin
+  catalog_revision: 1
+  last_validated: 2026-05-12

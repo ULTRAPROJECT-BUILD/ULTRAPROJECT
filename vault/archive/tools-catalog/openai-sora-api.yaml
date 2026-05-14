@@ -1,0 +1,42 @@
+tool_slug: openai-sora-api
+tool_stack_id: api:openai/sora@latest
+display_name: OpenAI Sora API
+versions:
+  - version: latest
+    released: 2026-01-01
+capabilities:
+  - id: generative_cinematic_video
+    bar_fit_default: HIGH
+    bar_fit_evidence:
+      - type: vendor_documentation
+        source: https://platform.openai.com/docs
+        summary: OpenAI platform documentation covers current API access patterns for generative media.
+    known_ceilings:
+      - Requires network access, credentials, paid usage, and careful provenance review.
+constraints:
+  os: [macos, linux, windows]
+  arch: [arm64, x86_64]
+  acquisition_cost_usd: 10
+  recurrence: one_time
+  license: commercial_api_terms
+  local_runnable: false
+  network_required: true
+  credentials_required: true
+acquisition:
+  install_method: api_only
+  install_risk: high
+  install_steps_summary: Operator provides API credentials out of band and a short video-generation canary verifies access.
+  canary_type: functional
+  credentials_needed: [OPENAI_API_KEY]
+  credential_handoff: operator_out_of_band
+catalog_metadata:
+  source: canonical
+  terms_last_checked: 2026-05-12
+  ttl_days_by_domain:
+    pricing: 90
+    licensing: 180
+    capability_evidence: 180
+  citation_urls:
+    - https://platform.openai.com/docs
+  catalog_revision: 1
+  last_validated: 2026-05-12

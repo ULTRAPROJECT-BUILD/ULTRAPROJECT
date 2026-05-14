@@ -1,0 +1,159 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://oneshot.local/schemas/tool-survey.schema.json",
+  "title": "Tool Survey Snapshot",
+  "description": "Validates Step 0.7 tool survey snapshots.",
+  "type": "object",
+  "additionalProperties": false,
+  "definitions": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "installedState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "detected_version", "canary_status", "last_seen_on_host"],
+      "properties": {
+        "state": {"type": "string", "enum": ["installed", "not_installed", "unknown"]},
+        "detected_version": {"type": ["string", "null"]},
+        "canary_status": {"type": "string", "enum": ["passed", "failed", "not_run"]},
+        "last_seen_on_host": {"type": ["string", "null"]}
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool_slug",
+        "bar_fitness",
+        "constraint_fit",
+        "excluded_by_constraint",
+        "installed_state",
+        "acquisition_summary",
+        "canary_type",
+        "evidence_confidence",
+        "catalog_freshness"
+      ],
+      "properties": {
+        "tool_slug": {"$ref": "#/definitions/slug"},
+        "tool_stack_id": {"type": "string"},
+        "display_name": {"type": "string"},
+        "bar_fitness": {"type": "string", "enum": ["HIGH", "MEDIUM", "LOW"]},
+        "bar_fitness_evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "constraint_fit": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {"type": "string"}
+        },
+        "excluded_by_constraint": {
+          "type": "array",
+          "items": {"type": "string"},
+          "uniqueItems": true
+        },
+        "installed_state": {"$ref": "#/definitions/installedState"},
+        "acquisition_summary": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["install_method", "install_risk", "acquisition_cost_usd", "recurrence"]
+        },
+        "canary_type": {"type": "string", "enum": ["functional", "smoke", "not_required"]},
+        "evidence_confidence": {"type": "string", "enum": ["high", "medium", "low", "stale_accepted"]},
+        "catalog_freshness": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["terms_last_checked", "ttl_status", "citation_urls"],
+          "properties": {
+            "terms_last_checked": {"type": "string"},
+            "ttl_status": {"type": "string", "enum": ["fresh", "stale_within_grace", "stale"]},
+            "citation_urls": {
+              "type": "array",
+              "items": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    "oaiPlanId": {
+      "type": "string",
+      "pattern": "^OAI-PLAN-[0-9]{3,}$"
+    }
+  },
+  "required": [
+    "project_slug",
+    "client_slug",
+    "generated_at",
+    "load_bearing_capabilities",
+    "constraints",
+    "surveys",
+    "oai_plan_responses"
+  ],
+  "properties": {
+    "project_slug": {"$ref": "#/definitions/slug"},
+    "client_slug": {"$ref": "#/definitions/slug"},
+    "generated_at": {"type": "string", "minLength": 1},
+    "load_bearing_capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "bar"],
+        "properties": {
+          "id": {"$ref": "#/definitions/slug"},
+          "bar": {"type": "string", "minLength": 1},
+          "operator_named_tool": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": true
+    },
+    "surveys": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["capability", "bar", "constraints", "candidates", "refresh_required"],
+        "properties": {
+          "capability": {"$ref": "#/definitions/slug"},
+          "bar": {"type": "string", "minLength": 1},
+          "constraints": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": true
+          },
+          "refresh_required": {"type": "boolean"},
+          "candidates": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"$ref": "#/definitions/candidate"}
+          },
+          "tension": {"type": ["string", "null"]},
+          "recommended_default": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "oai_plan_responses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["oai_id"]
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  }
+}

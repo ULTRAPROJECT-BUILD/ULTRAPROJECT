@@ -2,7 +2,7 @@
 type: config
 title: "OneShot Configuration"
 description: "Global settings for orchestration, legal compliance, budgets, payment rails, and marketing guardrails."
-updated: 2026-04-18T16:21
+updated: 2026-05-10T11:13
 ---
 
 # OneShot Configuration
@@ -125,6 +125,153 @@ quality_contract:
   playbook_divergence_section_required_for_frontier: true
   playbook_overreach_check_required: true
   playbook_primary_justification_budget_frontier_pct: 30
+  # === Visual Specification System (added 2026-05-10) ===
+  visual_quality_target_supported: true
+  visual_quality_target_mediums_supported: [web_ui, native_ui, presentation, brand_identity, video, 3d_render, document_typography, game_ui, data_visualization]
+  visual_quality_target_modes_supported: [preset, custom, brand_system, none]
+  visual_quality_target_named_values: [apple_consumer, apple_native, things_calm, operator_triage, operator_admin, observability_console, executive_analytics, developer_tools, vercel_marketing, editorial_premium, fintech_precise, playful_consumer, data_scientific]
+  visual_axes_required: [density, topology, expressiveness, motion, platform, trust]
+  visual_axes_medium_extensions_required: true
+  visual_spec_required_when_target_set: true
+  visual_spec_required_for_dashboards: true
+  visual_spec_required_for_operator_consoles: true
+  visual_spec_required_for_public_surfaces: true
+  visual_spec_required_for_presentations: true
+  visual_spec_required_for_brand_identity: true
+  visual_spec_required_for_video_animation: true
+  visual_spec_required_for_3d_renders: true
+  visual_spec_required_for_document_typography_when_premium: true
+  visual_spec_token_families_required: [color, type, spacing, radius, elevation, motion, density, focus]
+  visual_spec_min_anchor_mockups_per_medium: {web_ui: 2, native_ui: 2, presentation: 4, brand_identity: 5, video: 3, 3d_render: 2, document_typography: 3, game_ui: 2, data_visualization: 2}
+  visual_spec_min_revisions_per_anchor: 3
+  visual_spec_min_references: 3
+  visual_spec_min_antipatterns: 3
+  visual_spec_min_color_tokens: 10
+  visual_spec_min_type_styles: 5
+  visual_spec_min_spacing_values: 6
+  visual_spec_min_radius_values: 4
+  visual_spec_min_motion_timings: 3
+  visual_spec_signoff_required: true
+  visual_spec_adversarial_pass_required: true
+  visual_spec_first_round_must_be_revise: false
+  visual_spec_signoff_freshness_max_days: 14
+  visual_spec_block_build_when_unlocked: true
+  visual_spec_phash_noise_floor: 8
+  visual_spec_phash_forbidden_proximity: 12
+  visual_spec_phash_take_min: 14
+  visual_spec_phash_literal_max: 32
+  visual_spec_ssim_regen_min: 0.92
+  visual_spec_ssim_runtime_min: 0.85
+  visual_spec_layout_topology_variance_max_pct: 20
+  visual_spec_color_token_min_de76_distance: 3
+  visual_spec_contrast_aa_required: true
+  visual_spec_contrast_aaa_for_body_required: false
+  visual_spec_session_isolation_required: true
+  visual_spec_no_author_self_signoff: true
+  visual_spec_mtime_freshness_hours: 1
+  visual_spec_equal_weight_grid_max_siblings: 4
+  visual_spec_hierarchy_contrast_min_ratio: 1.8
+  visual_spec_pane_dominance_min_ratio: 1.5
+  visual_spec_min_distinct_components: 4
+  visual_spec_min_visible_color_tokens: 8
+  visual_spec_min_visible_type_styles: 4
+  visual_spec_clip_preset_distance_min: 0.20
+  visual_spec_clip_preset_distance_max: 0.55
+  visual_spec_clip_antipattern_distance_min: 0.50
+  visual_spec_clip_anchor_diversity_min: 0.10
+  visual_spec_clip_model: "ViT-B-32"
+  visual_spec_telemetry_closed_loop: true
+  visual_spec_aesthetic_proposal_min_projects: 5
+  visual_spec_aesthetic_proposal_outcome_required: true
+  visual_spec_aesthetic_proposal_baseline_comparison_required: true
+  visual_spec_aesthetic_proposal_regression_check_required: true
+  visual_spec_aesthetic_proposal_alternatives_required: 2
+  visual_spec_aesthetic_proposal_operator_approval_required: true
+  visual_spec_aesthetic_changelog_required: true
+  visual_spec_override_reasons: [aesthetic-default-wrong, project-specific-brand, reviewer-override, operator-taste, one-off-experiment]
+  visual_spec_immutable_ids_required: true
+  visual_spec_amendment_lock_required: true
+  visual_spec_amendment_lock_max_age_minutes: 30
+  visual_spec_deletion_forbidden: true
+  visual_spec_resolver_reruns_on_phase_activation: true
+  visual_spec_resolver_reruns_on_wave_activation: true
+  visual_spec_revision_chain_required: true
+  visual_spec_specificity_brief_extraction_required: true
+  visual_spec_specificity_banned_vague_taxonomy_path: "vault/archive/visual-aesthetics/_banned_vague_taxonomy.md"
+  visual_spec_specificity_min_brief_grounding_pct: 70
+  visual_spec_specificity_min_item_score: 0.4
+  visual_spec_specificity_min_average_score: 0.6
+  visual_spec_specificity_max_below_0_5_pct: 20
+  visual_spec_specificity_audience_context_required: true
+  visual_spec_specificity_audience_context_fields_required: [primary_environment, usage_frequency, usage_pressure, primary_user_role, user_experience_level, concurrent_attention]
+  visual_spec_mode_none_waiver_required_when_ambition_detected: true
+  visual_spec_waiver_required_fields: [waiver_reason_category, waiver_reason_text, waiver_acknowledged_by_operator, operator_session_id, risks_acknowledged]
+  visual_spec_waiver_log_path: "vault/config/visual-spec-waivers.md"
+  visual_ambition_keywords: [beautiful, gorgeous, "premium UI", "crafted UI", pixel-perfect, "polished UI", "best-in-class visually", design-led, "visually distinctive", "aesthetically deliberate"]
+  visual_ambition_branded_signals: [Apple, Linear, Stripe, Vercel, Things, Notion, Mercury, Brex]
+  visual_ambition_surface_keywords: [dashboard, landing, "marketing site", "operator console", "brand identity", animation, reel]
+  visual_spec_lock_by_id_not_path: true
+  visual_spec_lock_file_pattern: "vault/locks/visual-spec/{visual_spec_id}.lock"
+  visual_spec_lock_lease_minutes: 5
+  visual_spec_lock_lease_renewal_minutes: 4
+  visual_spec_lock_atomic_acquisition_required: true
+  visual_spec_amendment_base_revision_check_required: true
+  visual_spec_resolver_generation_tracking_required: true
+  visual_spec_resolver_generation_path: "vault/locks/visual-spec/_generation.json"
+  visual_spec_ticket_spawn_read_barrier_required: true
+  visual_spec_lock_backend_probe_required: true
+  visual_spec_lock_backend_probe_path: "scripts/probe_lock_backend.py"
+  visual_spec_lock_backend_config_path: "vault/config/lock-backend.json"
+  visual_spec_lock_backend_supported_local: [apfs, ext4, btrfs, xfs, "hfs+"]
+  visual_spec_lock_backend_recoverable_via_sqlite: [nfs, fuse, smb]
+  visual_spec_lock_backend_forbidden: [cloud_sync_dropbox, cloud_sync_icloud, cloud_sync_onedrive, cloud_sync_gdrive, unknown]
+  visual_spec_lock_backend_sqlite_path_template: "{vault_root}/locks/_lock_store.db"
+  visual_spec_clock_skew_check_required: true
+  visual_spec_clock_skew_max_seconds: 5
+  visual_spec_lock_fail_closed_on_unknown_fs: true
+  visual_spec_telemetry_distinct_organizations_min: 3
+  visual_spec_telemetry_max_domain_concentration_pct: 50
+  visual_spec_telemetry_max_reviewer_concentration_pct: 40
+  visual_spec_telemetry_min_effect_size_grade_points: 0.5
+  visual_spec_telemetry_min_revision_reduction_pct: 30
+  visual_spec_telemetry_min_operator_acceptance_pct: 80
+  visual_spec_telemetry_audit_min_items: 3
+  visual_spec_telemetry_audit_min_confidence: 0.8
+  visual_spec_telemetry_holdout_required: true
+  visual_spec_telemetry_holdout_min_projects: 3
+  visual_spec_telemetry_reviewer_operator_coupling_max_pct: 60
+  visual_spec_regression_replay_contract_required: true
+  visual_spec_regression_replay_fail_closed_default: block_proposal
+  visual_spec_regression_replay_unsupported_behaviors_supported: [operator_review, block_proposal, skip]
+  visual_spec_brief_specificity_adequacy_required: true
+  visual_spec_brief_named_systems_min: 2
+  visual_spec_brief_concrete_values_min: 3
+  visual_spec_brief_real_workflow_verbs_min: 3
+  visual_spec_brief_audience_context_fields_min: 3
+  visual_spec_brief_distinctiveness_signals_min: 2
+  visual_spec_brief_contract_collusion_check_required: true
+  visual_spec_brief_contract_collusion_sigma_threshold: 2.0
+  visual_spec_waiver_rate_30d_yellow_threshold_pct: 30
+  visual_spec_waiver_rate_30d_red_threshold_pct: 50
+  visual_spec_waiver_rate_90d_red_threshold_pct: 40
+  visual_spec_waiver_red_requires_second_review_or_cooling_off: true
+  visual_spec_waiver_cooling_off_hours: 24
+  visual_spec_unsupported_medium_approval_90d_red_threshold_count: 3
+  visual_spec_unsupported_medium_cooling_off_hours: 48
+  visual_spec_engagement_monthly_report_required: true
+  visual_spec_engagement_report_path_template: "vault/config/visual-system-engagement-{YYYY-MM}.md"
+  visual_spec_telemetry_promising_signals_path: "vault/archive/visual-aesthetics/proposals/_promising-but-insufficient/"
+  visual_spec_telemetry_promising_signal_min_projects: 2
+  visual_spec_telemetry_promising_signal_direction_consistency_required: true
+  visual_spec_telemetry_manual_approval_low_data_basis_flag_required: true
+  visual_spec_gate_profiles_required: [brief, vs_fast, vs_full, runtime, telemetry]
+  visual_spec_gate_profile_target_runtimes_s: {brief: 5, vs_fast: 5, vs_full: 360, runtime: 300, telemetry: 1200}
+  visual_spec_gate_profile_max_runtimes_s: {brief: 30, vs_fast: 15, vs_full: 900, runtime: 900, telemetry: 1800}
+  visual_spec_gate_cache_root: "vault/cache/visual-spec/"
+  visual_spec_gate_cache_invalidation_on_mtime_change: true
+  visual_spec_gate_runtime_budget_enforcement: hard_abort_on_max
+  visual_spec_schema_validation_required_for_all_artifacts: true
+  visual_spec_schemas_directory: "schemas/"
 ```
 
 ### Runtime Screenshot Preservation Policy
@@ -156,11 +303,11 @@ agent_routing:
   #     work to the named agent regardless of host detection. Useful when one CLI is
   #     unavailable mid-run on a normal-mode setup.
   # Manage via `python3 scripts/set_agent_mode.py {mode}`.
-  agent_mode: chat_native
+  agent_mode: codex_fallback
   # host_agent (optional): explicitly declare which CLI hosts the orchestrator.
   # Leave blank to auto-detect via env vars. Set to "claude" or "codex" to override.
   # Used only when agent_mode is chat_native.
-  host_agent: "claude"
+  host_agent: "codex"
   budget_based_routing: false
   orchestration_context_mode: tiered   # reversible: set to full to restore legacy broad-context Claude orchestration
   orchestration_context_packet_max_chars: 32000
@@ -198,6 +345,8 @@ agent_routing:
     self_review: codex        # default worker review lane, including UI/Stitch surfaces
     quality_check: codex      # default QC lane, including UI/Stitch surfaces; use visual_review for Claude visual judgment
     visual_review: claude      # must be Claude — authoritative screenshot/design judgment gate
+    visual_spec: claude
+    visual_spec_review: claude
     artifact_polish_review: codex   # clean-room artifact consumption review by default; use visual_review/design for Claude taste calls
     credibility_gate: codex    # trust/claim audit + fresh-checkout verification
     drift_detection: codex

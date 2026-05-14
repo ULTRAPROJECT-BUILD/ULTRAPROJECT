@@ -9,6 +9,12 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 CHECK_WAVE_HANDOFF_PATH = REPO_ROOT / "scripts" / "check_wave_handoff.py"
 
+ADEQUATE_BRIEF_BODY = [
+    "Demo Console serves operations leads using Stripe, Linear, and PagerDuty during 24/7 review.",
+    "Users triage alerts every 8-hour shift, approve escalations, reconcile status, suppress duplicates, and hand off decisions within 15 minutes.",
+    "The distinctive bar is a dense queue with SLA breach flags, merchant-risk states, and evidence bundle panels rather than a generic dashboard.",
+]
+
 
 def load_module(module_name: str, path: Path):
     spec = importlib.util.spec_from_file_location(module_name, path)
@@ -84,6 +90,9 @@ def write_brief(
     lines.extend([f"captured: {captured}", f"updated: {captured}", "---", "", f"# {title}", ""])
     if body_lines:
         lines.extend(body_lines)
+        lines.append("")
+    else:
+        lines.extend(ADEQUATE_BRIEF_BODY)
         lines.append("")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(lines), encoding="utf-8")

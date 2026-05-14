@@ -1,0 +1,42 @@
+tool_slug: runway-gen3-api
+tool_stack_id: api:runway/gen3@latest
+display_name: Runway Gen-3 API
+versions:
+  - version: latest
+    released: 2026-01-01
+capabilities:
+  - id: generative_cinematic_video
+    bar_fit_default: HIGH
+    bar_fit_evidence:
+      - type: vendor_documentation
+        source: https://docs.dev.runwayml.com/
+        summary: Runway developer documentation covers API-based video generation workflows.
+    known_ceilings:
+      - Requires paid API access and network-dependent generation.
+constraints:
+  os: [macos, linux, windows]
+  arch: [arm64, x86_64]
+  acquisition_cost_usd: 10
+  recurrence: one_time
+  license: commercial_api_terms
+  local_runnable: false
+  network_required: true
+  credentials_required: true
+acquisition:
+  install_method: api_only
+  install_risk: high
+  install_steps_summary: Operator provides Runway API credentials out of band and a short generation canary verifies access.
+  canary_type: functional
+  credentials_needed: [RUNWAYML_API_SECRET]
+  credential_handoff: operator_out_of_band
+catalog_metadata:
+  source: canonical
+  terms_last_checked: 2026-05-12
+  ttl_days_by_domain:
+    pricing: 90
+    licensing: 180
+    capability_evidence: 180
+  citation_urls:
+    - https://docs.dev.runwayml.com/
+  catalog_revision: 1
+  last_validated: 2026-05-12

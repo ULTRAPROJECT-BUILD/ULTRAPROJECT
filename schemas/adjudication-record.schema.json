@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/adjudication-record.schema.json",
+  "title": "Adjudication Record",
+  "description": "Validates adjudication-{date}-rev{N}.md frontmatter or extracted record data.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "round": {
+      "description": "One-based adjudication round number.",
+      "type": "integer",
+      "minimum": 1
+    },
+    "reviewer_session_id": {
+      "description": "Session identifier for the isolated reviewer.",
+      "type": "string",
+      "minLength": 1
+    },
+    "verdict": {
+      "description": "Reviewer verdict for this round.",
+      "type": "string",
+      "enum": ["PASS", "REVISE", "FAIL"]
+    },
+    "redlines": {
+      "description": "Reviewer redlines; may be empty for PASS.",
+      "type": "array",
+      "items": {
+        "description": "One reviewer redline.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "target": {
+            "description": "Field, mockup, or artifact targeted by the redline.",
+            "type": "string",
+            "minLength": 1
+          },
+          "severity": {
+            "description": "Severity assigned by the reviewer.",
+            "type": "string",
+            "enum": ["low", "medium", "high", "blocker"]
+          },
+          "comment": {
+            "description": "Reviewer redline text.",
+            "type": "string",
+            "minLength": 1
+          },
+          "recommended_change": {
+            "description": "Specific change requested by the reviewer.",
+            "type": "string"
+          }
+        },
+        "required": ["target", "severity", "comment"]
+      }
+    },
+    "report_path": {
+      "description": "Repository-relative path to the full adjudication report.",
+      "type": "string",
+      "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._@/#-]+$"
+    },
+    "linked_specificity_fields": {
+      "description": "Specificity contract fields the reviewer engaged with.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "domain_entities",
+          "workflow_signatures",
+          "data_texture_requirements",
+          "brand_or_context_invariants",
+          "signature_affordances",
+          "forbidden_generic_signals",
+          "audience_context"
+        ]
+      }
+    }
+  },
+  "required": ["round", "reviewer_session_id", "verdict", "redlines", "report_path", "linked_specificity_fields"]
+}

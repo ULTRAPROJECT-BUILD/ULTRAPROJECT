@@ -82,6 +82,18 @@ def parse_args() -> argparse.Namespace:
         help="check_visual_gate JSON output(s). Required when --require-visual-gate is set.",
     )
     parser.add_argument(
+        "--vs-gate-json",
+        action="append",
+        default=[],
+        help="check_visual_spec_gate JSON output(s). Required when --require-vs-gate is set.",
+    )
+    parser.add_argument(
+        "--vs-aware-runtime-gate-json",
+        action="append",
+        default=[],
+        help="VS-aware check_visual_gate JSON output(s). Required when provided for delivery gating.",
+    )
+    parser.add_argument(
         "--fresh-checkout-json",
         action="append",
         default=[],
@@ -108,6 +120,11 @@ def parse_args() -> argparse.Namespace:
         "--require-visual-gate",
         action="store_true",
         help="Require at least one PASS visual gate report for governed UI/image-facing work.",
+    )
+    parser.add_argument(
+        "--require-vs-gate",
+        action="store_true",
+        help="Require at least one PASS visual-spec gate report.",
     )
     parser.add_argument(
         "--fresh-checkout-mode",
@@ -491,6 +508,23 @@ def build_report(args: argparse.Namespace) -> dict:
     if args.require_visual_gate:
         visual_required_ok = bool(visual_reports) and not visual_failures
 
+    vs_gate_json = getattr(args, "vs_gate_json", [])
+    require_vs_gate = bool(getattr(args, "require_vs_gate", False))
+    vs_aware_runtime_gate_json = getattr(args, "vs_aware_runtime_gate_json", [])
+
+    vs_gate_reports = [read_json(path) for path in vs_gate_json]
+    vs_gate_failures = [report for report in vs_gate_reports if str(report.get("verdict") or "").upper() != "PASS"]
+    vs_gate_required_ok = True
+    if require_vs_gate:
+        vs_gate_required_ok = bool(vs_gate_reports) and not vs_gate_failures
+
+    vs_runtime_reports = [read_json(path) for path in vs_aware_runtime_gate_json]
+    vs_runtime_failures = [report for report in vs_runtime_reports if str(report.get("verdict") or "").upper() != "PASS"]
+    vs_runtime_required = bool(vs_aware_runtime_gate_json)
+    vs_runtime_required_ok = True
+    if vs_runtime_required:
+        vs_runtime_required_ok = bool(vs_runtime_reports) and not vs_runtime_failures
+
     polish_reports = [read_json(path) for path in args.polish_gate_json]
     polish_failures = [report for report in polish_reports if report.get("verdict") != "PASS"]
     polish_required_ok = True
@@ -579,6 +613,32 @@ def build_report(args: argparse.Namespace) -> dict:
             ),
         },
         {
+            "name": "vs_gate_pass",
+            "ok": vs_gate_required_ok,
+            "details": (
+                "Not required."
+                if not require_vs_gate
+                else (
+                    "All visual-spec gate reports passed."
+                    if vs_gate_required_ok
+                    else "Missing visual-spec PASS evidence."
+                )
+            ),
+        },
+        {
+            "name": "vs_aware_runtime_gate_pass",
+            "ok": vs_runtime_required_ok,
+            "details": (
+                "Not required."
+                if not vs_runtime_required
+                else (
+                    "All VS-aware runtime visual gate reports passed."
+                    if vs_runtime_required_ok
+                    else "Missing VS-aware runtime PASS evidence."
+                )
+            ),
+        },
+        {
             "name": "fresh_checkout_pass",
             "ok": fresh_required_ok,
             "details": (
@@ -608,6 +668,10 @@ def build_report(args: argparse.Namespace) -> dict:
         "require_stitch_gate": bool(args.require_stitch_gate),
         "visual_gate_reports": [str(Path(path).expanduser().resolve()) for path in args.visual_gate_json],
         "require_visual_gate": bool(args.require_visual_gate),
+        "vs_gate_reports": [str(Path(path).expanduser().resolve()) for path in vs_gate_json],
+        "require_vs_gate": require_vs_gate,
+        "vs_aware_runtime_gate_reports": [str(Path(path).expanduser().resolve()) for path in vs_aware_runtime_gate_json],
+        "require_vs_aware_runtime_gate": vs_runtime_required,
         "fresh_checkout_reports": [str(Path(path).expanduser().resolve()) for path in args.fresh_checkout_json],
         "fresh_checkout_mode": args.fresh_checkout_mode,
         "require_fresh_checkout": fresh_checkout_required,

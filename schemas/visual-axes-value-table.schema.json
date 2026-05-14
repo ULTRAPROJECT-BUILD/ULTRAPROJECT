@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/visual-axes-value-table.schema.json",
+  "title": "Visual Axes Value Table",
+  "description": "Validates _axes.md axis-value definitions for the visual aesthetics archive.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "axisDefinition": {
+      "description": "Definition of one universal visual axis.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "values": {
+          "description": "Allowed named values for the axis.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "description": "A single axis value and its interpretation.",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "value": {
+                "description": "Machine-readable axis value.",
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_-]*$"
+              },
+              "meaning": {
+                "description": "Human-readable meaning of this value.",
+                "type": "string",
+                "minLength": 1
+              },
+              "medium_notes": {
+                "description": "Optional medium-specific interpretation notes.",
+                "type": "object",
+                "additionalProperties": {
+                  "description": "Interpretation note for one medium.",
+                  "type": "string"
+                }
+              }
+            },
+            "required": ["value", "meaning"]
+          }
+        },
+        "meaning": {
+          "description": "Meaning of the axis as a whole.",
+          "type": "string",
+          "minLength": 1
+        },
+        "default_token_postures": {
+          "description": "Default token postures implied by each axis value.",
+          "type": "object",
+          "additionalProperties": {
+            "description": "Default token posture for one axis value.",
+            "type": "string"
+          }
+        },
+        "default_anti_patterns": {
+          "description": "Anti-patterns commonly associated with misuse of this axis.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "pairs_naturally_with": {
+          "description": "Axis values or presets this axis value tends to pair with.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "conflicts_with": {
+          "description": "Axis values or presets that conflict with this axis.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "values",
+        "meaning",
+        "default_token_postures",
+        "default_anti_patterns",
+        "pairs_naturally_with",
+        "conflicts_with"
+      ]
+    }
+  },
+  "properties": {
+    "axes": {
+      "description": "Definitions for the six universal visual axes.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "density": {
+          "description": "Density axis definition.",
+          "$ref": "#/$defs/axisDefinition"
+        },
+        "topology": {
+          "description": "Topology axis definition.",
+          "$ref": "#/$defs/axisDefinition"
+        },
+        "expressiveness": {
+          "description": "Expressiveness axis definition.",
+          "$ref": "#/$defs/axisDefinition"
+        },
+        "motion": {
+          "description": "Motion axis definition.",
+          "$ref": "#/$defs/axisDefinition"
+        },
+        "platform": {
+          "description": "Platform axis definition.",
+          "$ref": "#/$defs/axisDefinition"
+        },
+        "trust": {
+          "description": "Trust axis definition.",
+          "$ref": "#/$defs/axisDefinition"
+        }
+      },
+      "required": ["density", "topology", "expressiveness", "motion", "platform", "trust"]
+    }
+  },
+  "required": ["axes"]
+}

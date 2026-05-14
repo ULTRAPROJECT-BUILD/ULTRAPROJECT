@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/regression-report.schema.json",
+  "title": "Preset Regression Report",
+  "description": "Validates output from scripts/preset_regression_check.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "proposal_id": {
+      "description": "Stable proposal identifier or proposal path stem.",
+      "type": "string",
+      "minLength": 1
+    },
+    "method": {
+      "description": "Regression evaluation method used.",
+      "type": "string",
+      "enum": ["real_rendering", "simulate_only"]
+    },
+    "mockups_re_rendered": {
+      "description": "Number of historical mockups re-rendered.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "semantic_layout_regressions": {
+      "description": "Detected semantic layout regressions.",
+      "type": "array",
+      "items": {
+        "description": "One semantic layout regression.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "project": {
+            "description": "Project slug where regression was detected.",
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+          },
+          "mockup_path": {
+            "description": "Repository-relative mockup path affected.",
+            "type": "string",
+            "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._@/#-]+$"
+          },
+          "reason": {
+            "description": "Reason the layout regressed.",
+            "type": "string",
+            "minLength": 1
+          },
+          "severity": {
+            "description": "Regression severity.",
+            "type": "string",
+            "enum": ["low", "medium", "high", "blocker"]
+          }
+        },
+        "required": ["project", "mockup_path", "reason", "severity"]
+      }
+    },
+    "hierarchy_contrast_regressions": {
+      "description": "Detected hierarchy or contrast regressions.",
+      "type": "array",
+      "items": {
+        "description": "One hierarchy or contrast regression.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "project": {
+            "description": "Project slug where regression was detected.",
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+          },
+          "mockup_path": {
+            "description": "Repository-relative mockup path affected.",
+            "type": "string",
+            "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._@/#-]+$"
+          },
+          "metric": {
+            "description": "Metric that regressed.",
+            "type": "string",
+            "enum": ["hierarchy_contrast", "wcag_contrast", "saliency_weight", "focus_visibility", "other"]
+          },
+          "before": {
+            "description": "Metric value before the proposed change.",
+            "type": "number"
+          },
+          "after": {
+            "description": "Metric value after the proposed change.",
+            "type": "number"
+          }
+        },
+        "required": ["project", "mockup_path", "metric", "before", "after"]
+      }
+    },
+    "pass": {
+      "description": "Whether the regression report passed without blocking regressions.",
+      "type": "boolean"
+    },
+    "regression_status": {
+      "description": "Final regression status.",
+      "type": "string",
+      "enum": ["pass", "fail", "operator_review_required"]
+    },
+    "unsupported_mediums": {
+      "description": "Mediums that could not be replayed and therefore require operator handling.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "web_ui",
+          "native_ui",
+          "presentation",
+          "brand_identity",
+          "video_animation",
+          "3d_render",
+          "document_typography",
+          "game_ui",
+          "data_visualization"
+        ]
+      }
+    }
+  },
+  "required": [
+    "proposal_id",
+    "method",
+    "mockups_re_rendered",
+    "semantic_layout_regressions",
+    "hierarchy_contrast_regressions",
+    "pass",
+    "regression_status",
+    "unsupported_mediums"
+  ]
+}

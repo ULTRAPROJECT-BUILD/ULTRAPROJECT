@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/waiver.schema.json",
+  "title": "Visual Specification Waiver",
+  "description": "Validates {date}-visual-spec-waiver-{project}.md frontmatter.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "type": {
+      "description": "Snapshot artifact discriminator.",
+      "const": "snapshot"
+    },
+    "title": {
+      "description": "Human-readable waiver title.",
+      "type": "string",
+      "minLength": 1
+    },
+    "project": {
+      "description": "Project slug for which the waiver applies.",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "waiver_type": {
+      "description": "Waiver category.",
+      "const": "visual_spec"
+    },
+    "waiver_reason_category": {
+      "description": "Operator-selected reason category for skipping the VS phase.",
+      "type": "string",
+      "enum": ["intentional_low_polish", "external_designer", "no_visual_deliverable", "operator_taste_only", "other"]
+    },
+    "waiver_reason_text": {
+      "description": "Concrete explanation of why the visual-spec phase is being waived.",
+      "type": "string",
+      "minLength": 20
+    },
+    "waiver_acknowledged_by_operator": {
+      "description": "Explicit operator acknowledgement of the waiver.",
+      "const": true
+    },
+    "waiver_acknowledged_at": {
+      "description": "Timestamp when the operator acknowledged the waiver.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "operator_session_id": {
+      "description": "Operator session that acknowledged the waiver.",
+      "type": "string",
+      "minLength": 1
+    },
+    "visual_ambition_signals_detected": {
+      "description": "Visual ambition signals that made the waiver necessary.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "risks_acknowledged": {
+      "description": "Risks acknowledged by the operator when waiving the VS phase.",
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "type",
+    "title",
+    "project",
+    "waiver_type",
+    "waiver_reason_category",
+    "waiver_reason_text",
+    "waiver_acknowledged_by_operator",
+    "waiver_acknowledged_at",
+    "operator_session_id",
+    "visual_ambition_signals_detected",
+    "risks_acknowledged"
+  ]
+}

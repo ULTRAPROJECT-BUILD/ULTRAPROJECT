@@ -9,7 +9,7 @@ xcode-select --install
 brew install git gh python node ripgrep
 ```
 
-Install whichever agent tools you want to use, for example Claude Code, Codex, OpenCode, a VS Code-style editor agent, a desktop app, or another GUI agent that can open this folder, read and edit files, run shell commands, and follow long repo instructions. A plain web chat without repo and terminal access is not enough.
+Install whichever agent tools you want to use: Claude Code, Codex, OpenCode, a VS Code-style editor agent, a desktop app, or another GUI agent that can open this folder, read and edit files, run shell commands, and follow long repo instructions. A plain web chat without repo and terminal access is not enough.
 
 ## 2. Clone
 
@@ -42,9 +42,9 @@ Or pin everything to the full dev list with `pip install -r requirements.txt`.
 oneshot
 ```
 
-That copies `.env.example` → `.env`, `.mcp.example.json` → `.mcp.json`, and `vault/clients/_registry.example.md` → `vault/clients/_registry.md` (skipping any that already exist), then verifies `claude`, `codex`, or `opencode` is on PATH.
+That copies `.env.template` → `.env`, `.mcp.template.json` → `.mcp.json`, and `vault/clients/_registry.template.md` → `vault/clients/_registry.md` (skipping any that already exist), then verifies `claude`, `codex`, or `opencode` is on PATH.
 
-Edit `.env` and `.mcp.json` locally. Never commit them. Leave the `.example` files alone — they're the source of truth for new installs.
+Edit `.env` and `.mcp.json` locally. Never commit them. Leave the `.template` files alone — they're the source of truth for new installs.
 
 Minimum useful variables:
 
@@ -60,7 +60,7 @@ python3 -m playwright install chromium
 
 ## 6. Vault Bootstrap
 
-The repo includes a sanitized `vault/config/platform.md`, `vault/clients/_registry.example.md`, and `vault/clients/_template/`. After step 4 you also have a live `vault/clients/_registry.md`.
+The repo includes a sanitized `vault/config/platform.md`, `vault/clients/_registry.template.md`, and `vault/clients/_template/`. After step 4 you also have a live `vault/clients/_registry.md`.
 
 For a real install:
 

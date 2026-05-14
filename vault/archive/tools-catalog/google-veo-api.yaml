@@ -1,0 +1,42 @@
+tool_slug: google-veo-api
+tool_stack_id: api:google/veo@latest
+display_name: Google Veo API
+versions:
+  - version: latest
+    released: 2026-01-01
+capabilities:
+  - id: generative_cinematic_video
+    bar_fit_default: HIGH
+    bar_fit_evidence:
+      - type: vendor_documentation
+        source: https://ai.google.dev/
+        summary: Google AI developer documentation covers Gemini and generative media API access patterns.
+    known_ceilings:
+      - Requires network access, credentials, paid usage, and availability checks.
+constraints:
+  os: [macos, linux, windows]
+  arch: [arm64, x86_64]
+  acquisition_cost_usd: 10
+  recurrence: one_time
+  license: commercial_api_terms
+  local_runnable: false
+  network_required: true
+  credentials_required: true
+acquisition:
+  install_method: api_only
+  install_risk: high
+  install_steps_summary: Operator provides Google API credentials out of band and a media canary verifies access.
+  canary_type: functional
+  credentials_needed: [GOOGLE_API_KEY]
+  credential_handoff: operator_out_of_band
+catalog_metadata:
+  source: canonical
+  terms_last_checked: 2026-05-12
+  ttl_days_by_domain:
+    pricing: 90
+    licensing: 180
+    capability_evidence: 180
+  citation_urls:
+    - https://ai.google.dev/
+  catalog_revision: 1
+  last_validated: 2026-05-12
