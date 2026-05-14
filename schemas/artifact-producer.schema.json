@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/artifact-producer.schema.json",
+  "title": "Artifact Producer",
+  "description": "Validates one producer entry from vault/config/artifact-producers.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "artifactType": {
+      "type": "string",
+      "enum": [
+        "photograph",
+        "illustration",
+        "icon_set",
+        "pattern_texture",
+        "product_3d",
+        "scene_3d",
+        "motion_graphics_loop",
+        "cinematic_video",
+        "ambient_audio",
+        "sfx",
+        "voiceover",
+        "live_prototype",
+        "data_chart",
+        "custom_typography",
+        "bespoke_typeface_variation"
+      ]
+    },
+    "producerId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!.*\\.\\.).+$"
+    },
+    "mediumId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_]*$"
+    }
+  },
+  "properties": {
+    "producer_id": {
+      "description": "Immutable canonical producer ID.",
+      "$ref": "#/$defs/producerId"
+    },
+    "artifact_types": {
+      "description": "Artifact types this producer can create.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/artifactType"
+      }
+    },
+    "producer_version": {
+      "description": "Producer implementation or upstream model semver.",
+      "$ref": "#/$defs/semver"
+    },
+    "mcp_path": {
+      "description": "Path to an MCP wrapper.",
+      "$ref": "#/$defs/path"
+    },
+    "cli_command": {
+      "description": "CLI command used to invoke the producer.",
+      "type": "string",
+      "minLength": 1
+    },
+    "api_endpoint": {
+      "description": "HTTP API endpoint used to invoke the producer.",
+      "type": "string",
+      "minLength": 1
+    },
+    "api_key_env_var": {
+      "description": "Environment variable containing API credentials.",
+      "type": "string",
+      "pattern": "^[A-Z_][A-Z0-9_]*$"
+    },
+    "state": {
+      "description": "Lifecycle state.",
+      "type": "string",
+      "enum": ["pending", "active", "repaired_active", "quarantined", "failed", "deprecated"]
+    },
+    "state_changed_at": {
+      "description": "Timestamp of the last lifecycle state change.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "state_change_reason": {
+      "description": "Reason for the last lifecycle state change.",
+      "type": "string",
+      "minLength": 1
+    },
+    "quality_centroid_version": {
+      "description": "Version of the producer quality centroid.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "last_synthetic_fixture_pass": {
+      "description": "Timestamp of the most recent successful synthetic fixture run.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_synthetic_fixture_status": {
+      "description": "Most recent synthetic fixture verdict.",
+      "type": "string",
+      "enum": ["pass", "fail", "never_run"]
+    },
+    "rolling_success_rate_30d": {
+      "description": "Producer success rate over the last 30 days.",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "rolling_success_rate_90d": {
+      "description": "Producer success rate over the last 90 days.",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "total_invocations": {
+      "description": "Total registered producer invocations.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "license_acknowledgment": {
+      "description": "Path to the producer license acknowledgment file.",
+      "$ref": "#/$defs/path"
+    },
+    "spend_per_artifact_estimate_usd": {
+      "description": "Estimated spend per generated artifact.",
+      "type": "number",
+      "minimum": 0
+    },
+    "fallback_chain": {
+      "description": "Ordered fallback producer IDs.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/producerId"
+      }
+    },
+    "canonical_replaces": {
+      "description": "Deprecated predecessor this producer replaces.",
+      "$ref": "#/$defs/producerId"
+    },
+    "applicable_mediums": {
+      "description": "Medium IDs this producer is allowed to serve.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/mediumId"
+      }
+    }
+  },
+  "required": [
+    "producer_id",
+    "artifact_types",
+    "producer_version",
+    "state",
+    "state_changed_at",
+    "state_change_reason",
+    "quality_centroid_version",
+    "last_synthetic_fixture_pass",
+    "last_synthetic_fixture_status",
+    "rolling_success_rate_30d",
+    "rolling_success_rate_90d",
+    "total_invocations",
+    "license_acknowledgment",
+    "spend_per_artifact_estimate_usd",
+    "fallback_chain",
+    "applicable_mediums"
+  ],
+  "oneOf": [
+    {
+      "required": ["mcp_path"],
+      "not": {
+        "anyOf": [
+          {"required": ["cli_command"]},
+          {"required": ["api_endpoint"]}
+        ]
+      }
+    },
+    {
+      "required": ["cli_command"],
+      "not": {
+        "anyOf": [
+          {"required": ["mcp_path"]},
+          {"required": ["api_endpoint"]}
+        ]
+      }
+    },
+    {
+      "required": ["api_endpoint"],
+      "not": {
+        "anyOf": [
+          {"required": ["mcp_path"]},
+          {"required": ["cli_command"]}
+        ]
+      }
+    }
+  ]
+}

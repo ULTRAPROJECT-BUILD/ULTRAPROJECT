@@ -1,0 +1,55 @@
+tool_slug: houdini-indie
+tool_stack_id: vendor:sidefx/houdini-indie@latest
+display_name: Houdini Indie
+versions:
+  - version: latest
+    released: 2026-01-01
+capabilities:
+  - id: cinematic_volumetric_render
+    bar_fit_default: HIGH
+    bar_fit_evidence:
+      - type: vendor_documentation
+        source: https://www.sidefx.com/products/houdini-indie/
+        summary: Houdini Indie exposes production-grade procedural simulation workflows at indie pricing.
+      - type: industry_practice
+        source: https://www.sidefx.com/products/houdini/
+        summary: Houdini is a standard tool for high-end volumetric and fluid visual effects pipelines.
+    known_ceilings:
+      - Commercial license and acquisition are outside zero-spend open-source-only constraints.
+      - Operator must complete licensing and canary verification before dependent tickets start.
+  - id: viscous_material_surface_simulation
+    bar_fit_default: HIGH
+    bar_fit_evidence:
+      - type: vendor_documentation
+        source: https://www.sidefx.com/docs/houdini/
+        summary: Procedural simulation stack supports complex fluid and volume workflows.
+    known_ceilings:
+      - Requires Houdini-specific expertise and render/export pipeline setup.
+constraints:
+  os: [macos, linux, windows]
+  arch: [arm64, x86_64]
+  acquisition_cost_usd: 269
+  recurrence: annual
+  license: commercial_indie
+  local_runnable: true
+  network_required: false
+  credentials_required: true
+acquisition:
+  install_method: vendor_installer
+  install_risk: medium
+  install_steps_summary: Operator installs Houdini Indie from SideFX and verifies hython can run a minimal scene.
+  canary_type: functional
+  credentials_needed: [houdini_license_key]
+  credential_handoff: operator_out_of_band
+catalog_metadata:
+  source: canonical
+  terms_last_checked: 2026-05-12
+  ttl_days_by_domain:
+    pricing: 90
+    licensing: 180
+    capability_evidence: 365
+  citation_urls:
+    - https://www.sidefx.com/products/houdini-indie/
+    - https://www.sidefx.com/products/houdini/
+  catalog_revision: 1
+  last_validated: 2026-05-12

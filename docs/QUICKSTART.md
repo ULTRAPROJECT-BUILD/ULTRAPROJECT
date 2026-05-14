@@ -12,7 +12,7 @@ Clone the repo:
 git clone https://github.com/oneshot-repo/OneShot.git ~/Documents/OneShot
 ```
 
-Or download the source zip from the [latest release](https://github.com/oneshot-repo/OneShot/releases/tag/v0.1.0) and unzip it somewhere permanent.
+Or download the source zip from the [latest release](https://github.com/oneshot-repo/OneShot/releases/tag/v0.2.0) and unzip it somewhere permanent.
 
 ## 2. Open The Folder
 
@@ -91,10 +91,10 @@ pip install -e .
 oneshot
 ```
 
-The `oneshot` helper bootstraps local config examples and checks for an available agent CLI. The main workflow is still folder plus starter prompt.
+The `oneshot` helper bootstraps local config templates and checks for an available agent CLI. The main workflow is still folder plus starter prompt.
 
 ## Next
 
-- [README.md](../README.md) for the product overview and example prompts
+- [README.md](../README.md) for the product overview and starter prompt
 - [SETUP.md](SETUP.md) for deeper environment setup
 - [PUBLISHING.md](PUBLISHING.md) for public-release checks

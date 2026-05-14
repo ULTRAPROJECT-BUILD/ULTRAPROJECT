@@ -34,6 +34,58 @@ Returns recent spending transactions with summary statistics.
 **Parameters:**
 - `days` (int, default: 7) -- Number of days of history (1-365)
 
+### `quote_spend`
+Pre-flights a spend request without writing a transaction. Validates category
+(`tool_acquisition`, `tool_usage`, `api_call`, `other`) and checks the daily and
+monthly caps including active reservations.
+
+**Parameters:**
+- `project_slug` (str, required) -- Project receiving the spend
+- `vendor` (str, required) -- Vendor receiving payment
+- `amount_usd` (float, required) -- Requested amount
+- `recurrence` (str, required) -- none, one_time, monthly, or annual
+- `category` (str, required) -- Spend category
+- `requested_by_tool_stack` (str, optional) -- Tool stack requesting the spend
+
+Returns `OK` with a process-local `quote_id`, or `REJECTED` with cap details.
+
+### `reserve_spend`
+Creates a hold from a prior quote and an OAI authorization. The reservation is
+stored in the reservation ledger with `state: reserved` and mirrored into the
+Markdown spending log as an audit row. Reservations expire automatically on
+subsequent spending MCP calls.
+
+**Parameters:**
+- `quote_id` (str, required)
+- `authorization_id` (str, required) -- From the resolved OAI response
+- `expires_at` (str, required) -- ISO timestamp
+- `project_slug` (str, optional) -- Match check
+- `category` (str, optional) -- Match check
+- `max_authorized_amount_usd` (float, optional) -- Operator authorization ceiling
+
+### `capture_spend`
+Converts a reservation into actual spend. Capture is idempotent by
+`reservation_id`; retrying after success returns the same capture record.
+`actual_amount_usd` must be less than or equal to the reserved amount.
+
+**Parameters:**
+- `reservation_id` (str, required)
+- `actual_amount_usd` (float, required)
+- `receipt_ref` (str, required) -- Vault path to the receipt artifact
+- `project_slug` (str, optional) -- Match check
+- `category` (str, optional) -- Match check
+
+### `release_reservation`
+Releases an unused reservation with `actual_amount_usd: 0`. Used for operator
+decline, install failure, checksum mismatch, canary failure, or abort. Release
+is idempotent for already released/expired reservations.
+
+**Parameters:**
+- `reservation_id` (str, required)
+- `reason` (str, required)
+- `project_slug` (str, optional) -- Match check
+- `category` (str, optional) -- Match check
+
 ## MCP Elicitation Integration
 
 This server uses the MCP Elicitation protocol (Form mode) to request inline admin confirmation before recording expenditures in the $5-$50 range.
@@ -95,6 +147,7 @@ Key rules:
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `SPENDING_LOG_PATH` | No | `vault/config/spending-log.md` | Path to the spending log file |
+| `SPENDING_RESERVATION_LOG_PATH` | No | same directory, `.reservations.json` suffix | JSON reservation/capture/release state ledger |
 | `DAILY_CAP_USD` | No | `25` | Maximum daily spending in USD |
 | `MONTHLY_CAP_USD` | No | `200` | Maximum monthly spending in USD |
 
@@ -131,6 +184,12 @@ The spending log is a Markdown table at the configured path:
 | 2026-03-17 14:00:00 UTC | $75.00 | Anthropic | api | Claude batch job | BLOCKED |
 ```
 
+Reservation state is stored in a JSON ledger beside the Markdown log. The
+Markdown log remains the human-readable audit trail; the JSON ledger is the
+state-machine source of truth for `reserved -> captured | released | expired`.
+Captured rows count toward daily/monthly totals; reserved rows count only toward
+quote projections.
+
 ## Security Notes
 
 - All expenditures are logged regardless of approval status (blocked and rejected transactions are also recorded).
@@ -138,3 +197,7 @@ The spending log is a Markdown table at the configured path:
 - Caps are enforced server-side; the agent cannot bypass them.
 - Elicitation confirmation adds an inline human gate for the $5-$50 tier, replacing post-hoc review with pre-approval.
 - Integrity checksums detect log tampering and block all spending until investigated.
+- Capture requires a reservation, and reservations must carry the OAI
+  `authorization_id` that authorized the spend.
+- Secrets do not belong in spending descriptions, receipt refs, or authorization
+  metadata; use vault pointers, env var names, or keychain entry names only.

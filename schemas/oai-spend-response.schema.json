@@ -1,0 +1,118 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://oneshot.local/schemas/oai-spend-response.schema.json",
+  "title": "OAI-SPEND Response",
+  "description": "Validates operator attention records raised only when a spending reservation exceeds configured caps.",
+  "type": "object",
+  "additionalProperties": false,
+  "definitions": {
+    "oaiSpendId": {
+      "type": "string",
+      "pattern": "^OAI-SPEND-[0-9]{3,}$"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "adId": {
+      "type": ["string", "null"],
+      "pattern": "^AD-[0-9]{3,}$"
+    }
+  },
+  "required": [
+    "oai_id",
+    "added",
+    "category",
+    "project_slug",
+    "vendor",
+    "recurrence",
+    "requested_amount_usd",
+    "current_cap_usd",
+    "projected_balance_usd",
+    "requested_by_tool_stack",
+    "reason",
+    "operator_decision"
+  ],
+  "properties": {
+    "oai_id": {"$ref": "#/definitions/oaiSpendId"},
+    "added": {"type": "string", "minLength": 1},
+    "category": {
+      "type": "string",
+      "enum": ["tool_acquisition", "tool_usage", "api_call", "other"]
+    },
+    "project_slug": {"$ref": "#/definitions/slug"},
+    "vendor": {"type": "string", "minLength": 1},
+    "recurrence": {"type": "string", "enum": ["none", "one_time", "monthly", "annual"]},
+    "requested_amount_usd": {"type": "number", "exclusiveMinimum": 0},
+    "current_cap_usd": {"type": "number", "minimum": 0},
+    "projected_balance_usd": {"type": "number"},
+    "requested_by_tool_stack": {"type": "string", "minLength": 1},
+    "reason": {"type": "string", "minLength": 1},
+    "operator_decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision",
+        "decision_state",
+        "decision_authorization",
+        "ad_binding",
+        "decided_at",
+        "decided_by"
+      ],
+      "properties": {
+        "decision": {
+          "type": ["string", "null"],
+          "enum": ["approve_over_cap", "decline", "reduce_amount", null]
+        },
+        "decision_state": {"type": "string", "enum": ["open", "resolved"]},
+        "decision_authorization": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "authorization_id",
+            "spend_approved",
+            "currency",
+            "max_authorized_amount_usd",
+            "vendor",
+            "recurrence",
+            "paid_via",
+            "approval_source",
+            "expires_at",
+            "valid_until_stage"
+          ],
+          "properties": {
+            "authorization_id": {"type": ["string", "null"], "minLength": 1},
+            "spend_approved": {"type": "boolean"},
+            "currency": {"type": "string", "pattern": "^[A-Z]{3}$"},
+            "max_authorized_amount_usd": {"type": ["number", "null"], "minimum": 0},
+            "vendor": {"type": ["string", "null"]},
+            "recurrence": {"type": ["string", "null"], "enum": ["one_time", "annual", "monthly", null]},
+            "paid_via": {"type": "string", "enum": ["spending_mcp", "operator_out_of_band", "n_a"]},
+            "approval_source": {"type": ["string", "null"]},
+            "expires_at": {"type": ["string", "null"], "format": "date-time"},
+            "valid_until_stage": {"type": "string", "enum": ["stage_3", "indefinite"]}
+          }
+        },
+        "ad_binding": {"$ref": "#/definitions/adId"},
+        "decided_at": {"type": ["string", "null"]},
+        "decided_by": {"type": ["string", "null"]}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"decision_state": {"const": "resolved"}},
+            "required": ["decision_state"]
+          },
+          "then": {
+            "properties": {
+              "decision": {"type": "string"},
+              "ad_binding": {"type": "string", "pattern": "^AD-[0-9]{3,}$"},
+              "decided_at": {"type": "string", "minLength": 1},
+              "decided_by": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      ]
+    }
+  }
+}

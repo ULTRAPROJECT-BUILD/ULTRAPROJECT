@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/missing-producer-report.schema.json",
+  "title": "Missing Producer Report",
+  "description": "Validates frontmatter for vault/snapshots/{project}/{date}-missing-producer-{type}.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "artifactType": {
+      "type": "string",
+      "enum": [
+        "photograph",
+        "illustration",
+        "icon_set",
+        "pattern_texture",
+        "product_3d",
+        "scene_3d",
+        "motion_graphics_loop",
+        "cinematic_video",
+        "ambient_audio",
+        "sfx",
+        "voiceover",
+        "live_prototype",
+        "data_chart",
+        "custom_typography",
+        "bespoke_typeface_variation"
+      ]
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "Candidate producer name.",
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "description": "Candidate source, registry, marketplace, GitHub repo, or vendor.",
+          "type": "string",
+          "minLength": 1
+        },
+        "estimated_build_effort_hours": {
+          "description": "Estimated engineering effort to register or build the producer.",
+          "type": "number",
+          "minimum": 0
+        },
+        "license_terms": {
+          "description": "Known license or usage terms.",
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": ["name", "source", "estimated_build_effort_hours", "license_terms"]
+    }
+  },
+  "properties": {
+    "type": {
+      "const": "snapshot"
+    },
+    "missing_producer": {
+      "const": true
+    },
+    "project": {
+      "type": "string",
+      "minLength": 1
+    },
+    "client": {
+      "type": "string",
+      "minLength": 1
+    },
+    "artifact_type": {
+      "$ref": "#/$defs/artifactType"
+    },
+    "project_context": {
+      "description": "Paragraph explaining why this producer is needed.",
+      "type": "string",
+      "minLength": 1
+    },
+    "suggested_producer_candidates": {
+      "description": "Candidate producers for operator review.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/candidate"
+      }
+    },
+    "operator_action_options": {
+      "description": "Available operator actions.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "operator_decision": {
+      "description": "Operator's selected action.",
+      "type": "string",
+      "enum": [
+        "skip",
+        "register_existing",
+        "approve_build",
+        "adjust_slot_contract",
+        "reroute_to_custom_mode"
+      ]
+    },
+    "operator_decided_at": {
+      "description": "When the operator decision was recorded.",
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "type",
+    "missing_producer",
+    "project",
+    "client",
+    "artifact_type",
+    "project_context",
+    "suggested_producer_candidates",
+    "operator_action_options"
+  ]
+}

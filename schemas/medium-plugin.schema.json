@@ -1,0 +1,383 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/medium-plugin.schema.json",
+  "title": "Medium Plugin Frontmatter",
+  "description": "Validates visual medium plugin frontmatter for vault/archive/visual-aesthetics/mediums/{medium}.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "type": {
+      "description": "Artifact discriminator for medium plugin records.",
+      "const": "medium-plugin"
+    },
+    "medium": {
+      "description": "Stable medium identifier implemented by this plugin.",
+      "type": "string",
+      "enum": [
+        "web_ui",
+        "native_ui",
+        "presentation",
+        "brand_identity",
+        "video_animation",
+        "3d_render",
+        "document_typography",
+        "game_ui",
+        "data_visualization"
+      ]
+    },
+    "version": {
+      "description": "Plugin schema and methodology version in semver form.",
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+(\\.\\d+)?$"
+    },
+    "description": {
+      "description": "Human-readable summary of the medium plugin's scope.",
+      "type": "string",
+      "minLength": 1
+    },
+    "applicable_aesthetic_axes": {
+      "description": "Allowed universal visual-axis values for this medium.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "density": {
+          "description": "Allowed density values for the medium.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": ["sparse", "balanced", "dense", "ultra_dense"]
+          }
+        },
+        "topology": {
+          "description": "Allowed layout or composition topology values for the medium.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "single_panel",
+              "list_detail",
+              "multi_region",
+              "card_grid",
+              "canvas",
+              "timeline",
+              "identity_system",
+              "lockup_family",
+              "application_suite",
+              "storyboard",
+              "scene",
+              "chart_grid",
+              "small_multiples",
+              "narrative_sequence"
+            ]
+          }
+        },
+        "expressiveness": {
+          "description": "Allowed visual expressiveness values for the medium.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": ["quiet", "restrained", "editorial", "expressive", "playful", "cinematic"]
+          }
+        },
+        "motion": {
+          "description": "Allowed motion posture values for the medium.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": ["static", "subtle", "functional", "expressive", "cinematic", "rapid"]
+          }
+        },
+        "platform": {
+          "description": "Allowed platform idiom values for the medium.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "web_native",
+              "ios_native",
+              "android_native",
+              "desktop_native",
+              "cross_platform",
+              "print",
+              "deck",
+              "cinematic",
+              "game_engine",
+              "brand_system"
+            ]
+          }
+        },
+        "trust": {
+          "description": "Allowed trust, risk, and institutional posture values for the medium.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "experimental",
+              "approachable",
+              "professional",
+              "regulated",
+              "enterprise",
+              "clinical",
+              "financial",
+              "safety_critical",
+              "luxury"
+            ]
+          }
+        }
+      },
+      "required": ["density", "topology", "expressiveness", "motion", "platform", "trust"]
+    },
+    "medium_extension_axes": {
+      "description": "Medium-specific axes beyond the six universal axes.",
+      "type": "object",
+      "patternProperties": {
+        "^[a-z][a-z0-9_]*$": {
+          "description": "Definition of a medium-specific axis and its allowed values.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "description": {
+              "description": "Human-readable meaning of the extension axis.",
+              "type": "string",
+              "minLength": 1
+            },
+            "values": {
+              "description": "Allowed values for this extension axis.",
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_-]*$"
+              }
+            },
+            "required": {
+              "description": "Whether the extension axis must be set when this medium is used.",
+              "type": "boolean"
+            }
+          },
+          "required": ["description", "values", "required"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "mockup_format": {
+      "description": "Primary mockup source and capture format for the medium.",
+      "type": "string",
+      "minLength": 1
+    },
+    "mockup_anchor_count_min": {
+      "description": "Minimum number of anchor mockups required before locking a visual specification.",
+      "type": "integer",
+      "minimum": 1
+    },
+    "mockup_revisions_per_anchor_min": {
+      "description": "Minimum captured revisions required for each anchor mockup.",
+      "type": "integer",
+      "minimum": 1
+    },
+    "token_families": {
+      "description": "Token families extracted and enforced for this medium.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_-]*$"
+      }
+    },
+    "token_extractor_script": {
+      "description": "Repository-relative script path used to extract tokens for this medium.",
+      "type": "string",
+      "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._@/-]+$"
+    },
+    "parity_methodology": {
+      "description": "Methodology used to compare locked mockups to regenerated or runtime artifacts.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "description": "Primary parity comparison strategy.",
+          "type": "string",
+          "enum": ["ssim", "phash", "element_tree", "frame_strip", "application_suite", "manual_review", "mixed"]
+        },
+        "renderer_script": {
+          "description": "Repository-relative renderer script used for parity checks.",
+          "type": "string",
+          "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._@/-]+$"
+        },
+        "comparison_metrics": {
+          "description": "Metrics that must be computed for parity evaluation.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          }
+        },
+        "thresholds": {
+          "description": "Named numeric thresholds applied by the parity checker.",
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "description": "Threshold value for a named parity metric.",
+            "type": "number"
+          }
+        },
+        "required_artifacts": {
+          "description": "Source artifacts that must exist for parity evaluation.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          }
+        }
+      },
+      "required": ["method", "comparison_metrics", "thresholds", "required_artifacts"]
+    },
+    "runtime_check_methodology": {
+      "description": "Methodology used to verify delivered runtime artifacts against the locked VS.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "capture_method": {
+          "description": "How runtime evidence is captured for this medium.",
+          "type": "string",
+          "minLength": 1
+        },
+        "checks": {
+          "description": "Runtime checks this medium plugin enables.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          }
+        },
+        "budgets": {
+          "description": "Optional runtime budget limits for checks, in seconds.",
+          "type": "object",
+          "additionalProperties": {
+            "description": "Maximum runtime seconds for a named check.",
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "required": ["capture_method", "checks"]
+    },
+    "gospel_template_path": {
+      "description": "Repository-relative build-agent gospel template for this medium.",
+      "type": "string",
+      "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._@/-]+$"
+    },
+    "applicable_presets": {
+      "description": "Preset identifiers that can be used with this medium.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_-]*$"
+      }
+    },
+    "regression_replay_contract": {
+      "description": "Declares whether preset/token mutations can be replayed deterministically for regression checks.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "supported": {
+          "description": "Whether deterministic replay is supported for this medium.",
+          "type": "boolean"
+        },
+        "renderer_script": {
+          "description": "Repository-relative renderer used for regression replay.",
+          "type": "string",
+          "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._@/-]+$"
+        },
+        "required_source_artifacts": {
+          "description": "Artifact kinds required to replay historical visual specifications.",
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          }
+        },
+        "supported_token_mutations": {
+          "description": "Token mutation globs that can be replayed deterministically.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "unsupported_token_mutations": {
+          "description": "Token mutation globs that cannot be replayed deterministically.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "unsupported_mutation_behavior": {
+          "description": "How the proposer behaves when replay is unsupported.",
+          "type": "string",
+          "enum": ["operator_review", "block_proposal", "skip"]
+        },
+        "replay_fixture": {
+          "description": "Repository-relative fixture path used to verify replay support.",
+          "type": "string",
+          "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._@/-]+$"
+        },
+        "replay_determinism_test": {
+          "description": "Repository-relative test command or script that proves replay determinism.",
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "supported",
+        "renderer_script",
+        "required_source_artifacts",
+        "supported_token_mutations",
+        "unsupported_token_mutations",
+        "unsupported_mutation_behavior",
+        "replay_fixture",
+        "replay_determinism_test"
+      ]
+    }
+  },
+  "required": [
+    "type",
+    "medium",
+    "version",
+    "applicable_aesthetic_axes",
+    "medium_extension_axes",
+    "mockup_format",
+    "mockup_anchor_count_min",
+    "mockup_revisions_per_anchor_min",
+    "token_families",
+    "token_extractor_script",
+    "parity_methodology",
+    "runtime_check_methodology",
+    "gospel_template_path",
+    "applicable_presets",
+    "regression_replay_contract"
+  ]
+}

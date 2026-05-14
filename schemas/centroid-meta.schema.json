@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/centroid-meta.schema.json",
+  "title": "Centroid Metadata",
+  "description": "Validates vault/archive/visual-aesthetics/centroids/{preset}.npy.meta.json.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "producerId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+    },
+    "sampleProvenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "description": "Path to the centroid sample.",
+          "type": "string",
+          "minLength": 1
+        },
+        "producer_id": {
+          "description": "Producer that generated the sample.",
+          "$ref": "#/$defs/producerId"
+        },
+        "producer_version": {
+          "description": "Producer version used for the sample.",
+          "$ref": "#/$defs/semver"
+        }
+      },
+      "required": ["path", "producer_id", "producer_version"]
+    },
+    "rebaselineTrigger": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "triggered_at": {
+          "description": "When the rebaseline was triggered.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "reason": {
+          "description": "Reason for the rebaseline.",
+          "type": "string",
+          "minLength": 1
+        },
+        "prior_version": {
+          "description": "Centroid version before the rebaseline.",
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": ["triggered_at", "reason", "prior_version"]
+    }
+  },
+  "properties": {
+    "centroid_version": {
+      "description": "Current centroid version.",
+      "type": "integer",
+      "minimum": 1
+    },
+    "sample_provenance": {
+      "description": "Samples used to build this centroid.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/sampleProvenance"
+      }
+    },
+    "producer_versions_in_set": {
+      "description": "Producer versions represented in the centroid sample set.",
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/producerId"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/semver"
+      }
+    },
+    "last_baselined_at": {
+      "description": "Most recent baseline timestamp.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "rebaseline_trigger_history": {
+      "description": "Historical rebaseline triggers.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/rebaselineTrigger"
+      }
+    }
+  },
+  "required": [
+    "centroid_version",
+    "sample_provenance",
+    "producer_versions_in_set",
+    "last_baselined_at",
+    "rebaseline_trigger_history"
+  ]
+}

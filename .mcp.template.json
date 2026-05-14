@@ -1,0 +1,14 @@
+{
+  "mcpServers": {},
+  "_commentedOutMcpServers": {
+    "tool-discovery": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["vault/clients/_platform/mcps/tool-discovery/server.py"],
+      "env": {
+        "TOOL_DISCOVERY_CATALOG_DIR": "vault/archive/tools-catalog",
+        "TOOL_DISCOVERY_VAULT_ROOT": "vault"
+      }
+    }
+  }
+}

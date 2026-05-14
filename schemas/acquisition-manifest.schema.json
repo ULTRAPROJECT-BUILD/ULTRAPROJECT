@@ -1,0 +1,288 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://oneshot.local/schemas/acquisition-manifest.schema.json",
+  "title": "Acquire-Tool Transaction Manifest",
+  "description": "Validates a tool acquisition transaction manifest before any external mutation.",
+  "type": "object",
+  "additionalProperties": false,
+  "definitions": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "manifestId": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
+    },
+    "safePath": {
+      "type": "string",
+      "minLength": 1,
+      "not": {
+        "anyOf": [
+          {"pattern": "(^|/)\\.mcp\\.json$"},
+          {"pattern": "\\.\\."}
+        ]
+      }
+    },
+    "safeArg": {
+      "type": "string",
+      "not": {
+        "anyOf": [
+          {"pattern": "&&"},
+          {"pattern": "\\|"},
+          {"pattern": ";"},
+          {"pattern": "`"},
+          {"pattern": "\\$\\("},
+          {"pattern": "\n"}
+        ]
+      }
+    },
+    "binaryProvenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "source_url",
+        "sha256",
+        "tls_provenance_check"
+      ],
+      "properties": {
+        "version": {"type": "string", "minLength": 1},
+        "source_url": {"type": "string", "pattern": "^https://"},
+        "sha256": {"type": "string", "pattern": "^[A-Fa-f0-9]{64}$"},
+        "signature_url": {"type": ["string", "null"], "pattern": "^https://"},
+        "tls_provenance_check": {"type": "string", "enum": ["required"]},
+        "expected_hostname": {"type": ["string", "null"], "minLength": 1}
+      }
+    },
+    "plannedStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "step_id",
+        "kind",
+        "description",
+        "mutation",
+        "files_to_touch",
+        "global_install"
+      ],
+      "properties": {
+        "step_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]*$"},
+        "kind": {
+          "type": "string",
+          "enum": [
+            "preflight",
+            "create_venv",
+            "pip_install",
+            "npm_install",
+            "binary_download",
+            "vendor_installer",
+            "api_secret_check",
+            "operator_action",
+            "canary",
+            "mcp_registration_proposal",
+            "record_execution_evidence"
+          ]
+        },
+        "description": {"type": "string", "minLength": 1},
+        "mutation": {"type": "string", "enum": ["none", "filesystem", "external"]},
+        "command": {
+          "type": ["array", "null"],
+          "items": {"$ref": "#/definitions/safeArg"}
+        },
+        "package": {"type": ["string", "null"], "minLength": 1},
+        "version": {"type": ["string", "null"], "minLength": 1},
+        "binary": {"anyOf": [{"$ref": "#/definitions/binaryProvenance"}, {"type": "null"}]},
+        "files_to_touch": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/safePath"},
+          "uniqueItems": true
+        },
+        "global_install": {"type": "boolean"},
+        "global_install_approval": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["approved", "approved_by", "approved_at", "reason"],
+          "properties": {
+            "approved": {"type": "boolean"},
+            "approved_by": {"type": "string", "minLength": 1},
+            "approved_at": {"type": "string", "minLength": 1},
+            "reason": {"type": "string", "minLength": 1}
+          }
+        },
+        "requires_secret_env_vars": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
+          "uniqueItems": true
+        },
+        "operator_action_prompt": {"type": ["string", "null"]},
+        "mcp_registration_proposal_path": {"type": ["string", "null"], "minLength": 1}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"kind": {"const": "binary_download"}},
+            "required": ["kind"]
+          },
+          "then": {"required": ["binary"]}
+        },
+        {
+          "if": {
+            "properties": {"global_install": {"const": true}},
+            "required": ["global_install"]
+          },
+          "then": {
+            "properties": {
+              "global_install_approval": {
+                "type": "object",
+                "properties": {"approved": {"const": true}}
+              }
+            },
+            "required": ["global_install_approval"]
+          }
+        }
+      ]
+    },
+    "spendReservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "project_slug",
+        "vendor",
+        "amount_usd",
+        "max_authorized_amount_usd",
+        "recurrence",
+        "category",
+        "authorization_id"
+      ],
+      "properties": {
+        "mode": {"type": "string", "enum": ["none", "operator_out_of_band", "spending_mcp"]},
+        "project_slug": {"$ref": "#/definitions/slug"},
+        "vendor": {"type": ["string", "null"]},
+        "amount_usd": {"type": "number", "minimum": 0},
+        "max_authorized_amount_usd": {"type": ["number", "null"], "minimum": 0},
+        "recurrence": {"type": "string", "enum": ["none", "one_time", "monthly", "annual"]},
+        "category": {
+          "type": "string",
+          "enum": ["tool_acquisition", "tool_usage", "api_call", "other"]
+        },
+        "authorization_id": {"type": ["string", "null"], "minLength": 1},
+        "quote_id": {"type": ["string", "null"]},
+        "reservation_id": {"type": ["string", "null"]},
+        "receipt_ref": {"type": ["string", "null"]}
+      }
+    },
+    "operatorSignature": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["operator_id", "signed_at", "approval_source"],
+      "properties": {
+        "operator_id": {"type": "string", "minLength": 1},
+        "signed_at": {"type": "string", "minLength": 1},
+        "approval_source": {"type": "string", "minLength": 1}
+      }
+    },
+    "registrationProposal": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["required", "proposal_path", "server_name", "server_path", "env_vars"],
+      "properties": {
+        "required": {"type": "boolean"},
+        "proposal_path": {"type": ["string", "null"], "minLength": 1},
+        "server_name": {"type": ["string", "null"], "minLength": 1},
+        "server_path": {"type": ["string", "null"], "minLength": 1},
+        "env_vars": {
+          "type": "object",
+          "additionalProperties": {"type": "string"}
+        }
+      }
+    }
+  },
+  "required": [
+    "manifest_id",
+    "created_at",
+    "created_by",
+    "acquisition_target",
+    "install_scope",
+    "planned_steps",
+    "files_to_touch",
+    "spend_reservation",
+    "operator_approval_status",
+    "operator_approval_signature",
+    "rollback_plan",
+    "registration_proposal",
+    "dry_run_default"
+  ],
+  "properties": {
+    "manifest_id": {"$ref": "#/definitions/manifestId"},
+    "created_at": {"type": "string", "minLength": 1},
+    "created_by": {"type": "string", "minLength": 1},
+    "acquisition_target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool_slug", "project_slug", "client_slug"],
+      "properties": {
+        "tool_slug": {"$ref": "#/definitions/slug"},
+        "tool_stack_id": {"type": ["string", "null"]},
+        "project_slug": {"$ref": "#/definitions/slug"},
+        "client_slug": {"$ref": "#/definitions/slug"},
+        "version": {"type": ["string", "null"]}
+      }
+    },
+    "catalog_entry_ref": {"type": ["string", "null"]},
+    "install_scope": {"type": "string", "enum": ["project_local", "oneshot_tools_cache", "global"]},
+    "planned_steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/definitions/plannedStep"}
+    },
+    "files_to_touch": {
+      "type": "array",
+      "items": {"$ref": "#/definitions/safePath"},
+      "uniqueItems": true
+    },
+    "spend_reservation": {"$ref": "#/definitions/spendReservation"},
+    "operator_approval_status": {"type": "string", "enum": ["pending", "approved", "declined"]},
+    "operator_approval_signature": {"$ref": "#/definitions/operatorSignature"},
+    "rollback_plan": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["action", "target"],
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": ["pip_uninstall", "npm_uninstall", "remove_path", "release_reservation", "manual_cleanup_note", "none"]
+          },
+          "target": {"type": "string", "minLength": 1},
+          "condition": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "registration_proposal": {"$ref": "#/definitions/registrationProposal"},
+    "preflight_checks": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "dry_run_default": {"type": "boolean", "const": true},
+    "execution": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"operator_approval_status": {"const": "approved"}},
+        "required": ["operator_approval_status"]
+      },
+      "then": {
+        "properties": {"operator_approval_signature": {"type": "object"}},
+        "required": ["operator_approval_signature"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,238 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/token-payload-brand_identity.schema.json",
+  "title": "Brand Identity Token Payload",
+  "description": "Validates the tokens block in manifest.json for brand_identity visual specifications.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "hexColor": {
+      "type": "string",
+      "pattern": "^#[0-9A-Fa-f]{6}$"
+    },
+    "numberMap": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_-]*$"
+      },
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "typeStyle": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "family": {
+          "type": "string",
+          "minLength": 1
+        },
+        "size": {
+          "type": "number",
+          "minimum": 1
+        },
+        "weight": {
+          "type": [
+            "string",
+            "integer",
+            "number"
+          ]
+        },
+        "leading": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "tracking": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "family",
+        "size",
+        "weight",
+        "leading",
+        "tracking"
+      ]
+    },
+    "timing": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "easing": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "duration_ms",
+        "easing"
+      ]
+    },
+    "namedString": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ]
+    }
+  },
+  "properties": {
+    "logo_clear_space": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "minimum_size_px": {
+          "type": "number",
+          "minimum": 1
+        },
+        "clear_space_unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "clear_space_multiplier": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "minimum_size_px",
+        "clear_space_unit",
+        "clear_space_multiplier"
+      ]
+    },
+    "brand_color": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "primary": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/hexColor"
+          }
+        },
+        "secondary": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/hexColor"
+          }
+        },
+        "accent": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/hexColor"
+          }
+        },
+        "monochrome": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/hexColor"
+          }
+        }
+      },
+      "required": [
+        "primary",
+        "secondary",
+        "accent",
+        "monochrome"
+      ]
+    },
+    "brand_type": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/typeStyle"
+      },
+      "minProperties": 2
+    },
+    "application_rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contexts": {
+          "type": "array",
+          "minItems": 5,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "background_rules": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "minimum_size_px": {
+          "type": "number",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "contexts",
+        "background_rules",
+        "minimum_size_px"
+      ]
+    },
+    "lockup_variants": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "variants": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "components": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "usage": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "name",
+              "components",
+              "usage"
+            ]
+          }
+        }
+      },
+      "required": [
+        "variants"
+      ]
+    }
+  },
+  "required": [
+    "logo_clear_space",
+    "brand_color",
+    "brand_type",
+    "application_rules",
+    "lockup_variants"
+  ]
+}

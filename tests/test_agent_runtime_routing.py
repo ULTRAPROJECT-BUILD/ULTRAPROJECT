@@ -12,6 +12,12 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[1]
 MODULE_PATH = REPO_ROOT / "scripts" / "agent_runtime.py"
 
+ADEQUATE_BRIEF_BODY = [
+    "Demo Console serves operations leads using Stripe, Linear, and PagerDuty during 24/7 review.",
+    "Users triage alerts every 8-hour shift, approve escalations, reconcile status, suppress duplicates, and hand off decisions within 15 minutes.",
+    "The distinctive bar is a dense queue with SLA breach flags, merchant-risk states, and evidence bundle panels rather than a generic dashboard.",
+]
+
 
 def load_agent_runtime():
     spec = importlib.util.spec_from_file_location("agent_runtime_routing_under_test", MODULE_PATH)
@@ -119,6 +125,8 @@ def write_brief_snapshot(
     if covered_waves is not None:
         lines.append(f"covered_waves: {covered_waves}")
     lines.extend([f"captured: {captured}", f"updated: {captured}", "---", "", f"# {title}", ""])
+    lines.extend(ADEQUATE_BRIEF_BODY)
+    lines.append("")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(lines), encoding="utf-8")
 

@@ -1,0 +1,291 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/specificity-contract.schema.json",
+  "title": "Visual Specificity Contract",
+  "description": "Validates the visual_specificity_contract block used to bind visual work to project-specific domain evidence.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "domain_entities": {
+      "description": "Domain nouns users actually work with, grounded in brief quotes and visible mockup anchors.",
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "description": "A domain entity that must appear in mockups or runtime captures.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "description": "Domain-specific entity name.",
+            "type": "string",
+            "minLength": 1
+          },
+          "brief_quote": {
+            "description": "Verbatim brief quote grounding the entity.",
+            "type": "string",
+            "minLength": 1
+          },
+          "mockup_anchors": {
+            "description": "Mockup file paths or element anchors where the entity is visible.",
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._@/#-]+$"
+            }
+          }
+        },
+        "required": ["name", "brief_quote", "mockup_anchors"]
+      }
+    },
+    "workflow_signatures": {
+      "description": "Domain-specific actions or decisions the UI must expose as visible affordances.",
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "description": "A workflow verb and its visible affordance contract.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "verb": {
+            "description": "Domain-specific workflow action.",
+            "type": "string",
+            "minLength": 1
+          },
+          "brief_quote": {
+            "description": "Verbatim brief quote grounding the workflow action.",
+            "type": "string",
+            "minLength": 1
+          },
+          "mockup_affordance": {
+            "description": "Visible control, menu item, shortcut, or interaction where the workflow appears.",
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["verb", "brief_quote", "mockup_affordance"]
+      }
+    },
+    "data_texture_requirements": {
+      "description": "Expected data shape, sample scale, columns, distributions, and concrete values visible in mockups.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sample_size_target": {
+          "description": "Target sample size represented or implied by the visual artifact.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "columns": {
+          "description": "Domain-specific data columns or visible data fields required by the brief.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "description": "A concrete data column or field with expected values.",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "description": "Column or field name visible in the mockup.",
+                "type": "string",
+                "minLength": 1
+              },
+              "values": {
+                "description": "Allowed or expected visible values for this field.",
+                "type": "array",
+                "items": {
+                  "type": ["string", "number", "boolean"]
+                }
+              },
+              "distribution": {
+                "description": "Expected value distribution where known; values should sum near 1.0.",
+                "type": "object",
+                "additionalProperties": {
+                  "description": "Expected proportion for a named value.",
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              },
+              "values_count": {
+                "description": "Expected count of distinct possible values when listing them is impractical.",
+                "type": "integer",
+                "minimum": 1
+              },
+              "named_examples": {
+                "description": "Representative concrete values from the project domain.",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "required": ["name"]
+          }
+        }
+      },
+      "required": ["sample_size_target", "columns"]
+    },
+    "brand_or_context_invariants": {
+      "description": "Brand, regulatory, organizational, or contextual constraints that must be visible; may explicitly declare none required with justification.",
+      "oneOf": [
+        {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "description": "A required invariant and where it appears.",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "description": {
+                "description": "Invariant that must be visible or structurally present.",
+                "type": "string",
+                "minLength": 1
+              },
+              "requirement_type": {
+                "description": "Category of invariant.",
+                "type": "string",
+                "enum": ["brand", "regulatory", "compliance", "organizational", "contextual", "accessibility", "other"]
+              },
+              "mockup_location": {
+                "description": "Mockup path or element anchor where the invariant is represented.",
+                "type": "string",
+                "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._@/#-]+$"
+              }
+            },
+            "required": ["description", "requirement_type", "mockup_location"]
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "none_required": {
+              "description": "Explicit marker that no brand or context invariants apply.",
+              "const": true
+            },
+            "justification": {
+              "description": "Brief-grounded justification for why no invariants are required.",
+              "type": "string",
+              "minLength": 20
+            }
+          },
+          "required": ["none_required", "justification"]
+        }
+      ]
+    },
+    "signature_affordances": {
+      "description": "Product-specific differentiating affordances that must be represented.",
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "description": "A signature affordance and why it is not generic.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "description": "Name of the signature affordance.",
+            "type": "string",
+            "minLength": 1
+          },
+          "what_makes_it_signature": {
+            "description": "Explanation of why this affordance is distinctive for the project.",
+            "type": "string",
+            "minLength": 1
+          },
+          "mockup_anchor": {
+            "description": "Mockup path or element anchor where the affordance is visible.",
+            "type": "string",
+            "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._@/#-]+$"
+          }
+        },
+        "required": ["name", "what_makes_it_signature", "mockup_anchor"]
+      }
+    },
+    "forbidden_generic_signals": {
+      "description": "Generic phrases, layouts, and patterns that must not appear in mockups or runtime captures.",
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "description": "A forbidden generic signal and the reason it is harmful.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "signal": {
+            "description": "Forbidden phrase, UI label, layout pattern, or visual trope.",
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "description": "Reason this signal would make the deliverable generic or misleading.",
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["signal", "reason"]
+      }
+    },
+    "audience_context": {
+      "description": "Context of use that should shape density, affordances, contrast, platform, and interaction choices.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "primary_environment": {
+          "description": "Primary physical or device environment where the artifact is used.",
+          "type": "string",
+          "enum": ["office_desktop", "mobile_field", "kiosk", "large_monitor", "wearable", "in_vehicle", "other"]
+        },
+        "primary_environment_detail": {
+          "description": "Free-text details about the environment of use.",
+          "type": "string",
+          "minLength": 1
+        },
+        "usage_frequency": {
+          "description": "How often the primary user interacts with the artifact.",
+          "type": "string",
+          "enum": ["constant", "hourly", "daily", "weekly", "monthly", "episodic", "one_time"]
+        },
+        "usage_pressure": {
+          "description": "Operational pressure during normal use.",
+          "type": "string",
+          "enum": ["calm", "time_sensitive", "life_safety", "regulatory", "high_stakes_decision", "low_stakes"]
+        },
+        "primary_user_role": {
+          "description": "Primary role or persona using the artifact.",
+          "type": "string",
+          "minLength": 1
+        },
+        "user_experience_level": {
+          "description": "Expected experience level of the primary user.",
+          "type": "string",
+          "enum": ["novice", "intermediate", "expert", "power_user"]
+        },
+        "concurrent_attention": {
+          "description": "Whether the user can dedicate attention or is interrupted while using the artifact.",
+          "type": "string",
+          "enum": ["dedicated", "interrupted", "multi_tasked"]
+        }
+      },
+      "required": [
+        "primary_environment",
+        "primary_environment_detail",
+        "usage_frequency",
+        "usage_pressure",
+        "primary_user_role",
+        "user_experience_level",
+        "concurrent_attention"
+      ]
+    }
+  },
+  "required": [
+    "domain_entities",
+    "workflow_signatures",
+    "data_texture_requirements",
+    "brand_or_context_invariants",
+    "signature_affordances",
+    "forbidden_generic_signals",
+    "audience_context"
+  ]
+}

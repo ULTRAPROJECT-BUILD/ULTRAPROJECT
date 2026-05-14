@@ -6,6 +6,7 @@ requests
 python-pptx
 playwright
 tomli
+jsonschema
 
 # Optional index/search integrations used by some scripts.
 chromadb

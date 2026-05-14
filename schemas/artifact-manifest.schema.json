@@ -1,0 +1,332 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/artifact-manifest.schema.json",
+  "title": "Artifact Manifest",
+  "description": "Validates the artifact_manifest block in visual specification frontmatter.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "artifactType": {
+      "type": "string",
+      "enum": [
+        "photograph",
+        "illustration",
+        "icon_set",
+        "pattern_texture",
+        "product_3d",
+        "scene_3d",
+        "motion_graphics_loop",
+        "cinematic_video",
+        "ambient_audio",
+        "sfx",
+        "voiceover",
+        "live_prototype",
+        "data_chart",
+        "custom_typography",
+        "bespoke_typeface_variation"
+      ]
+    },
+    "producerId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!.*\\.\\.).+$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "dimensions": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]*x[1-9][0-9]*$"
+    },
+    "mediumId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_]*$"
+    },
+    "slotContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "medium": {
+          "description": "Medium ID that owns slot integration.",
+          "$ref": "#/$defs/mediumId"
+        },
+        "slot_role": {
+          "description": "Role of the deliverable slot.",
+          "type": "string",
+          "minLength": 1
+        },
+        "target_dimensions": {
+          "description": "Target rendered dimensions.",
+          "$ref": "#/$defs/dimensions"
+        },
+        "target_aspect_ratio": {
+          "description": "Target aspect ratio such as 5:3.",
+          "type": "string",
+          "pattern": "^[1-9][0-9]*:[1-9][0-9]*$"
+        },
+        "crop_safe_zone": {
+          "description": "Safe crop zone token.",
+          "type": "string",
+          "minLength": 1
+        },
+        "focal_point_safe_zone": {
+          "description": "Focal point safe zone token.",
+          "type": "string",
+          "minLength": 1
+        },
+        "file_size_max_kb": {
+          "description": "Maximum file size for slot integration.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "load_priority": {
+          "description": "Slot loading priority.",
+          "type": "string",
+          "enum": ["critical", "important", "deferred"]
+        },
+        "accessibility_alt_text_required": {
+          "description": "Whether alt text is required for this slot.",
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "required": ["medium", "slot_role", "target_dimensions"]
+    },
+    "productionAttempt": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "attempt": {
+          "description": "One-based attempt number when emitted by remediation tooling.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "timestamp": {
+          "description": "When the production attempt completed.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "producer_id": {
+          "description": "Producer used for this attempt.",
+          "$ref": "#/$defs/producerId"
+        },
+        "verdict": {
+          "description": "Attempt verdict.",
+          "type": "string",
+          "enum": ["pass", "fail", "pending"]
+        },
+        "type": {
+          "description": "Attempt type such as initial, re-prompt, or fallback.",
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "description": "Failure or remediation reason.",
+          "type": "string"
+        },
+        "artifact_path": {
+          "description": "Artifact path emitted by this attempt.",
+          "$ref": "#/$defs/path"
+        }
+      },
+      "required": ["producer_id", "verdict"]
+    },
+    "slotRemediation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "attempted": {
+          "description": "Whether slot remediation was attempted after an integration failure.",
+          "type": "boolean"
+        },
+        "initial_failure_result": {
+          "description": "Initial slot integration failure verdict.",
+          "type": "string",
+          "enum": ["fail"]
+        },
+        "final_verdict": {
+          "description": "Final remediation outcome from run_slot_remediation.py.",
+          "type": "string",
+          "enum": [
+            "pass_via_reprompt",
+            "pass_via_substitution",
+            "paused_with_incompatibility_report",
+            "operator_approved_skip",
+            "error"
+          ]
+        },
+        "incompatibility_report_path": {
+          "description": "Path to slot incompatibility report when remediation exhausted.",
+          "$ref": "#/$defs/path"
+        },
+        "operator_decision": {
+          "description": "Recorded operator decision after a slot incompatibility report.",
+          "type": "string"
+        },
+        "remediation_attempts": {
+          "description": "Attempt records returned by run_slot_remediation.py.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/productionAttempt"
+          }
+        }
+      },
+      "required": ["attempted", "initial_failure_result", "final_verdict"]
+    },
+    "centroidRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "centroid_id": {
+          "description": "Stable centroid identifier.",
+          "type": "string",
+          "minLength": 1
+        },
+        "centroid_path": {
+          "description": "Path to centroid file used by the artifact quality gate.",
+          "$ref": "#/$defs/path"
+        },
+        "centroid_meta_path": {
+          "description": "Path to centroid sidecar metadata.",
+          "$ref": "#/$defs/path"
+        },
+        "centroid_version": {
+          "description": "Centroid version used for the artifact.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "lock_time_centroid_version": {
+          "description": "Project lock-time centroid version recorded in the VS.",
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": ["centroid_id", "centroid_version"]
+    },
+    "manifestItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Project-unique artifact ID.",
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "description": "Artifact type.",
+          "$ref": "#/$defs/artifactType"
+        },
+        "prompt": {
+          "description": "Direct artifact prompt.",
+          "type": "string",
+          "minLength": 1
+        },
+        "prompt_template": {
+          "description": "Template prompt used with count.",
+          "type": "string",
+          "minLength": 1
+        },
+        "slot": {
+          "description": "Deliverable slot identifier.",
+          "type": "string",
+          "minLength": 1
+        },
+        "slot_contract": {
+          "description": "Medium-owned slot integration contract.",
+          "$ref": "#/$defs/slotContract"
+        },
+        "producer_override": {
+          "description": "Explicit producer selection.",
+          "$ref": "#/$defs/producerId"
+        },
+        "quality_centroid_override_path": {
+          "description": "Path to an alternate quality centroid.",
+          "$ref": "#/$defs/path"
+        },
+        "count": {
+          "description": "Number of artifacts to produce from a template.",
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
+        },
+        "dimensions": {
+          "description": "Requested artifact dimensions.",
+          "$ref": "#/$defs/dimensions"
+        },
+        "locked_artifact_path": {
+          "description": "Path to the locked produced artifact.",
+          "$ref": "#/$defs/path"
+        },
+        "locked_artifact_hash": {
+          "description": "SHA-256 hash of the locked artifact.",
+          "$ref": "#/$defs/sha256"
+        },
+        "quality_gate_result": {
+          "description": "Producer-owned quality gate verdict.",
+          "type": "string",
+          "enum": ["pass", "fail", "pending"]
+        },
+        "slot_integration_gate_result": {
+          "description": "Medium-owned slot integration verdict.",
+          "type": "string",
+          "enum": ["pass", "fail", "pending", "not_applicable"]
+        },
+        "producer_substitution_for_slot": {
+          "description": "Fallback producer used after slot remediation.",
+          "$ref": "#/$defs/producerId"
+        },
+        "slot_integration_remediation": {
+          "description": "Slot integration remediation result when a prior slot check failed.",
+          "$ref": "#/$defs/slotRemediation"
+        },
+        "centroid_version": {
+          "description": "Single contributing centroid version, for simple artifact types.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "lock_time_centroid_version": {
+          "description": "Single lock-time centroid version, for simple artifact types.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "contributing_centroids": {
+          "description": "Centroids used by this artifact's quality gate.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/centroidRef"
+          }
+        },
+        "production_attempts": {
+          "description": "Attempt history for this artifact.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/productionAttempt"
+          }
+        }
+      },
+      "required": ["id", "type"],
+      "dependentRequired": {
+        "slot": ["slot_contract"]
+      },
+      "oneOf": [
+        {"required": ["prompt"]},
+        {"required": ["prompt_template"]}
+      ]
+    }
+  },
+  "properties": {
+    "artifact_manifest": {
+      "description": "Artifacts requested by a visual specification.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/manifestItem"
+      }
+    }
+  },
+  "required": ["artifact_manifest"]
+}

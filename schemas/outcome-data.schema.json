@@ -1,0 +1,200 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/outcome-data.schema.json",
+  "title": "Visual Specification Outcome Data",
+  "description": "Validates visual-spec-outcome-{date}.json telemetry artifacts.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "axes": {
+      "description": "Resolved six-axis visual profile.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "density": {"description": "Information density target.", "type": "string", "enum": ["sparse", "balanced", "dense", "ultra_dense"]},
+        "topology": {"description": "Layout or composition topology.", "type": "string", "minLength": 1},
+        "expressiveness": {"description": "Expressive posture.", "type": "string", "enum": ["quiet", "restrained", "editorial", "expressive", "playful", "cinematic"]},
+        "motion": {"description": "Motion posture.", "type": "string", "enum": ["static", "subtle", "functional", "expressive", "cinematic", "rapid"]},
+        "platform": {"description": "Platform idiom.", "type": "string", "minLength": 1},
+        "trust": {"description": "Trust and risk posture.", "type": "string", "minLength": 1}
+      },
+      "required": ["density", "topology", "expressiveness", "motion", "platform", "trust"]
+    },
+    "medium": {
+      "description": "Supported visual medium.",
+      "type": "string",
+      "enum": [
+        "web_ui",
+        "native_ui",
+        "presentation",
+        "brand_identity",
+        "video_animation",
+        "3d_render",
+        "document_typography",
+        "game_ui",
+        "data_visualization"
+      ]
+    },
+    "grade": {
+      "description": "Letter grade used by OneShot review artifacts.",
+      "type": "string",
+      "enum": ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F", "N/A"]
+    }
+  },
+  "properties": {
+    "project": {
+      "description": "Project slug for the outcome record.",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "client_id": {
+      "description": "Client identifier for cohort controls.",
+      "type": "string",
+      "minLength": 1
+    },
+    "client_organization_id": {
+      "description": "Organization identifier for cross-client cohort controls.",
+      "type": "string",
+      "minLength": 1
+    },
+    "client_domain": {
+      "description": "Client domain or industry segment used in cohort analysis.",
+      "type": "string",
+      "minLength": 1
+    },
+    "visual_quality_target_medium": {
+      "description": "Medium targeted by the VS.",
+      "$ref": "#/$defs/medium"
+    },
+    "visual_quality_target_preset": {
+      "description": "Preset or custom aesthetic label used by the VS.",
+      "type": "string"
+    },
+    "visual_axes": {
+      "description": "Resolved visual axes for the project.",
+      "$ref": "#/$defs/axes"
+    },
+    "preset_default_overrides": {
+      "description": "Preset axis or token defaults overridden for this project.",
+      "type": "array",
+      "items": {
+        "description": "One preset override with reason and approval state.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "axis_or_token": {
+            "description": "Axis or token path that was overridden.",
+            "type": "string",
+            "minLength": 1
+          },
+          "preset_default": {
+            "description": "Default preset value before override.",
+            "type": ["string", "number", "boolean"]
+          },
+          "project_value": {
+            "description": "Project-specific value after override.",
+            "type": ["string", "number", "boolean"]
+          },
+          "override_reason": {
+            "description": "Reason the default was overridden.",
+            "type": "string",
+            "enum": ["aesthetic-default-wrong", "project-specific-brand", "accessibility", "operator-taste", "technical-constraint", "other"]
+          },
+          "operator_approved": {
+            "description": "Whether the operator approved this override.",
+            "type": "boolean"
+          }
+        },
+        "required": ["axis_or_token", "preset_default", "project_value", "override_reason", "operator_approved"]
+      }
+    },
+    "visual_gate_first_attempt": {
+      "description": "First visual gate verdict.",
+      "type": "string",
+      "enum": ["PASS", "REVISE", "FAIL", "WAIVED", "NOT_RUN"]
+    },
+    "visual_gate_final": {
+      "description": "Final visual gate verdict.",
+      "type": "string",
+      "enum": ["PASS", "REVISE", "FAIL", "WAIVED", "NOT_RUN"]
+    },
+    "visual_gate_revision_rounds": {
+      "description": "Number of visual gate revision rounds.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "reviewer_grades": {
+      "description": "Reviewer grades collected for the project.",
+      "type": "array",
+      "items": {
+        "description": "A reviewer grade and verdict.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "reviewer_session_id": {
+            "description": "Reviewer session identifier.",
+            "type": "string",
+            "minLength": 1
+          },
+          "grade": {
+            "description": "Reviewer-assigned grade.",
+            "$ref": "#/$defs/grade"
+          },
+          "verdict": {
+            "description": "Reviewer verdict.",
+            "type": "string",
+            "enum": ["PASS", "REVISE", "FAIL"]
+          },
+          "notes": {
+            "description": "Reviewer notes.",
+            "type": "string"
+          }
+        },
+        "required": ["reviewer_session_id", "grade", "verdict"]
+      }
+    },
+    "operator_acceptance": {
+      "description": "Operator acceptance outcome at delivery.",
+      "type": "string",
+      "enum": ["accepted", "accepted_with_notes", "rejected", "waived", "unknown"]
+    },
+    "revision_count_during_build": {
+      "description": "Count of build revisions attributed to visual quality issues.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "delivery_review_grade": {
+      "description": "Final delivery review grade.",
+      "$ref": "#/$defs/grade"
+    },
+    "build_duration_hours": {
+      "description": "Total build duration in hours.",
+      "type": "number",
+      "minimum": 0
+    },
+    "vs_phase_duration_hours": {
+      "description": "Total visual-spec phase duration in hours.",
+      "type": "number",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "project",
+    "client_id",
+    "client_organization_id",
+    "client_domain",
+    "visual_quality_target_medium",
+    "visual_quality_target_preset",
+    "visual_axes",
+    "preset_default_overrides",
+    "visual_gate_first_attempt",
+    "visual_gate_final",
+    "visual_gate_revision_rounds",
+    "reviewer_grades",
+    "operator_acceptance",
+    "revision_count_during_build",
+    "delivery_review_grade",
+    "build_duration_hours",
+    "vs_phase_duration_hours"
+  ]
+}

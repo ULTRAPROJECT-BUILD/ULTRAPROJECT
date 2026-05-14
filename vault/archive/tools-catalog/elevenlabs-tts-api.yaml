@@ -1,0 +1,42 @@
+tool_slug: elevenlabs-tts-api
+tool_stack_id: api:elevenlabs/tts@latest
+display_name: ElevenLabs Text to Speech API
+versions:
+  - version: latest
+    released: 2026-01-01
+capabilities:
+  - id: cinematic_voiceover_generation
+    bar_fit_default: HIGH
+    bar_fit_evidence:
+      - type: vendor_documentation
+        source: https://elevenlabs.io/docs
+        summary: ElevenLabs exposes text-to-speech and voice generation APIs for production voiceover workflows.
+    known_ceilings:
+      - Requires API credentials and may raise likeness or consent questions for voice cloning.
+constraints:
+  os: [macos, linux, windows]
+  arch: [arm64, x86_64]
+  acquisition_cost_usd: 5
+  recurrence: monthly
+  license: commercial_api_terms
+  local_runnable: false
+  network_required: true
+  credentials_required: true
+acquisition:
+  install_method: api_only
+  install_risk: medium
+  install_steps_summary: Operator provides an ElevenLabs API key out of band and a short synthesis canary verifies output.
+  canary_type: functional
+  credentials_needed: [ELEVENLABS_API_KEY]
+  credential_handoff: operator_out_of_band
+catalog_metadata:
+  source: canonical
+  terms_last_checked: 2026-05-12
+  ttl_days_by_domain:
+    pricing: 90
+    licensing: 180
+    capability_evidence: 365
+  citation_urls:
+    - https://elevenlabs.io/docs
+  catalog_revision: 1
+  last_validated: 2026-05-12

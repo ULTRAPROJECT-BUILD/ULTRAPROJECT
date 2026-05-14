@@ -1,0 +1,149 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://oneshot.local/schemas/disposition-checkpoint.schema.json",
+  "title": "Disposition Checkpoint",
+  "description": "Validates orchestrator disposition checkpoints, including forward-watch hygiene.",
+  "type": "object",
+  "additionalProperties": true,
+  "definitions": {
+    "ticketId": {
+      "type": "string",
+      "pattern": "^T-[0-9]{3,}$"
+    },
+    "forwardWatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "operation", "target_phase_or_ticket"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["artifact_touching", "artifact_judging"]
+        },
+        "operation": {"type": "string", "minLength": 1},
+        "target_phase_or_ticket": {"type": "string", "minLength": 1},
+        "expected_artifact_change": {"type": "string", "minLength": 1}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"type": {"const": "artifact_touching"}},
+            "required": ["type"]
+          },
+          "then": {
+            "required": ["expected_artifact_change"]
+          }
+        },
+        {
+          "if": {
+            "properties": {"type": {"const": "artifact_judging"}},
+            "required": ["type"]
+          },
+          "then": {
+            "not": {"required": ["expected_artifact_change"]}
+          }
+        }
+      ]
+    }
+  },
+  "required": ["Decision"],
+  "properties": {
+    "ticket_id": {"$ref": "#/definitions/ticketId"},
+    "Tier selected": {
+      "type": "string",
+      "enum": ["T1", "T2", "T3"]
+    },
+    "Decision": {
+      "type": "string",
+      "enum": ["ACCEPT", "REJECT", "ESCALATE"]
+    },
+    "Reasoning": {"type": "string"},
+    "root_cause": {
+      "type": "string",
+      "enum": ["craft_miss", "spec_miss", "tool_ceiling", "unknown"]
+    },
+    "root_cause_confidence": {
+      "type": "string",
+      "enum": ["low", "medium", "high"]
+    },
+    "forward_watch": {
+      "type": "array",
+      "items": {"$ref": "#/definitions/forwardWatch"},
+      "default": []
+    },
+    "tool_stack_bottleneck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool", "capability", "observed_ceiling"],
+      "properties": {
+        "tool": {"type": "string", "minLength": 1},
+        "capability": {"type": "string", "minLength": 1},
+        "observed_ceiling": {"type": "string", "minLength": 1}
+      }
+    },
+    "next_iteration_options": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "same-stack-harder-with-explicit-composition-direction",
+          "pivot-to-brief-secondary-path",
+          "tool-replan-to-named-alternative"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "tool_presence_canary": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "canary_status": {"type": "string", "enum": ["not_run", "passed", "failed"]},
+        "blocked_tickets": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/ticketId"}
+        },
+        "attempted_ticket": {"$ref": "#/definitions/ticketId"}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"Decision": {"const": "ACCEPT"}},
+        "required": ["Decision"]
+      },
+      "then": {
+        "properties": {
+          "forward_watch": {
+            "type": "array",
+            "items": {
+              "allOf": [
+                {"$ref": "#/definitions/forwardWatch"},
+                {"properties": {"type": {"const": "artifact_touching"}}}
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "Decision": {"const": "REJECT"},
+          "Tier selected": {"const": "T3"}
+        },
+        "required": ["Decision", "Tier selected"]
+      },
+      "then": {
+        "required": ["root_cause", "root_cause_confidence"]
+      },
+      "else": {
+        "not": {
+          "anyOf": [
+            {"required": ["root_cause"]},
+            {"required": ["root_cause_confidence"]}
+          ]
+        }
+      }
+    }
+  ]
+}

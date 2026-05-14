@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/token-payload-game_ui.schema.json",
+  "title": "Game UI Token Payload",
+  "description": "Validates the tokens block in manifest.json for game_ui visual specifications.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "hexColor": {
+      "type": "string",
+      "pattern": "^#[0-9A-Fa-f]{6}$"
+    },
+    "numberMap": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_-]*$"
+      },
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "typeStyle": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "family": {
+          "type": "string",
+          "minLength": 1
+        },
+        "size": {
+          "type": "number",
+          "minimum": 1
+        },
+        "weight": {
+          "type": [
+            "string",
+            "integer",
+            "number"
+          ]
+        },
+        "leading": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "tracking": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "family",
+        "size",
+        "weight",
+        "leading",
+        "tracking"
+      ]
+    },
+    "timing": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "easing": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "duration_ms",
+        "easing"
+      ]
+    },
+    "namedString": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ]
+    }
+  },
+  "properties": {
+    "hud_density": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_elements": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "safe_zone_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 50
+        }
+      },
+      "required": [
+        "max_elements",
+        "safe_zone_pct"
+      ]
+    },
+    "font_legibility_distance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "min_px_at_distance": {
+          "type": "number",
+          "minimum": 1
+        },
+        "test_distance_m": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "min_px_at_distance",
+        "test_distance_m"
+      ]
+    },
+    "color_state_encoding": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/hexColor"
+      },
+      "minProperties": 3
+    },
+    "animation_timing": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/timing"
+      },
+      "minProperties": 1
+    },
+    "audio_cue_vocabulary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cues": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "cues"
+      ]
+    }
+  },
+  "required": [
+    "hud_density",
+    "font_legibility_distance",
+    "color_state_encoding",
+    "animation_timing",
+    "audio_cue_vocabulary"
+  ]
+}

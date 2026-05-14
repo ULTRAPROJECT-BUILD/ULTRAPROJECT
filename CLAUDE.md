@@ -9,10 +9,10 @@ The platform layer is ready for use: vault schema, orchestrator + executor skill
 ### Platform Infrastructure
 - [[SYSTEM]] — system prompt for all agents (roles, rules, vault structure, safety)
 - `vault/` — shared markdown memory with YAML frontmatter schema (see [[SCHEMA]])
-- `vault/clients/` — workspace isolation layer (each project gets its own subdirectory) with `_template/`, `_platform/`, and `_registry.example.md` (copy to `_registry.md` on first install)
+- `vault/clients/` — workspace isolation layer (each project gets its own subdirectory) with `_template/`, `_platform/`, and `_registry.template.md` (copy to `_registry.md` on first install)
 - `vault/archive/` — sanitized reusable capabilities with `mcps/`, `skills/`, `playbooks/`, `patterns/`
 - `vault/config/` — platform config, metering, admin log, spending log
-- `.mcp.example.json` — MCP server registry template (copy to `.mcp.json` on first install)
+- `.mcp.template.json` — MCP server registry template (copy to `.mcp.json` on first install)
 
 ### MCP Servers (under `vault/clients/_platform/mcps/`)
 - `spending/` — agent spending budget with caps (wallet protection)

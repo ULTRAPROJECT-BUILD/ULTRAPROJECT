@@ -28,7 +28,7 @@ Or export it in the shell where you start Claude / Codex.
 
 ## Wire into MCP
 
-The repo's `.mcp.example.json` already includes a `stitch` server entry that points here:
+The repo's `.mcp.template.json` includes the MCP registry shape. Add a `stitch` server entry like this:
 
 ```json
 {
@@ -43,7 +43,7 @@ The repo's `.mcp.example.json` already includes a `stitch` server entry that poi
 }
 ```
 
-Copy `.mcp.example.json` → `.mcp.json`, fill in the key, and restart your agent.
+Copy `.mcp.template.json` → `.mcp.json`, add the entry, fill in the key, and restart your agent.
 
 ## Skip the repo `.env`
 

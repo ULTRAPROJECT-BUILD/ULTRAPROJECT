@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://oneshot.local/schemas/tools-catalog-overlay.schema.json",
+  "title": "Tools Catalog Overlay",
+  "description": "Validates per-client Tool Discovery catalog overlays.",
+  "type": "object",
+  "additionalProperties": false,
+  "definitions": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "installedState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "detected_version", "canary_status", "last_seen_on_host"],
+      "properties": {
+        "state": {"type": "string", "enum": ["installed", "not_installed", "unknown"]},
+        "detected_version": {"type": ["string", "null"]},
+        "canary_status": {"type": "string", "enum": ["passed", "failed", "not_run"]},
+        "canary_last_run": {"type": ["string", "null"]},
+        "last_seen_on_host": {"type": ["string", "null"]}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "source", "summary"],
+      "properties": {
+        "type": {"type": "string", "minLength": 1},
+        "source": {"type": "string", "minLength": 1},
+        "summary": {"type": "string", "minLength": 1}
+      }
+    }
+  },
+  "required": ["tool_slug", "overlay_metadata"],
+  "properties": {
+    "tool_slug": {"$ref": "#/definitions/slug"},
+    "overlay_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "curator",
+        "canonical_revision_base",
+        "conflict_reason",
+        "review_after",
+        "override_durability"
+      ],
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": ["operator-curated", "inferred-from-canary", "declared-by-operator"]
+        },
+        "curator": {"type": "string", "minLength": 1},
+        "canonical_revision_base": {"type": "integer", "minimum": 1},
+        "conflict_reason": {"type": "string", "minLength": 1},
+        "review_after": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+        "override_durability": {"type": "string", "enum": ["temporary", "durable"]},
+        "created_at": {"type": "string"}
+      }
+    },
+    "installed_state_by_host": {
+      "type": "object",
+      "additionalProperties": {"$ref": "#/definitions/installedState"}
+    },
+    "capability_overrides": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "bar_fit_default", "bar_fit_evidence", "known_ceilings", "override_reason"],
+        "properties": {
+          "id": {"$ref": "#/definitions/slug"},
+          "bar_fit_default": {"type": "string", "enum": ["HIGH", "MEDIUM", "LOW"]},
+          "bar_fit_evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"$ref": "#/definitions/evidence"}
+          },
+          "known_ceilings": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1}
+          },
+          "override_reason": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "acquisition": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "notes": {"type": "string"},
+    "promotion_proposal": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  }
+}

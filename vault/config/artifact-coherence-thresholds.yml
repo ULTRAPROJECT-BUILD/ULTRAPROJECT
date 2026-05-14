@@ -1,0 +1,45 @@
+version: 1
+last_calibrated_at: "2026-05-10T16:30:00+00:00"
+calibration_sample_count: 0
+defaults:
+  palette_delta_e76_max: 8
+  color_temperature_variance_k_max: 500
+  type_scale_ratio_variance_max: 0.05
+  type_family_consistency_required: true
+  lighting_primary_direction_variance_deg_max: 15
+  lighting_fill_ratio_variance_max: 0.3
+  motion_pacing_register_consistency_required: true
+  audio_mood_centroid_distance_max: 0.4
+  spatial_scale_subject_variance_max: 0.5
+  slot_fit_must_be_unanimous: true
+per_medium_overrides:
+  presentation:
+    palette_delta_e76_max: 12
+    color_temperature_variance_k_max: 800
+  brand_identity:
+    palette_delta_e76_max: 5
+    color_temperature_variance_k_max: 250
+  video_animation:
+    motion_pacing_register_consistency_required: true
+per_preset_overrides:
+  vercel_marketing:
+    palette_delta_e76_max: 10
+  apple_consumer:
+    palette_delta_e76_max: 6
+    color_temperature_variance_k_max: 300
+calibration_provenance:
+  - threshold: palette_delta_e76_max
+    initial_value: 8
+    initial_basis: "estimated from CIELAB perception literature; just-noticeable-difference threshold"
+    calibration_history: []
+  - threshold: color_temperature_variance_k_max
+    initial_value: 500
+    initial_basis: "warm-cool perceptual variance threshold for visually unified asset sets"
+    calibration_history: []
+tuning_method:
+  retune_after_n_projects: 10
+  retune_inputs:
+    - per_project: coherence_signoff_reviewer_agreement
+    - per_project: post_delivery_operator_acceptance
+    - per_project: revisions_during_build
+  retune_skill: skills/calibrate-coherence-thresholds.md

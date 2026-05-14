@@ -1,0 +1,51 @@
+tool_slug: blender-cycles
+tool_stack_id: blender:cycles@4.5
+display_name: Blender Cycles renderer
+versions:
+  - version: "4.5"
+    released: 2025-12-01
+capabilities:
+  - id: offline_photoreal_render
+    bar_fit_default: HIGH
+    bar_fit_evidence:
+      - type: vendor_documentation
+        source: https://docs.blender.org/manual/en/latest/render/cycles/index.html
+        summary: Cycles is Blender's physically based path tracer for photoreal offline renders.
+    known_ceilings:
+      - Offline render quality does not automatically solve live WebGL runtime delivery.
+  - id: cinematic_volumetric_render
+    bar_fit_default: HIGH
+    bar_fit_evidence:
+      - type: pipeline_pattern
+        source: render-fixture planning replay
+        summary: Cycles can carry the offline bake side of a VDB-to-MP4 hybrid path that clears a high visual bar in runtime composition.
+    known_ceilings:
+      - Needs video-texture or equivalent runtime mounting to satisfy the continuous 3D world constraint.
+constraints:
+  os: [macos, linux, windows]
+  arch: [arm64, x86_64]
+  acquisition_cost_usd: 0
+  recurrence: none
+  license: apache_2_and_gpl_compatible
+  local_runnable: true
+  network_required: false
+  credentials_required: false
+acquisition:
+  install_method: built_in
+  install_risk: low
+  install_steps_summary: Use Cycles included with Blender and run a minimal path-traced frame canary.
+  canary_type: functional
+  credentials_needed: []
+  credential_handoff: none
+catalog_metadata:
+  source: canonical
+  terms_last_checked: 2026-05-12
+  ttl_days_by_domain:
+    pricing: 90
+    licensing: 180
+    capability_evidence: 365
+  citation_urls:
+    - https://docs.blender.org/manual/en/latest/render/cycles/index.html
+    - https://www.blender.org/about/license/
+  catalog_revision: 1
+  last_validated: 2026-05-12

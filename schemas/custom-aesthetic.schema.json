@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/custom-aesthetic.schema.json",
+  "title": "Custom Aesthetic Frontmatter",
+  "description": "Validates vault/archive/visual-aesthetics/custom/{project_slug}.md frontmatter.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "axes": {
+      "description": "Six-axis custom aesthetic profile.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "density": {"description": "Custom density value.", "type": "string", "enum": ["sparse", "balanced", "dense", "ultra_dense"]},
+        "topology": {"description": "Custom topology value.", "type": "string", "minLength": 1},
+        "expressiveness": {"description": "Custom expressiveness value.", "type": "string", "enum": ["quiet", "restrained", "editorial", "expressive", "playful", "cinematic"]},
+        "motion": {"description": "Custom motion value.", "type": "string", "enum": ["static", "subtle", "functional", "expressive", "cinematic", "rapid"]},
+        "platform": {"description": "Custom platform idiom value.", "type": "string", "minLength": 1},
+        "trust": {"description": "Custom trust posture value.", "type": "string", "minLength": 1}
+      },
+      "required": ["density", "topology", "expressiveness", "motion", "platform", "trust"]
+    }
+  },
+  "properties": {
+    "type": {
+      "description": "Artifact discriminator for custom aesthetics.",
+      "const": "custom-aesthetic"
+    },
+    "project": {
+      "description": "Project slug that owns this custom aesthetic.",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "axes": {
+      "description": "Project-specific aesthetic axes.",
+      "$ref": "#/$defs/axes"
+    },
+    "references": {
+      "description": "Project-specific visual references for this custom aesthetic.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "description": "One project-specific reference.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "file": {
+            "description": "Repository-relative reference file path.",
+            "type": "string",
+            "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._@/#-]+$"
+          },
+          "sha256": {
+            "description": "SHA-256 hash of the reference.",
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "role": {
+            "description": "Role of the reference.",
+            "type": "string",
+            "enum": ["inspiration", "anti_pattern", "brand", "competitor", "operator_supplied", "other"]
+          },
+          "note": {
+            "description": "Why this reference belongs to the custom aesthetic.",
+            "type": "string"
+          }
+        },
+        "required": ["file", "sha256", "role", "note"]
+      }
+    },
+    "anti_patterns": {
+      "description": "Project-specific anti-patterns to avoid.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "clip_centroid_path": {
+      "description": "Repository-relative path to the computed custom CLIP centroid.",
+      "type": "string",
+      "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._@/-]+$"
+    },
+    "version": {
+      "description": "Custom aesthetic version in semver form.",
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+(\\.\\d+)?$"
+    },
+    "created": {
+      "description": "Timestamp when the custom aesthetic was created.",
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": ["type", "project", "axes", "references", "anti_patterns", "clip_centroid_path", "version", "created"]
+}

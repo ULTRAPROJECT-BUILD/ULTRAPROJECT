@@ -26,7 +26,7 @@ The important design choice is simple: chat is the interface, but disk is the so
 
 OneShot has two different surfaces:
 
-- **Bootstrap CLI:** `oneshot` creates local config files from examples and checks whether Claude Code or Codex is available.
+- **Bootstrap CLI:** `oneshot` creates local config files from templates and checks whether Claude Code or Codex is available.
 - **Project execution:** the user opens the repo in Claude Code or Codex and pastes a prompt. There is no hidden daemon and no `oneshot run` command.
 
 That boundary keeps setup boring while leaving execution inside the AI coding tool the operator already uses.

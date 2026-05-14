@@ -1,0 +1,243 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/token-payload-document_typography.schema.json",
+  "title": "Document Typography Token Payload",
+  "description": "Validates the tokens block in manifest.json for document_typography visual specifications.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "hexColor": {
+      "type": "string",
+      "pattern": "^#[0-9A-Fa-f]{6}$"
+    },
+    "numberMap": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_-]*$"
+      },
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "typeStyle": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "family": {
+          "type": "string",
+          "minLength": 1
+        },
+        "size": {
+          "type": "number",
+          "minimum": 1
+        },
+        "weight": {
+          "type": [
+            "string",
+            "integer",
+            "number"
+          ]
+        },
+        "leading": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "tracking": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "family",
+        "size",
+        "weight",
+        "leading",
+        "tracking"
+      ]
+    },
+    "timing": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "easing": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "duration_ms",
+        "easing"
+      ]
+    },
+    "namedString": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ]
+    }
+  },
+  "properties": {
+    "type_scale": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/typeStyle"
+      },
+      "minProperties": 5
+    },
+    "page_grid": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "page_width": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "page_height": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "columns": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "gutter": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "page_width",
+        "page_height",
+        "columns",
+        "gutter"
+      ]
+    },
+    "margin_system": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "top": {
+          "type": "number",
+          "minimum": 0
+        },
+        "right": {
+          "type": "number",
+          "minimum": 0
+        },
+        "bottom": {
+          "type": "number",
+          "minimum": 0
+        },
+        "left": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "top",
+        "right",
+        "bottom",
+        "left"
+      ]
+    },
+    "leading_rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "body_ratio": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "heading_ratio": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "body_ratio",
+        "heading_ratio"
+      ]
+    },
+    "widow_orphan_rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "widow_lines": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "orphan_lines": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "widow_lines",
+        "orphan_lines"
+      ]
+    },
+    "chart_styling": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "palette": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/hexColor"
+          }
+        },
+        "gridline_color": {
+          "$ref": "#/$defs/hexColor"
+        }
+      },
+      "required": [
+        "palette",
+        "gridline_color"
+      ]
+    },
+    "color_narrative": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "background": {
+          "$ref": "#/$defs/hexColor"
+        },
+        "text": {
+          "$ref": "#/$defs/hexColor"
+        },
+        "accent": {
+          "$ref": "#/$defs/hexColor"
+        }
+      },
+      "required": [
+        "background",
+        "text",
+        "accent"
+      ]
+    }
+  },
+  "required": [
+    "type_scale",
+    "page_grid",
+    "margin_system",
+    "leading_rules",
+    "widow_orphan_rules",
+    "chart_styling",
+    "color_narrative"
+  ]
+}

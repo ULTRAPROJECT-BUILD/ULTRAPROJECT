@@ -1,0 +1,1049 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/visual-spec-frontmatter.schema.json",
+  "title": "Visual Specification Frontmatter",
+  "description": "Validates YAML frontmatter for {date}-visual-spec-{project}.md visual specification snapshots.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "path": {
+      "description": "Repository-relative path without traversal.",
+      "type": "string",
+      "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._@/#-]+$"
+    },
+    "sha256": {
+      "description": "Lowercase SHA-256 content hash.",
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "phash": {
+      "description": "Perceptual hash encoded as lowercase hexadecimal.",
+      "type": "string",
+      "pattern": "^[a-f0-9]{16,64}$"
+    },
+    "medium": {
+      "description": "Supported visual deliverable medium.",
+      "type": "string",
+      "enum": [
+        "web_ui",
+        "native_ui",
+        "presentation",
+        "brand_identity",
+        "video_animation",
+        "3d_render",
+        "document_typography",
+        "game_ui",
+        "data_visualization"
+      ]
+    },
+    "axes": {
+      "description": "Universal six-axis aesthetic profile.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "density": {
+          "description": "Information density target.",
+          "type": "string",
+          "enum": ["sparse", "balanced", "dense", "ultra_dense"]
+        },
+        "topology": {
+          "description": "Dominant layout or composition topology.",
+          "type": "string",
+          "enum": [
+            "single_panel",
+            "list_detail",
+            "multi_region",
+            "card_grid",
+            "canvas",
+            "timeline",
+            "identity_system",
+            "lockup_family",
+            "application_suite",
+            "storyboard",
+            "scene",
+            "chart_grid",
+            "small_multiples",
+            "narrative_sequence"
+          ]
+        },
+        "expressiveness": {
+          "description": "Desired expressive posture.",
+          "type": "string",
+          "enum": ["quiet", "restrained", "editorial", "expressive", "playful", "cinematic"]
+        },
+        "motion": {
+          "description": "Motion and transition posture.",
+          "type": "string",
+          "enum": ["static", "subtle", "functional", "expressive", "cinematic", "rapid"]
+        },
+        "platform": {
+          "description": "Primary platform idiom to honor.",
+          "type": "string",
+          "enum": [
+            "web_native",
+            "ios_native",
+            "android_native",
+            "desktop_native",
+            "cross_platform",
+            "print",
+            "deck",
+            "cinematic",
+            "game_engine",
+            "brand_system"
+          ]
+        },
+        "trust": {
+          "description": "Trust, risk, and institutional posture.",
+          "type": "string",
+          "enum": [
+            "experimental",
+            "approachable",
+            "professional",
+            "regulated",
+            "enterprise",
+            "clinical",
+            "financial",
+            "safety_critical",
+            "luxury"
+          ]
+        }
+      },
+      "required": ["density", "topology", "expressiveness", "motion", "platform", "trust"]
+    },
+    "mediumExtensions": {
+      "description": "Resolved medium-specific axis values.",
+      "type": "object",
+      "additionalProperties": {
+        "description": "Medium-specific axis value, list of values, or structured setting.",
+        "type": ["string", "number", "boolean", "array", "object"]
+      }
+    },
+    "reference": {
+      "description": "Pinned visual reference with provenance and hashes.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "file": {
+          "description": "Repository-relative reference file path.",
+          "$ref": "#/$defs/path"
+        },
+        "sha256": {
+          "description": "SHA-256 hash of the reference file.",
+          "$ref": "#/$defs/sha256"
+        },
+        "phash": {
+          "description": "Perceptual hash of the reference image or frame.",
+          "$ref": "#/$defs/phash"
+        },
+        "clip_embedding_hash": {
+          "description": "SHA-256 hash of the CLIP embedding vector used for centroid checks.",
+          "$ref": "#/$defs/sha256"
+        },
+        "width": {
+          "description": "Pixel width of the captured reference.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "height": {
+          "description": "Pixel height of the captured reference.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "source_url": {
+          "description": "Original source URL for the reference.",
+          "type": "string",
+          "format": "uri"
+        },
+        "captured_at": {
+          "description": "Timestamp when the reference was captured.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "role": {
+          "description": "Role this reference plays in the visual specification.",
+          "type": "string",
+          "enum": ["inspiration", "anti_pattern", "brand", "competitor", "historical", "operator_supplied", "other"]
+        },
+        "note": {
+          "description": "Brief explanation of why the reference is included.",
+          "type": "string"
+        }
+      },
+      "required": ["file", "sha256", "phash", "clip_embedding_hash", "width", "height", "source_url", "captured_at", "role", "note"]
+    },
+    "mockup": {
+      "description": "Locked anchor mockup and revision trail.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "screen": {
+          "description": "Screen, slide, frame, or scene represented by the mockup.",
+          "type": "string",
+          "minLength": 1
+        },
+        "role": {
+          "description": "Anchor role for this mockup.",
+          "type": "string",
+          "enum": ["primary_anchor", "secondary_anchor", "title_anchor", "content_anchor", "section_anchor", "state_anchor", "other"]
+        },
+        "final_html": {
+          "description": "Repository-relative final HTML source path when applicable.",
+          "$ref": "#/$defs/path"
+        },
+        "final_png": {
+          "description": "Repository-relative final rendered PNG path.",
+          "$ref": "#/$defs/path"
+        },
+        "sha256_html": {
+          "description": "SHA-256 hash of the final HTML source.",
+          "$ref": "#/$defs/sha256"
+        },
+        "sha256_png": {
+          "description": "SHA-256 hash of the final PNG capture.",
+          "$ref": "#/$defs/sha256"
+        },
+        "phash_png": {
+          "description": "Perceptual hash of the final PNG capture.",
+          "$ref": "#/$defs/phash"
+        },
+        "revisions": {
+          "description": "Captured revision history for this anchor.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "description": "A captured mockup revision.",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "rev": {
+                "description": "Revision number.",
+                "type": "integer",
+                "minimum": 1
+              },
+              "html": {
+                "description": "Repository-relative revision HTML source path when applicable.",
+                "$ref": "#/$defs/path"
+              },
+              "png": {
+                "description": "Repository-relative revision PNG path.",
+                "$ref": "#/$defs/path"
+              },
+              "sha256_html": {
+                "description": "SHA-256 hash of revision HTML source.",
+                "$ref": "#/$defs/sha256"
+              },
+              "sha256_png": {
+                "description": "SHA-256 hash of revision PNG capture.",
+                "$ref": "#/$defs/sha256"
+              },
+              "captured_at": {
+                "description": "Timestamp when this revision was captured.",
+                "type": "string",
+                "format": "date-time"
+              },
+              "note": {
+                "description": "Revision note describing what changed.",
+                "type": "string"
+              }
+            },
+            "required": ["rev", "png", "sha256_png", "captured_at"]
+          }
+        },
+        "locked_at": {
+          "description": "Timestamp when this mockup was locked.",
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["screen", "role", "final_png", "sha256_png", "phash_png", "revisions", "locked_at"]
+    },
+    "adjudication": {
+      "description": "Reviewer adjudication round summary.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "round": {
+          "description": "One-based adjudication round number.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "reviewer_session_id": {
+          "description": "Session identifier for the isolated reviewer.",
+          "type": "string",
+          "minLength": 1
+        },
+        "verdict": {
+          "description": "Reviewer verdict for this round.",
+          "type": "string",
+          "enum": ["PASS", "REVISE", "FAIL"]
+        },
+        "redlines": {
+          "description": "Reviewer redlines, empty only when no changes are required.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "report": {
+          "description": "Repository-relative adjudication report path.",
+          "$ref": "#/$defs/path"
+        }
+      },
+      "required": ["round", "reviewer_session_id", "verdict", "redlines", "report"]
+    },
+    "specificityContract": {
+      "description": "Project-specificity contract embedded in the visual spec.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "domain_entities": {
+          "description": "Domain nouns users actually work with.",
+          "type": "array",
+          "minItems": 5,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {"description": "Domain-specific entity name.", "type": "string", "minLength": 1},
+              "brief_quote": {"description": "Brief quote grounding the entity.", "type": "string", "minLength": 1},
+              "mockup_anchors": {"description": "Mockup anchors where the entity appears.", "type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._@/#-]+$"}}
+            },
+            "required": ["name", "brief_quote", "mockup_anchors"]
+          }
+        },
+        "workflow_signatures": {
+          "description": "Domain-specific actions users perform.",
+          "type": "array",
+          "minItems": 5,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "verb": {"description": "Workflow action verb.", "type": "string", "minLength": 1},
+              "brief_quote": {"description": "Brief quote grounding the action.", "type": "string", "minLength": 1},
+              "mockup_affordance": {"description": "Visible affordance where the action appears.", "type": "string", "minLength": 1}
+            },
+            "required": ["verb", "brief_quote", "mockup_affordance"]
+          }
+        },
+        "data_texture_requirements": {
+          "description": "Concrete data texture required by the brief.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "sample_size_target": {"description": "Target sample size.", "type": "integer", "minimum": 1},
+            "columns": {
+              "description": "Required domain columns or fields.",
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "name": {"description": "Column or field name.", "type": "string", "minLength": 1},
+                  "values": {"description": "Expected visible values.", "type": "array", "items": {"type": ["string", "number", "boolean"]}},
+                  "distribution": {"description": "Expected value distribution.", "type": "object", "additionalProperties": {"type": "number", "minimum": 0, "maximum": 1}},
+                  "values_count": {"description": "Expected count of distinct values.", "type": "integer", "minimum": 1},
+                  "named_examples": {"description": "Representative examples.", "type": "array", "items": {"type": "string"}}
+                },
+                "required": ["name"]
+              }
+            }
+          },
+          "required": ["sample_size_target", "columns"]
+        },
+        "brand_or_context_invariants": {
+          "description": "Required invariants, or explicit none-required justification.",
+          "oneOf": [
+            {
+              "type": "array",
+              "minItems": 3,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "description": {"description": "Invariant description.", "type": "string", "minLength": 1},
+                  "requirement_type": {"description": "Invariant category.", "type": "string", "enum": ["brand", "regulatory", "compliance", "organizational", "contextual", "accessibility", "other"]},
+                  "mockup_location": {"description": "Mockup location where invariant appears.", "type": "string", "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._@/#-]+$"}
+                },
+                "required": ["description", "requirement_type", "mockup_location"]
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "none_required": {"description": "Explicit no-invariants marker.", "const": true},
+                "justification": {"description": "Brief-grounded justification.", "type": "string", "minLength": 20}
+              },
+              "required": ["none_required", "justification"]
+            }
+          ]
+        },
+        "signature_affordances": {
+          "description": "Product-specific differentiating affordances.",
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {"description": "Signature affordance name.", "type": "string", "minLength": 1},
+              "what_makes_it_signature": {"description": "Why the affordance is distinctive.", "type": "string", "minLength": 1},
+              "mockup_anchor": {"description": "Mockup anchor where it appears.", "type": "string", "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._@/#-]+$"}
+            },
+            "required": ["name", "what_makes_it_signature", "mockup_anchor"]
+          }
+        },
+        "forbidden_generic_signals": {
+          "description": "Generic signals forbidden by the spec.",
+          "type": "array",
+          "minItems": 5,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "signal": {"description": "Forbidden signal.", "type": "string", "minLength": 1},
+              "reason": {"description": "Why the signal is forbidden.", "type": "string", "minLength": 1}
+            },
+            "required": ["signal", "reason"]
+          }
+        },
+        "audience_context": {
+          "description": "Context of use that constrains visual decisions.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "primary_environment": {"description": "Primary use environment.", "type": "string", "enum": ["office_desktop", "mobile_field", "kiosk", "large_monitor", "wearable", "in_vehicle", "other"]},
+            "primary_environment_detail": {"description": "Environment detail.", "type": "string", "minLength": 1},
+            "usage_frequency": {"description": "Use frequency.", "type": "string", "enum": ["constant", "hourly", "daily", "weekly", "monthly", "episodic", "one_time"]},
+            "usage_pressure": {"description": "Use pressure.", "type": "string", "enum": ["calm", "time_sensitive", "life_safety", "regulatory", "high_stakes_decision", "low_stakes"]},
+            "primary_user_role": {"description": "Primary user role.", "type": "string", "minLength": 1},
+            "user_experience_level": {"description": "User experience level.", "type": "string", "enum": ["novice", "intermediate", "expert", "power_user"]},
+            "concurrent_attention": {"description": "Attention context.", "type": "string", "enum": ["dedicated", "interrupted", "multi_tasked"]}
+          },
+          "required": ["primary_environment", "primary_environment_detail", "usage_frequency", "usage_pressure", "primary_user_role", "user_experience_level", "concurrent_attention"]
+        }
+      },
+      "required": ["domain_entities", "workflow_signatures", "data_texture_requirements", "brand_or_context_invariants", "signature_affordances", "forbidden_generic_signals", "audience_context"]
+    },
+    "producerId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "artifactType": {
+      "type": "string",
+      "enum": [
+        "photograph",
+        "illustration",
+        "icon_set",
+        "pattern_texture",
+        "product_3d",
+        "scene_3d",
+        "motion_graphics_loop",
+        "cinematic_video",
+        "ambient_audio",
+        "sfx",
+        "voiceover",
+        "live_prototype",
+        "data_chart",
+        "custom_typography",
+        "bespoke_typeface_variation"
+      ]
+    },
+    "dimensions": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]*x[1-9][0-9]*$"
+    },
+    "slotContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "medium": {"$ref": "#/$defs/medium"},
+        "slot_role": {"type": "string", "minLength": 1},
+        "target_dimensions": {"$ref": "#/$defs/dimensions"},
+        "target_aspect_ratio": {"type": "string", "pattern": "^[1-9][0-9]*:[1-9][0-9]*$"},
+        "crop_safe_zone": {"type": "string", "minLength": 1},
+        "focal_point_safe_zone": {"type": "string", "minLength": 1},
+        "file_size_max_kb": {"type": "integer", "minimum": 1},
+        "load_priority": {"type": "string", "enum": ["critical", "important", "deferred"]},
+        "accessibility_alt_text_required": {"type": "boolean", "default": true}
+      },
+      "required": ["medium", "slot_role", "target_dimensions"]
+    },
+    "productionAttempt": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "attempt": {"type": "integer", "minimum": 1},
+        "timestamp": {"type": "string", "format": "date-time"},
+        "producer_id": {"$ref": "#/$defs/producerId"},
+        "verdict": {"type": "string", "enum": ["pass", "fail", "pending"]},
+        "type": {"type": "string", "minLength": 1},
+        "reason": {"type": "string"},
+        "artifact_path": {"$ref": "#/$defs/path"}
+      },
+      "required": ["producer_id", "verdict"]
+    },
+    "slotRemediation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "attempted": {"type": "boolean"},
+        "initial_failure_result": {"type": "string", "enum": ["fail"]},
+        "final_verdict": {
+          "type": "string",
+          "enum": [
+            "pass_via_reprompt",
+            "pass_via_substitution",
+            "paused_with_incompatibility_report",
+            "operator_approved_skip",
+            "error"
+          ]
+        },
+        "incompatibility_report_path": {"$ref": "#/$defs/path"},
+        "operator_decision": {"type": "string"},
+        "remediation_attempts": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/productionAttempt"}
+        }
+      },
+      "required": ["attempted", "initial_failure_result", "final_verdict"]
+    },
+    "centroidRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "centroid_id": {"type": "string", "minLength": 1},
+        "centroid_path": {"$ref": "#/$defs/path"},
+        "centroid_meta_path": {"$ref": "#/$defs/path"},
+        "centroid_version": {"type": "integer", "minimum": 1},
+        "lock_time_centroid_version": {"type": "integer", "minimum": 1}
+      },
+      "required": ["centroid_id", "centroid_version"]
+    },
+    "artifactManifestItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "type": {"$ref": "#/$defs/artifactType"},
+        "prompt": {"type": "string", "minLength": 1},
+        "prompt_template": {"type": "string", "minLength": 1},
+        "slot": {"type": "string", "minLength": 1},
+        "slot_contract": {"$ref": "#/$defs/slotContract"},
+        "producer_override": {"$ref": "#/$defs/producerId"},
+        "quality_centroid_override_path": {"$ref": "#/$defs/path"},
+        "count": {"type": "integer", "minimum": 1, "default": 1},
+        "dimensions": {"$ref": "#/$defs/dimensions"},
+        "locked_artifact_path": {"$ref": "#/$defs/path"},
+        "locked_artifact_hash": {"$ref": "#/$defs/sha256"},
+        "quality_gate_result": {"type": "string", "enum": ["pass", "fail", "pending"]},
+        "slot_integration_gate_result": {"type": "string", "enum": ["pass", "fail", "pending", "not_applicable"]},
+        "producer_substitution_for_slot": {"$ref": "#/$defs/producerId"},
+        "slot_integration_remediation": {"$ref": "#/$defs/slotRemediation"},
+        "centroid_version": {"type": "integer", "minimum": 1},
+        "lock_time_centroid_version": {"type": "integer", "minimum": 1},
+        "contributing_centroids": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/centroidRef"}
+        },
+        "production_attempts": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/productionAttempt"}
+        }
+      },
+      "required": ["id", "type"],
+      "dependentRequired": {
+        "slot": ["slot_contract"]
+      },
+      "oneOf": [
+        {"required": ["prompt"]},
+        {"required": ["prompt_template"]}
+      ]
+    },
+    "coherenceVerdict": {
+      "type": "string",
+      "enum": ["pass", "fail"]
+    },
+    "numericCoherenceCheck": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {"type": "number"},
+        "max_threshold": {"type": "number"},
+        "verdict": {"$ref": "#/$defs/coherenceVerdict"},
+        "details": {"type": "string", "minLength": 1}
+      },
+      "required": ["value", "max_threshold", "verdict", "details"]
+    },
+    "qualitativeCoherenceCheck": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {"type": "number"},
+        "max_threshold": {"type": "number"},
+        "verdict": {"$ref": "#/$defs/coherenceVerdict"},
+        "details": {"type": "string", "minLength": 1}
+      },
+      "required": ["verdict", "details"]
+    },
+    "thresholdMap": {
+      "type": "object",
+      "additionalProperties": {"type": ["number", "integer", "boolean"]}
+    },
+    "thresholdResolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "from_defaults": {"$ref": "#/$defs/thresholdMap"},
+        "from_medium_override": {"$ref": "#/$defs/thresholdMap"},
+        "from_preset_override": {"$ref": "#/$defs/thresholdMap"},
+        "effective": {"$ref": "#/$defs/thresholdMap"}
+      },
+      "required": ["from_defaults", "from_medium_override", "from_preset_override", "effective"]
+    },
+    "coherenceSignoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "reviewer_session_id": {"type": "string", "format": "uuid"},
+        "artifact_set_json": {"$ref": "#/$defs/path"},
+        "coherence_report_path": {"$ref": "#/$defs/path"},
+        "coherence_report_sha256": {"$ref": "#/$defs/sha256"},
+        "applied_thresholds_version": {"type": "integer", "minimum": 1},
+        "applied_thresholds_resolution": {"$ref": "#/$defs/thresholdResolution"},
+        "documented_prior_thresholds_version_justification": {"type": "string", "minLength": 1},
+        "set_palette_delta": {"$ref": "#/$defs/numericCoherenceCheck"},
+        "set_color_temp_variance": {"$ref": "#/$defs/numericCoherenceCheck"},
+        "set_type_discipline": {"$ref": "#/$defs/qualitativeCoherenceCheck"},
+        "set_lighting_vocab": {"$ref": "#/$defs/qualitativeCoherenceCheck"},
+        "set_motion_tempo": {"$ref": "#/$defs/qualitativeCoherenceCheck"},
+        "set_audio_mood": {"$ref": "#/$defs/qualitativeCoherenceCheck"},
+        "set_spatial_scale": {"$ref": "#/$defs/qualitativeCoherenceCheck"},
+        "per_slot_integration": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "passed": {"type": "integer", "minimum": 0},
+            "total": {"type": "integer", "minimum": 0},
+            "verdict": {"$ref": "#/$defs/coherenceVerdict"},
+            "details": {"type": "string", "minLength": 1}
+          },
+          "required": ["passed", "total", "verdict", "details"]
+        },
+        "reviewer_qualitative_assessment": {"type": "string", "minLength": 1},
+        "verdict": {"type": "string", "enum": ["pass", "revise", "fail"]}
+      },
+      "required": [
+        "reviewer_session_id",
+        "artifact_set_json",
+        "coherence_report_path",
+        "coherence_report_sha256",
+        "applied_thresholds_version",
+        "applied_thresholds_resolution",
+        "set_palette_delta",
+        "set_color_temp_variance",
+        "set_type_discipline",
+        "set_lighting_vocab",
+        "set_motion_tempo",
+        "set_audio_mood",
+        "set_spatial_scale",
+        "per_slot_integration",
+        "reviewer_qualitative_assessment",
+        "verdict"
+      ]
+    }
+  },
+  "properties": {
+    "type": {
+      "description": "Snapshot artifact discriminator.",
+      "const": "snapshot"
+    },
+    "title": {
+      "description": "Human-readable visual specification title.",
+      "type": "string",
+      "minLength": 1
+    },
+    "project": {
+      "description": "Project slug governed by this visual specification.",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "spec_scope": {
+      "description": "Scope level governed by this visual specification.",
+      "type": "string",
+      "enum": ["project", "phase", "wave", "ticket"]
+    },
+    "phase": {
+      "description": "Phase identifier when spec_scope is phase.",
+      "type": ["string", "integer"]
+    },
+    "wave": {
+      "description": "Wave identifier when spec_scope is wave.",
+      "type": "string"
+    },
+    "parent_brief": {
+      "description": "Repository-relative path to the creative brief that produced this VS.",
+      "$ref": "#/$defs/path"
+    },
+    "deliverable_type": {
+      "description": "Inherits from the source creative-brief's deliverable_type. Determines whether visual-spec runs single-pass (product_app) or multi-round adjudication + adversarial (brand_marketing_site).",
+      "type": "string",
+      "enum": ["product_app", "brand_marketing_site", "hybrid"]
+    },
+    "governs_tickets": {
+      "description": "Ticket paths governed by this visual specification.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/path"
+      }
+    },
+    "visual_quality_target_medium": {
+      "description": "Primary visual medium targeted by this VS.",
+      "$ref": "#/$defs/medium"
+    },
+    "medium_plugin_version": {
+      "description": "Semver version of the medium plugin used.",
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+(\\.\\d+)?$"
+    },
+    "medium_plugin_path": {
+      "description": "Repository-relative path to the medium plugin file.",
+      "$ref": "#/$defs/path"
+    },
+    "visual_quality_target_preset": {
+      "description": "Preset slug selected for preset mode, or project-specific label for custom and brand-system modes.",
+      "type": "string"
+    },
+    "visual_quality_target_mode": {
+      "description": "How the visual quality target is resolved.",
+      "type": "string",
+      "enum": ["preset", "custom", "brand_system", "none"]
+    },
+    "craft_depth": {
+      "description": "Artifact production depth for the visual specification.",
+      "type": "string",
+      "enum": ["standard", "enhanced", "obsessive"]
+    },
+    "artifact_manifest": {
+      "description": "Produced artifact manifest required for enhanced and obsessive craft depth.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/artifactManifestItem"
+      }
+    },
+    "coherence_signoff": {
+      "description": "Reviewer signoff over cross-artifact coherence when an artifact manifest is present.",
+      "$ref": "#/$defs/coherenceSignoff"
+    },
+    "centroid_versions_at_lock": {
+      "description": "Project lock-time centroid versions keyed by centroid identifier.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 1
+      }
+    },
+    "custom_cohort_cluster_id": {
+      "description": "Custom aesthetic cohort UUID assigned when visual_quality_target_mode is custom.",
+      "type": "string",
+      "format": "uuid"
+    },
+    "visual_axes": {
+      "description": "Resolved universal aesthetic axes.",
+      "$ref": "#/$defs/axes"
+    },
+    "visual_axes_medium_extensions": {
+      "description": "Resolved medium-specific aesthetic axes.",
+      "$ref": "#/$defs/mediumExtensions"
+    },
+    "adjacent_preset_rejected": {
+      "description": "Adjacent preset considered and rejected during adversarial review.",
+      "type": "string"
+    },
+    "adjacent_preset_rejection_reason": {
+      "description": "Reason the adjacent preset was rejected.",
+      "type": "string",
+      "minLength": 1
+    },
+    "references": {
+      "description": "Pinned references and anti-patterns used for visual grounding.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/reference"
+      }
+    },
+    "mockups": {
+      "description": "Locked anchor mockups for the visual specification.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/mockup"
+      }
+    },
+    "adjudications": {
+      "description": "Reviewer adjudication rounds.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/adjudication"
+      }
+    },
+    "adversarial_pass": {
+      "description": "Adversarial review arguing for an adjacent preset or aesthetic.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "reviewer_session_id": {
+          "description": "Session identifier for the adversarial reviewer.",
+          "type": "string",
+          "minLength": 1
+        },
+        "adjacent_preset_argued": {
+          "description": "Adjacent preset or aesthetic argued by the adversarial reviewer.",
+          "type": "string",
+          "minLength": 1
+        },
+        "verdict": {
+          "description": "Outcome of the adversarial pass.",
+          "type": "string",
+          "enum": ["selected_upheld", "adjacent_preferred", "inconclusive", "revise"]
+        },
+        "report": {
+          "description": "Repository-relative adversarial pass report path.",
+          "$ref": "#/$defs/path"
+        }
+      },
+      "required": ["reviewer_session_id", "adjacent_preset_argued", "verdict", "report"]
+    },
+    "tokens_locked": {
+      "description": "Whether token extraction has completed and tokens are locked.",
+      "type": "boolean"
+    },
+    "tokens_locked_at": {
+      "description": "Timestamp when tokens were locked.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "parity_targets": {
+      "description": "Medium-specific parity thresholds for build and runtime checks.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ssim_min": {"description": "Minimum structural similarity score.", "type": "number", "minimum": 0, "maximum": 1},
+        "topology_variance_max_pct": {"description": "Maximum allowed element-tree topology variance percentage.", "type": "number", "minimum": 0, "maximum": 100},
+        "density_rows_visible_at_800pt": {"description": "Minimum rows visible at 800pt content height for dense UI targets.", "type": "integer", "minimum": 0},
+        "clip_distance_min": {"description": "Minimum CLIP distance from generic centroid or anti-patterns.", "type": "number", "minimum": 0, "maximum": 2},
+        "clip_distance_max": {"description": "Maximum CLIP distance from selected preset centroid.", "type": "number", "minimum": 0, "maximum": 2}
+      },
+      "required": ["ssim_min", "topology_variance_max_pct"]
+    },
+    "contrast_validation": {
+      "description": "Contrast validation summary for locked mockups.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "wcag_level": {"description": "WCAG contrast level used for evaluation.", "type": "string", "enum": ["AA", "AAA", "custom"]},
+        "min_ratio_normal": {"description": "Minimum normal-text contrast ratio.", "type": "number", "minimum": 1, "maximum": 21},
+        "min_ratio_large": {"description": "Minimum large-text contrast ratio.", "type": "number", "minimum": 1, "maximum": 21},
+        "violations": {"description": "Contrast violations detected during validation.", "type": "array", "items": {"type": "string"}}
+      },
+      "required": ["wcag_level", "min_ratio_normal", "min_ratio_large", "violations"]
+    },
+    "outcome_data": {
+      "description": "Outcome telemetry attached after delivery or review.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "visual_gate_first_attempt": {"description": "First visual gate verdict.", "type": "string", "enum": ["PASS", "REVISE", "FAIL", "WAIVED", "NOT_RUN"]},
+        "visual_gate_final": {"description": "Final visual gate verdict.", "type": "string", "enum": ["PASS", "REVISE", "FAIL", "WAIVED", "NOT_RUN"]},
+        "revision_count_during_build": {"description": "Build-phase revisions caused by visual issues.", "type": "integer", "minimum": 0},
+        "delivery_review_grade": {"description": "Final delivery review grade.", "type": "string", "enum": ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F", "N/A"]},
+        "operator_acceptance": {"description": "Operator acceptance outcome.", "type": "string", "enum": ["accepted", "accepted_with_notes", "rejected", "waived", "unknown"]}
+      }
+    },
+    "visual_specificity_contract": {
+      "description": "Full seven-field visual specificity contract.",
+      "$ref": "#/$defs/specificityContract"
+    },
+    "visual_spec_id": {
+      "description": "Immutable logical visual specification UUID.",
+      "type": "string",
+      "format": "uuid"
+    },
+    "revision_id": {
+      "description": "Immutable UUID for this revision of the visual specification.",
+      "type": "string",
+      "format": "uuid"
+    },
+    "supersedes": {
+      "description": "Revision UUIDs superseded by this revision.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      }
+    },
+    "superseded_by": {
+      "description": "Revision UUID that superseded this revision, empty when active.",
+      "anyOf": [
+        {"type": "string", "format": "uuid"},
+        {"const": ""},
+        {"type": "null"}
+      ]
+    },
+    "active": {
+      "description": "Whether this revision is active for resolution.",
+      "type": "boolean"
+    },
+    "deprecated": {
+      "description": "Whether this revision has been deprecated and should not resolve for new work.",
+      "type": "boolean"
+    },
+    "captured": {
+      "description": "Timestamp when this visual specification snapshot was captured.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "agent": {
+      "description": "Agent or operator session that produced the snapshot.",
+      "type": "string",
+      "minLength": 1
+    },
+    "tags": {
+      "description": "Search and routing tags for this snapshot.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9_-]+$"
+      }
+    },
+    "subject_presence_contract": {
+      "description": "Names the deliverable's primary subject and locks where it must visibly appear. Forces the agent to either render the subject or explicitly waive with a stated reason. Required for consumer / service / venue / product surfaces unless waiver_reason is set.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "subject": {
+          "description": "Plain-English name of the product's primary subject.",
+          "type": "string",
+          "minLength": 1
+        },
+        "required": {
+          "description": "Whether the subject MUST visibly appear in the deliverable. Set to false only when waived with reason.",
+          "type": "boolean"
+        },
+        "required_locations": {
+          "description": "Surfaces where the subject must visibly appear when required: true. Locked mockups for these locations must contain the subject in at least one allowed modality.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "home_first_viewport",
+              "home_anywhere",
+              "stories",
+              "about",
+              "services",
+              "gallery",
+              "og_tile"
+            ]
+          },
+          "minItems": 1
+        },
+        "allowed_modalities": {
+          "description": "How the subject is allowed to appear. Use any combination. 'photograph_stock' is intentionally NOT in the enum — stock imagery is always a separate ban.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "photograph_art_directed",
+              "photograph_commissioned",
+              "illustration",
+              "illustration_custom",
+              "composite",
+              "video_still",
+              "svg_figurative",
+              "3d_render"
+            ]
+          },
+          "minItems": 1
+        },
+        "waiver_reason": {
+          "description": "If required: false, the stated reason why the subject does not need to visibly appear. Required when required: false; must be null when required: true.",
+          "type": ["string", "null"]
+        }
+      },
+      "required": ["subject", "required", "required_locations", "allowed_modalities", "waiver_reason"]
+    }
+  },
+  "required": [
+    "type",
+    "title",
+    "project",
+    "spec_scope",
+    "parent_brief",
+    "governs_tickets",
+    "visual_quality_target_medium",
+    "medium_plugin_version",
+    "medium_plugin_path",
+    "visual_quality_target_preset",
+    "visual_quality_target_mode",
+    "craft_depth",
+    "visual_axes",
+    "visual_axes_medium_extensions",
+    "adjacent_preset_rejected",
+    "adjacent_preset_rejection_reason",
+    "references",
+    "mockups",
+    "adjudications",
+    "adversarial_pass",
+    "tokens_locked",
+    "tokens_locked_at",
+    "parity_targets",
+    "contrast_validation",
+    "outcome_data",
+    "visual_specificity_contract",
+    "visual_spec_id",
+    "revision_id",
+    "supersedes",
+    "superseded_by",
+    "active",
+    "deprecated",
+    "captured",
+    "agent",
+    "tags"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "visual_quality_target_mode": {"const": "custom"}
+        },
+        "required": ["visual_quality_target_mode"]
+      },
+      "then": {
+        "required": ["custom_cohort_cluster_id"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "craft_depth": {"enum": ["enhanced", "obsessive"]}
+        },
+        "required": ["craft_depth"]
+      },
+      "then": {
+        "required": ["artifact_manifest"]
+      }
+    },
+    {
+      "if": {
+        "required": ["artifact_manifest"]
+      },
+      "then": {
+        "required": ["coherence_signoff"]
+      }
+    }
+  ]
+}

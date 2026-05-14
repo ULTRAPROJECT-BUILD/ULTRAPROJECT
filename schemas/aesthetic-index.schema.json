@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/aesthetic-index.schema.json",
+  "title": "Aesthetic Index",
+  "description": "Validates the visual-aesthetics _index.md registry.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "axes": {
+      "description": "Six-axis aesthetic profile.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "density": {"description": "Density value.", "type": "string", "enum": ["sparse", "balanced", "dense", "ultra_dense"]},
+        "topology": {"description": "Topology value.", "type": "string", "minLength": 1},
+        "expressiveness": {"description": "Expressiveness value.", "type": "string", "enum": ["quiet", "restrained", "editorial", "expressive", "playful", "cinematic"]},
+        "motion": {"description": "Motion value.", "type": "string", "enum": ["static", "subtle", "functional", "expressive", "cinematic", "rapid"]},
+        "platform": {"description": "Platform value.", "type": "string", "minLength": 1},
+        "trust": {"description": "Trust value.", "type": "string", "minLength": 1}
+      },
+      "required": ["density", "topology", "expressiveness", "motion", "platform", "trust"]
+    },
+    "mediumRef": {
+      "description": "Medium applicability annotation.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "medium": {
+          "description": "Supported medium identifier.",
+          "type": "string",
+          "enum": [
+            "web_ui",
+            "native_ui",
+            "presentation",
+            "brand_identity",
+            "video_animation",
+            "3d_render",
+            "document_typography",
+            "game_ui",
+            "data_visualization"
+          ]
+        },
+        "applicability": {
+          "description": "Primary or secondary applicability for this preset.",
+          "type": "string",
+          "enum": ["primary", "secondary"]
+        }
+      },
+      "required": ["medium", "applicability"]
+    }
+  },
+  "properties": {
+    "presets": {
+      "description": "Preset registry entries.",
+      "type": "array",
+      "items": {
+        "description": "One preset index entry.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "description": "Preset slug.",
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          },
+          "axes": {
+            "description": "Preset axis profile.",
+            "$ref": "#/$defs/axes"
+          },
+          "applies_to_mediums": {
+            "description": "Mediums to which this preset applies.",
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/mediumRef"
+            }
+          }
+        },
+        "required": ["name", "axes", "applies_to_mediums"]
+      }
+    },
+    "mediums": {
+      "description": "Medium registry entries.",
+      "type": "array",
+      "items": {
+        "description": "One medium index entry.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "description": "Medium identifier.",
+            "type": "string",
+            "enum": [
+              "web_ui",
+              "native_ui",
+              "presentation",
+              "brand_identity",
+              "video_animation",
+              "3d_render",
+              "document_typography",
+              "game_ui",
+              "data_visualization"
+            ]
+          },
+          "applicable_presets": {
+            "description": "Preset slugs applicable to the medium.",
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_-]*$"
+            }
+          }
+        },
+        "required": ["id", "applicable_presets"]
+      }
+    },
+    "adjacency_map": {
+      "description": "Mapping from each preset slug to neighboring presets used in adversarial review.",
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_-]*$"
+      },
+      "additionalProperties": {
+        "description": "Neighboring preset slugs for one preset.",
+        "type": "array",
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]*$"
+        }
+      }
+    }
+  },
+  "required": ["presets", "mediums", "adjacency_map"]
+}

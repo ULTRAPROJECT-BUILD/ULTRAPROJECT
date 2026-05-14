@@ -1,0 +1,220 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/token-payload-native_ui.schema.json",
+  "title": "Native UI Token Payload",
+  "description": "Validates the tokens block in manifest.json for native_ui visual specifications.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "dynamicTypeStyle": {
+      "description": "Native dynamic type style.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "family": {
+          "description": "Native font family or system family token.",
+          "type": "string",
+          "minLength": 1
+        },
+        "size": {
+          "description": "Base point size.",
+          "type": "number",
+          "minimum": 6,
+          "maximum": 160
+        },
+        "weight": {
+          "description": "Native font weight token or numeric weight.",
+          "type": ["string", "integer"]
+        },
+        "line_height": {
+          "description": "Line height in points.",
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "platform_text_style": {
+          "description": "Platform-native text style name.",
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": ["family", "size", "weight", "line_height", "platform_text_style"]
+    },
+    "motionTiming": {
+      "description": "Native motion timing token.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "description": "Duration in milliseconds.",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5000
+        },
+        "curve": {
+          "description": "Platform-native motion curve.",
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": ["duration_ms", "curve"]
+    }
+  },
+  "properties": {
+    "dynamic_type_scale": {
+      "description": "Named native dynamic type styles.",
+      "type": "object",
+      "minProperties": 5,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_-]*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/dynamicTypeStyle"
+      }
+    },
+    "color": {
+      "description": "Native semantic system colors.",
+      "type": "object",
+      "minProperties": 10,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_-]*$"
+      },
+      "properties": {
+        "label": {"description": "Primary label color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "secondary_label": {"description": "Secondary label color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "tertiary_label": {"description": "Tertiary label color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "system_background": {"description": "Primary system background color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "secondary_system_background": {"description": "Secondary system background color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "separator": {"description": "Separator color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "tint": {"description": "Platform tint or accent color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "success": {"description": "Success semantic color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "warning": {"description": "Warning semantic color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "destructive": {"description": "Destructive action color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"}
+      },
+      "additionalProperties": {
+        "description": "Additional platform semantic color token.",
+        "type": "string",
+        "pattern": "^#[0-9A-Fa-f]{6}$"
+      },
+      "required": [
+        "label",
+        "secondary_label",
+        "tertiary_label",
+        "system_background",
+        "secondary_system_background",
+        "separator",
+        "tint",
+        "success",
+        "warning",
+        "destructive"
+      ]
+    },
+    "spacing": {
+      "description": "Native spacing scale.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "description": "Base spacing unit in points or density-independent pixels.",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "scale": {
+          "description": "Spacing scale values.",
+          "type": "array",
+          "minItems": 6,
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "required": ["base", "scale"]
+    },
+    "corner_radius": {
+      "description": "Native corner radius tokens.",
+      "type": "object",
+      "minProperties": 4,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_-]*$"
+      },
+      "additionalProperties": {
+        "description": "Corner radius value in points or density-independent pixels.",
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 80
+      }
+    },
+    "elevation": {
+      "description": "Native elevation, shadow, or z-depth tokens.",
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "description": "Platform-native elevation token value.",
+        "type": ["string", "number", "object"]
+      }
+    },
+    "motion": {
+      "description": "Native motion timing tokens.",
+      "type": "object",
+      "minProperties": 3,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_-]*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/motionTiming"
+      }
+    },
+    "safe_area_insets": {
+      "description": "Default safe area insets for the target device class.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "top": {"description": "Top safe area inset.", "type": "integer", "minimum": 0},
+        "bottom": {"description": "Bottom safe area inset.", "type": "integer", "minimum": 0},
+        "leading": {"description": "Leading safe area inset.", "type": "integer", "minimum": 0},
+        "trailing": {"description": "Trailing safe area inset.", "type": "integer", "minimum": 0}
+      },
+      "required": ["top", "bottom", "leading", "trailing"]
+    },
+    "focus": {
+      "description": "Keyboard, remote, or accessibility focus tokens.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ring_width": {"description": "Focus ring width.", "type": "integer", "minimum": 0, "maximum": 16},
+        "color_alpha_pct": {"description": "Focus indicator alpha percentage.", "type": "integer", "minimum": 0, "maximum": 100},
+        "corner_radius": {"description": "Focus indicator corner radius.", "type": "integer", "minimum": 0, "maximum": 80}
+      },
+      "required": ["ring_width", "color_alpha_pct", "corner_radius"]
+    },
+    "materials": {
+      "description": "Optional translucency and material tokens for iOS/macOS-style platforms.",
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_-]*$"
+      },
+      "additionalProperties": {
+        "description": "Material translucency token.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "blur_radius": {"description": "Blur radius for the material.", "type": "number", "minimum": 0},
+          "alpha_pct": {"description": "Material opacity percentage.", "type": "integer", "minimum": 0, "maximum": 100},
+          "tint": {"description": "Material tint color.", "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"}
+        },
+        "required": ["blur_radius", "alpha_pct", "tint"]
+      }
+    }
+  },
+  "required": [
+    "dynamic_type_scale",
+    "color",
+    "spacing",
+    "corner_radius",
+    "elevation",
+    "motion",
+    "safe_area_insets",
+    "focus"
+  ]
+}

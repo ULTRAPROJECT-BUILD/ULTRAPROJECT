@@ -1,0 +1,386 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://oneshot.local/schemas/oai-plan-response.schema.json",
+  "title": "OAI-PLAN Response",
+  "description": "Validates planning-time tool-bar tension operator attention responses.",
+  "type": "object",
+  "additionalProperties": false,
+  "definitions": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "oaiPlanId": {
+      "type": "string",
+      "pattern": "^OAI-PLAN-[0-9]{3,}$"
+    },
+    "adId": {
+      "type": ["string", "null"],
+      "pattern": "^AD-[0-9]{3,}$"
+    },
+    "ticketId": {
+      "type": "string",
+      "pattern": "^T-[0-9]{3,}$"
+    },
+    "toolConstraints": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "budget",
+        "local_runnable",
+        "network",
+        "license_constraint",
+        "deliverable",
+        "credentials"
+      ],
+      "properties": {
+        "os": {
+          "type": "array",
+          "items": {"type": "string"},
+          "default": []
+        },
+        "arch": {
+          "type": "array",
+          "items": {"type": "string"},
+          "default": []
+        },
+        "hardware": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "gpu_class": {
+              "type": "array",
+              "items": {"type": "string"}
+            },
+            "ram_floor_gb": {"type": "number", "minimum": 0},
+            "disk_floor_gb": {"type": "number", "minimum": 0}
+          }
+        },
+        "browser_runtime": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "webgl": {"type": "string", "enum": ["required", "preferred", "none"]},
+            "webgpu": {"type": "string", "enum": ["required", "preferred", "none"]},
+            "target_browsers": {
+              "type": "array",
+              "items": {"type": "string"}
+            }
+          }
+        },
+        "host_availability": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "hosts": {
+              "type": "array",
+              "items": {"type": "string"}
+            }
+          }
+        },
+        "budget": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["max_total_usd", "max_recurring_usd_per_month", "operator_will_pay_out_of_band"],
+          "properties": {
+            "max_total_usd": {"type": "number", "minimum": 0},
+            "max_recurring_usd_per_month": {"type": "number", "minimum": 0},
+            "operator_will_pay_out_of_band": {"type": "boolean"}
+          }
+        },
+        "local_runnable": {"type": "string", "enum": ["required", "preferred", "unconstrained"]},
+        "network": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["outbound", "api_dependencies_allowed"],
+          "properties": {
+            "outbound": {"type": "string", "enum": ["forbidden", "restricted_to_apis", "open"]},
+            "api_dependencies_allowed": {"type": "boolean"}
+          }
+        },
+        "license_constraint": {"type": "string", "enum": ["cc0_only", "open_source_only", "commercial_ok"]},
+        "deliverable": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["type"],
+          "properties": {
+            "type": {"type": "string", "enum": ["live_runtime", "pre_rendered", "hybrid"]},
+            "performance_target": {"type": "string"}
+          }
+        },
+        "credentials": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["out_of_band_secrets_allowed", "api_keys_allowed"],
+          "properties": {
+            "out_of_band_secrets_allowed": {"type": "boolean"},
+            "api_keys_allowed": {"type": "boolean"}
+          }
+        },
+        "canary_type": {"type": "string", "enum": ["functional", "smoke", "not_required"]},
+        "evidence_threshold": {"type": "string", "enum": ["low", "medium", "high"]},
+        "install_risk_threshold": {"type": "string", "enum": ["low", "medium", "high"]}
+      }
+    },
+    "decisionAuthorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorization_id",
+        "spend_approved",
+        "currency",
+        "max_authorized_amount_usd",
+        "vendor",
+        "recurrence",
+        "paid_via",
+        "approval_source",
+        "expires_at",
+        "valid_until_stage",
+        "receipt_or_canary_required",
+        "receipt_or_canary_status"
+      ],
+      "properties": {
+        "authorization_id": {
+          "type": ["string", "null"],
+          "minLength": 1
+        },
+        "spend_approved": {"type": "boolean"},
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$",
+          "default": "USD"
+        },
+        "max_authorized_amount_usd": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "vendor": {
+          "type": ["string", "null"]
+        },
+        "recurrence": {
+          "type": ["string", "null"],
+          "enum": ["one_time", "annual", "monthly", null]
+        },
+        "paid_via": {
+          "type": "string",
+          "enum": ["operator_out_of_band", "spending_mcp", "n_a"]
+        },
+        "approval_source": {
+          "type": ["string", "null"]
+        },
+        "expires_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "valid_until_stage": {
+          "type": "string",
+          "enum": ["stage_1", "stage_2", "stage_3", "indefinite"]
+        },
+        "receipt_or_canary_required": {"type": "boolean"},
+        "receipt_or_canary_status": {
+          "type": "string",
+          "enum": ["pending", "satisfied", "failed", "n_a"]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"spend_approved": {"const": true}},
+            "required": ["spend_approved"]
+          },
+          "then": {
+            "properties": {
+              "authorization_id": {"type": "string", "minLength": 1},
+              "max_authorized_amount_usd": {"type": "number", "exclusiveMinimum": 0},
+              "vendor": {"type": "string", "minLength": 1},
+              "recurrence": {"type": "string", "enum": ["one_time", "annual", "monthly"]},
+              "paid_via": {"enum": ["operator_out_of_band", "spending_mcp"]},
+              "approval_source": {"type": "string", "minLength": 1},
+              "receipt_or_canary_required": {"const": true},
+              "receipt_or_canary_status": {"enum": ["pending", "satisfied", "failed"]}
+            }
+          }
+        }
+      ]
+    },
+    "toolPresenceCanary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required",
+        "canary_target",
+        "blocked_tickets",
+        "canary_type",
+        "canary_status",
+        "canary_evidence_pointer"
+      ],
+      "properties": {
+        "required": {"type": "boolean"},
+        "canary_target": {
+          "type": ["string", "null"],
+          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+        },
+        "blocked_tickets": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/ticketId"},
+          "uniqueItems": true
+        },
+        "canary_type": {
+          "type": "string",
+          "enum": ["functional", "smoke", "not_required"]
+        },
+        "canary_status": {
+          "type": "string",
+          "enum": ["not_run", "passed", "failed", "not_required"]
+        },
+        "canary_evidence_pointer": {
+          "type": ["string", "null"]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"required": {"const": true}},
+            "required": ["required"]
+          },
+          "then": {
+            "properties": {
+              "canary_target": {"type": "string", "minLength": 1},
+              "blocked_tickets": {"type": "array", "minItems": 1},
+              "canary_type": {"enum": ["functional", "smoke"]},
+              "canary_status": {"enum": ["not_run", "passed", "failed"]}
+            }
+          }
+        }
+      ]
+    },
+    "alternative": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "label",
+        "tool_slug",
+        "display_name",
+        "bar_fitness",
+        "constraint_fit",
+        "acquisition",
+        "install_risk",
+        "evidence_confidence",
+        "why_this_fits"
+      ],
+      "properties": {
+        "label": {"type": "string", "pattern": "^[abc]$"},
+        "tool_slug": {"$ref": "#/definitions/slug"},
+        "tool_stack_id": {"type": "string"},
+        "display_name": {"type": "string", "minLength": 1},
+        "bar_fitness": {"type": "string", "enum": ["HIGH", "MEDIUM", "LOW"]},
+        "constraint_fit": {
+          "type": "object",
+          "additionalProperties": {"type": "string"}
+        },
+        "excluded_by_constraint": {
+          "type": "array",
+          "items": {"type": "string"},
+          "uniqueItems": true,
+          "default": []
+        },
+        "acquisition": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "install_risk": {"type": "string", "enum": ["low", "medium", "high"]},
+        "evidence_confidence": {
+          "type": "string",
+          "enum": ["high", "medium", "low", "stale_accepted"]
+        },
+        "why_this_fits": {"type": "string", "minLength": 1}
+      }
+    }
+  },
+  "required": [
+    "oai_id",
+    "capability",
+    "bar",
+    "binding_constraints",
+    "tension",
+    "alternatives",
+    "recommended_default",
+    "operator_decision"
+  ],
+  "properties": {
+    "oai_id": {"$ref": "#/definitions/oaiPlanId"},
+    "added": {"type": "string"},
+    "planning_time": {"type": "boolean", "default": true},
+    "capability": {"$ref": "#/definitions/slug"},
+    "bar": {"type": "string", "minLength": 1},
+    "binding_constraints": {"$ref": "#/definitions/toolConstraints"},
+    "tension": {"type": "string", "minLength": 1},
+    "alternatives": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {"$ref": "#/definitions/alternative"}
+    },
+    "recommended_default": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "reason"],
+      "properties": {
+        "label": {
+          "type": "string",
+          "enum": ["a", "b", "c", "no_satisfying_tool_exists"]
+        },
+        "reason": {"type": "string", "minLength": 1}
+      }
+    },
+    "operator_decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision",
+        "decision_state",
+        "decision_authorization",
+        "ad_binding",
+        "tool_presence_canary",
+        "decided_at",
+        "decided_by"
+      ],
+      "properties": {
+        "decision": {
+          "type": ["string", "null"],
+          "enum": [
+            "chose_a",
+            "chose_b",
+            "chose_c",
+            "brief_amendment",
+            "stay_with_operator_named_tool_accept_lower_bar",
+            null
+          ]
+        },
+        "decision_state": {"type": "string", "enum": ["open", "resolved"]},
+        "decision_reasoning": {"type": ["string", "null"]},
+        "decision_authorization": {"$ref": "#/definitions/decisionAuthorization"},
+        "ad_binding": {"$ref": "#/definitions/adId"},
+        "tool_presence_canary": {"$ref": "#/definitions/toolPresenceCanary"},
+        "decided_at": {"type": ["string", "null"]},
+        "decided_by": {"type": ["string", "null"]}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"decision_state": {"const": "resolved"}},
+            "required": ["decision_state"]
+          },
+          "then": {
+            "properties": {
+              "decision": {"type": "string"},
+              "ad_binding": {"type": "string", "pattern": "^AD-[0-9]{3,}$"},
+              "decided_at": {"type": "string", "minLength": 1},
+              "decided_by": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      ]
+    }
+  }
+}

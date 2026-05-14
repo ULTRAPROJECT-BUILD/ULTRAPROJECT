@@ -1,0 +1,209 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/token-payload-data_visualization.schema.json",
+  "title": "Data Visualization Token Payload",
+  "description": "Validates the tokens block in manifest.json for data_visualization visual specifications.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "hexColor": {
+      "type": "string",
+      "pattern": "^#[0-9A-Fa-f]{6}$"
+    },
+    "numberMap": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_-]*$"
+      },
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "typeStyle": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "family": {
+          "type": "string",
+          "minLength": 1
+        },
+        "size": {
+          "type": "number",
+          "minimum": 1
+        },
+        "weight": {
+          "type": [
+            "string",
+            "integer",
+            "number"
+          ]
+        },
+        "leading": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "tracking": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "family",
+        "size",
+        "weight",
+        "leading",
+        "tracking"
+      ]
+    },
+    "timing": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "easing": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "duration_ms",
+        "easing"
+      ]
+    },
+    "namedString": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ]
+    }
+  },
+  "properties": {
+    "chart_grammar": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "marks": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "encodings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "coordinate_system": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "marks",
+        "encodings",
+        "coordinate_system"
+      ]
+    },
+    "color_scale": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "scheme": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "domain": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "range": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/hexColor"
+          }
+        }
+      },
+      "required": [
+        "scheme",
+        "type",
+        "domain",
+        "range"
+      ]
+    },
+    "type_on_chart": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/typeStyle"
+      },
+      "minProperties": 3
+    },
+    "chart_density": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "marks_per_view": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_series": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "label_density": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "marks_per_view",
+        "max_series",
+        "label_density"
+      ]
+    },
+    "annotation_vocabulary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "annotations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "annotations"
+      ]
+    }
+  },
+  "required": [
+    "chart_grammar",
+    "color_scale",
+    "type_on_chart",
+    "chart_density",
+    "annotation_vocabulary"
+  ]
+}

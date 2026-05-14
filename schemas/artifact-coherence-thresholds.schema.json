@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oneshot.local/schemas/artifact-coherence-thresholds.schema.json",
+  "title": "Artifact Coherence Threshold Registry",
+  "description": "Validates vault/config/artifact-coherence-thresholds.yml.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "thresholds": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "palette_delta_e76_max": {
+          "type": "number"
+        },
+        "color_temperature_variance_k_max": {
+          "type": "number"
+        },
+        "type_scale_ratio_variance_max": {
+          "type": "number"
+        },
+        "type_family_consistency_required": {
+          "type": "boolean"
+        },
+        "lighting_primary_direction_variance_deg_max": {
+          "type": "number"
+        },
+        "lighting_fill_ratio_variance_max": {
+          "type": "number"
+        },
+        "motion_pacing_register_consistency_required": {
+          "type": "boolean"
+        },
+        "audio_mood_centroid_distance_max": {
+          "type": "number"
+        },
+        "spatial_scale_subject_variance_max": {
+          "type": "number"
+        },
+        "slot_fit_must_be_unanimous": {
+          "type": "boolean"
+        }
+      }
+    },
+    "completeThresholds": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/thresholds"
+        },
+        {
+          "required": [
+            "palette_delta_e76_max",
+            "color_temperature_variance_k_max",
+            "type_scale_ratio_variance_max",
+            "type_family_consistency_required",
+            "lighting_primary_direction_variance_deg_max",
+            "lighting_fill_ratio_variance_max",
+            "motion_pacing_register_consistency_required",
+            "audio_mood_centroid_distance_max",
+            "spatial_scale_subject_variance_max",
+            "slot_fit_must_be_unanimous"
+          ]
+        }
+      ]
+    },
+    "overrideMap": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/thresholds"
+      },
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "last_calibrated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "calibration_sample_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "defaults": {
+      "$ref": "#/$defs/completeThresholds"
+    },
+    "per_medium_overrides": {
+      "$ref": "#/$defs/overrideMap"
+    },
+    "per_preset_overrides": {
+      "$ref": "#/$defs/overrideMap"
+    },
+    "calibration_provenance": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "threshold": {
+            "type": "string",
+            "minLength": 1
+          },
+          "initial_value": {
+            "type": ["number", "boolean"]
+          },
+          "initial_basis": {
+            "type": "string",
+            "minLength": 1
+          },
+          "calibration_history": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": ["threshold", "initial_value", "initial_basis", "calibration_history"]
+      }
+    },
+    "tuning_method": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "retune_after_n_projects": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "retune_inputs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minProperties": 1,
+            "maxProperties": 1
+          }
+        },
+        "retune_skill": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": ["retune_after_n_projects", "retune_inputs", "retune_skill"]
+    }
+  },
+  "required": [
+    "version",
+    "last_calibrated_at",
+    "calibration_sample_count",
+    "defaults",
+    "calibration_provenance",
+    "tuning_method"
+  ]
+}

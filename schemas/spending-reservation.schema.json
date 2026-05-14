@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://oneshot.local/schemas/spending-reservation.schema.json",
+  "title": "Spending Reservation Record",
+  "description": "Validates spending MCP reservation, capture, release, and expiry records.",
+  "type": "object",
+  "additionalProperties": false,
+  "definitions": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "category": {
+      "type": "string",
+      "enum": ["tool_acquisition", "tool_usage", "api_call", "other"]
+    },
+    "recurrence": {
+      "type": "string",
+      "enum": ["none", "one_time", "monthly", "annual"]
+    },
+    "state": {
+      "type": "string",
+      "enum": ["quoted", "reserved", "captured", "released", "expired", "rejected"]
+    }
+  },
+  "required": [
+    "record_type",
+    "state",
+    "project_slug",
+    "vendor",
+    "category",
+    "recurrence",
+    "amount_usd",
+    "created_at"
+  ],
+  "properties": {
+    "record_type": {"type": "string", "enum": ["quote", "reservation", "capture", "release"]},
+    "state": {"$ref": "#/definitions/state"},
+    "quote_id": {"type": ["string", "null"]},
+    "reservation_id": {"type": ["string", "null"]},
+    "capture_id": {"type": ["string", "null"]},
+    "release_id": {"type": ["string", "null"]},
+    "project_slug": {"$ref": "#/definitions/slug"},
+    "vendor": {"type": "string", "minLength": 1},
+    "category": {"$ref": "#/definitions/category"},
+    "recurrence": {"$ref": "#/definitions/recurrence"},
+    "amount_usd": {"type": "number", "minimum": 0},
+    "reserved_amount_usd": {"type": ["number", "null"], "minimum": 0},
+    "actual_amount_usd": {"type": ["number", "null"], "minimum": 0},
+    "authorization_id": {"type": ["string", "null"], "minLength": 1},
+    "requested_by_tool_stack": {"type": ["string", "null"]},
+    "expires_at": {"type": ["string", "null"], "format": "date-time"},
+    "receipt_ref": {"type": ["string", "null"]},
+    "reason": {"type": ["string", "null"]},
+    "created_at": {"type": "string", "minLength": 1},
+    "updated_at": {"type": ["string", "null"]},
+    "captured_at": {"type": ["string", "null"]},
+    "released_at": {"type": ["string", "null"]},
+    "expired_at": {"type": ["string", "null"]}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"state": {"const": "reserved"}}, "required": ["state"]},
+      "then": {
+        "required": ["quote_id", "reservation_id", "authorization_id", "expires_at"],
+        "properties": {
+          "reserved_amount_usd": {"type": "number", "exclusiveMinimum": 0}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"state": {"const": "captured"}}, "required": ["state"]},
+      "then": {
+        "required": ["reservation_id", "capture_id", "authorization_id", "receipt_ref"],
+        "properties": {
+          "actual_amount_usd": {"type": "number", "minimum": 0},
+          "captured_at": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"state": {"const": "released"}}, "required": ["state"]},
+      "then": {
+        "required": ["reservation_id", "release_id", "authorization_id", "reason"],
+        "properties": {
+          "actual_amount_usd": {"const": 0},
+          "released_at": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,287 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://oneshot.local/schemas/oai-tool-response.schema.json",
+  "title": "OAI-TOOL Response",
+  "description": "Validates execution-time Tool-Fit Retrospective operator attention responses.",
+  "type": "object",
+  "additionalProperties": false,
+  "definitions": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "oaiToolId": {
+      "type": "string",
+      "pattern": "^OAI-TOOL-[0-9]{3,}$"
+    },
+    "adId": {
+      "type": ["string", "null"],
+      "pattern": "^AD-[0-9]{3,}$"
+    },
+    "ticketId": {
+      "type": "string",
+      "pattern": "^T-[0-9]{3,}$"
+    },
+    "decisionAuthorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorization_id",
+        "spend_approved",
+        "currency",
+        "max_authorized_amount_usd",
+        "vendor",
+        "recurrence",
+        "paid_via",
+        "approval_source",
+        "expires_at",
+        "valid_until_stage",
+        "receipt_or_canary_required",
+        "receipt_or_canary_status"
+      ],
+      "properties": {
+        "authorization_id": {"type": ["string", "null"], "minLength": 1},
+        "spend_approved": {"type": "boolean"},
+        "currency": {"type": "string", "pattern": "^[A-Z]{3}$", "default": "USD"},
+        "max_authorized_amount_usd": {"type": ["number", "null"], "minimum": 0},
+        "vendor": {"type": ["string", "null"]},
+        "recurrence": {
+          "type": ["string", "null"],
+          "enum": ["one_time", "annual", "monthly", null]
+        },
+        "paid_via": {
+          "type": "string",
+          "enum": ["operator_out_of_band", "spending_mcp", "n_a"]
+        },
+        "approval_source": {"type": ["string", "null"]},
+        "expires_at": {"type": ["string", "null"], "format": "date-time"},
+        "valid_until_stage": {
+          "type": "string",
+          "enum": ["stage_1", "stage_2", "stage_3", "indefinite"]
+        },
+        "receipt_or_canary_required": {"type": "boolean"},
+        "receipt_or_canary_status": {
+          "type": "string",
+          "enum": ["pending", "satisfied", "failed", "n_a"]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"spend_approved": {"const": true}},
+            "required": ["spend_approved"]
+          },
+          "then": {
+            "properties": {
+              "authorization_id": {"type": "string", "minLength": 1},
+              "max_authorized_amount_usd": {"type": "number", "exclusiveMinimum": 0},
+              "vendor": {"type": "string", "minLength": 1},
+              "recurrence": {"type": "string", "enum": ["one_time", "annual", "monthly"]},
+              "paid_via": {"enum": ["operator_out_of_band", "spending_mcp"]},
+              "approval_source": {"type": "string", "minLength": 1},
+              "receipt_or_canary_required": {"const": true},
+              "receipt_or_canary_status": {"enum": ["pending", "satisfied", "failed"]}
+            }
+          }
+        }
+      ]
+    },
+    "toolPresenceCanary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required",
+        "canary_target",
+        "blocked_tickets",
+        "canary_type",
+        "canary_status",
+        "canary_evidence_pointer"
+      ],
+      "properties": {
+        "required": {"type": "boolean"},
+        "canary_target": {
+          "type": ["string", "null"],
+          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+        },
+        "blocked_tickets": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/ticketId"},
+          "uniqueItems": true
+        },
+        "canary_type": {
+          "type": "string",
+          "enum": ["functional", "smoke", "not_required"]
+        },
+        "canary_status": {
+          "type": "string",
+          "enum": ["not_run", "passed", "failed", "not_required"]
+        },
+        "canary_evidence_pointer": {"type": ["string", "null"]}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"required": {"const": true}},
+            "required": ["required"]
+          },
+          "then": {
+            "properties": {
+              "canary_target": {"type": "string", "minLength": 1},
+              "blocked_tickets": {"type": "array", "minItems": 1},
+              "canary_type": {"enum": ["functional", "smoke"]},
+              "canary_status": {"enum": ["not_run", "passed", "failed"]}
+            }
+          }
+        }
+      ]
+    },
+    "alternative": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "label",
+        "tool_slug",
+        "tool_stack_id",
+        "display_name",
+        "bar_fitness",
+        "constraint_fit",
+        "acquisition",
+        "install_risk",
+        "evidence_confidence",
+        "why_this_fits"
+      ],
+      "properties": {
+        "label": {"type": "string", "pattern": "^[abc]$"},
+        "tool_slug": {"$ref": "#/definitions/slug"},
+        "tool_stack_id": {"type": "string", "minLength": 1},
+        "display_name": {"type": "string", "minLength": 1},
+        "bar_fitness": {"type": "string", "enum": ["HIGH", "MEDIUM", "LOW"]},
+        "constraint_fit": {
+          "type": "object",
+          "additionalProperties": {"type": "string"}
+        },
+        "excluded_by_constraint": {
+          "type": "array",
+          "items": {"type": "string"},
+          "uniqueItems": true,
+          "default": []
+        },
+        "acquisition": {"type": "object", "additionalProperties": true},
+        "install_risk": {"type": "string", "enum": ["low", "medium", "high"]},
+        "evidence_confidence": {
+          "type": "string",
+          "enum": ["high", "medium", "low", "stale_accepted"]
+        },
+        "why_this_fits": {"type": "string", "minLength": 1}
+      }
+    }
+  },
+  "required": [
+    "oai_id",
+    "added",
+    "execution_time",
+    "capability",
+    "trigger",
+    "current_tool_stack_id",
+    "current_tool_slug",
+    "prior_ad_binding",
+    "affected_tickets",
+    "updated_constraints",
+    "retrospective_summary",
+    "alternatives",
+    "recommended_default",
+    "operator_decision"
+  ],
+  "properties": {
+    "oai_id": {"$ref": "#/definitions/oaiToolId"},
+    "added": {"type": "string", "minLength": 1},
+    "execution_time": {"type": "boolean", "const": true},
+    "capability": {"$ref": "#/definitions/slug"},
+    "trigger": {
+      "type": "string",
+      "enum": ["tool_ceiling_high_confidence", "same_stack_rejects", "same_stack_revises"]
+    },
+    "current_tool_stack_id": {"type": "string", "minLength": 1},
+    "current_tool_slug": {"$ref": "#/definitions/slug"},
+    "prior_ad_binding": {"type": "string", "pattern": "^AD-[0-9]{3,}$"},
+    "affected_tickets": {
+      "type": "array",
+      "items": {"$ref": "#/definitions/ticketId"},
+      "uniqueItems": true
+    },
+    "updated_constraints": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "retrospective_summary": {"type": "string", "minLength": 1},
+    "alternatives": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {"$ref": "#/definitions/alternative"}
+    },
+    "recommended_default": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "reason"],
+      "properties": {
+        "label": {
+          "type": "string",
+          "enum": ["a", "b", "c", "same_stack_harder", "pivot_to_brief_secondary_path", "no_satisfying_tool_exists"]
+        },
+        "reason": {"type": "string", "minLength": 1}
+      }
+    },
+    "operator_decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision",
+        "decision_state",
+        "decision_authorization",
+        "ad_binding",
+        "tool_presence_canary",
+        "decided_at",
+        "decided_by"
+      ],
+      "properties": {
+        "decision": {
+          "type": ["string", "null"],
+          "enum": [
+            "chose_a",
+            "chose_b",
+            "chose_c",
+            "same_stack_harder",
+            "pivot_to_brief_secondary_path",
+            "brief_amendment",
+            "no_tool_replan",
+            null
+          ]
+        },
+        "decision_state": {"type": "string", "enum": ["open", "resolved"]},
+        "decision_reasoning": {"type": ["string", "null"]},
+        "decision_authorization": {"$ref": "#/definitions/decisionAuthorization"},
+        "ad_binding": {"$ref": "#/definitions/adId"},
+        "tool_presence_canary": {"$ref": "#/definitions/toolPresenceCanary"},
+        "decided_at": {"type": ["string", "null"]},
+        "decided_by": {"type": ["string", "null"]}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"decision_state": {"const": "resolved"}},
+            "required": ["decision_state"]
+          },
+          "then": {
+            "properties": {
+              "decision": {"type": "string"},
+              "ad_binding": {"type": "string", "pattern": "^AD-[0-9]{3,}$"},
+              "decided_at": {"type": "string", "minLength": 1},
+              "decided_by": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      ]
+    }
+  }
+}

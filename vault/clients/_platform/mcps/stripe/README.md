@@ -56,7 +56,7 @@ Lists recent payments, optionally filtered by customer email.
 
 3. Set the environment variable:
    ```bash
-   export STRIPE_RESTRICTED_KEY="rk_live_..."
+   export STRIPE_RESTRICTED_KEY="<restricted-key-from-stripe-dashboard>"
    ```
 
 4. Run the server:

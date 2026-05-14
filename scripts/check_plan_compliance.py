@@ -47,6 +47,7 @@ from check_quality_contract import (
     split_frontmatter,
 )
 from check_ticket_evidence import parse_frontmatter_map
+from check_tool_survey import validate_tool_survey
 
 TIMESTAMP_FMT = "%Y-%m-%dT%H:%M:%S"
 WS_RE = re.compile(r"\bWS-\d+\b", re.IGNORECASE)
@@ -343,6 +344,21 @@ def validate_plan_compliance(plan_path: Path) -> dict[str, Any]:
             )
         )
 
+    # 7. Tool survey sub-check (Stage 1 Tool Lifecycle patch).
+    tool_survey_report = validate_tool_survey(plan_path=plan_path)
+    tool_survey_failures = [c for c in tool_survey_report["checks"] if not c["ok"]]
+    checks.append(
+        build_check(
+            "tool_survey_plan_qa",
+            not tool_survey_failures,
+            "Tool Survey + OAI-PLAN sub-check passed."
+            if not tool_survey_failures
+            else "Tool Survey + OAI-PLAN sub-check failed: "
+            + "; ".join(f"{c['name']}: {c['details']}" for c in tool_survey_failures[:5])
+            + ("..." if len(tool_survey_failures) > 5 else ""),
+        )
+    )
+
     return {
         "is_frontier": is_frontier,
         "is_capability_waves": is_capability_waves,
@@ -350,6 +366,7 @@ def validate_plan_compliance(plan_path: Path) -> dict[str, Any]:
         "traced_workstreams": sorted(traced_ws),
         "partial_coverage_workstreams": sorted(partial_ws),
         "exit_criteria_count": len(exit_lines),
+        "tool_survey_warnings": tool_survey_report.get("warnings", []),
         "checks": checks,
     }
 
@@ -373,6 +390,10 @@ def render_markdown(report: dict[str, Any], plan_path: Path) -> str:
     for check in report["checks"]:
         marker = "✅" if check["ok"] else "❌"
         lines.append(f"- {marker} **{check['name']}** — {check['details']}")
+    if report.get("tool_survey_warnings"):
+        lines.extend(["", "## Tool Survey Warnings", ""])
+        for warning in report["tool_survey_warnings"]:
+            lines.append(f"- {warning}")
     failures = [c for c in report["checks"] if not c["ok"]]
     lines.extend(["", f"**Verdict:** {'PASS' if not failures else f'FAIL — {len(failures)} violation(s)'}"])
     return "\n".join(lines) + "\n"
